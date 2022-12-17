@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Register.css";
 
 function Register() {
@@ -7,6 +8,10 @@ function Register() {
 		email: "",
 		password: "",
 	});
+	const [errMsg, setErrMsg] = useState("");
+	const [sucMsg, setSucMsg] = useState("");
+	const navigate = useNavigate();
+
 	const handleChange = (e) => {
 		let value = e.target.value;
 		setFormData({
@@ -15,16 +20,42 @@ function Register() {
 		});
 	};
 
-const handleSubmit = (e) => {
-	e.preventDefault();
-	console.log(formData);
-}
+	const handleSubmit = (e) => {
+		setSucMsg("");
+		setErrMsg("");
+		e.preventDefault();
+
+		axios
+			.post("http://localhost:5000/register", {
+				...formData,
+			})
+			.then((data) => {
+				setSucMsg("Account Registered Successfully");
+				setTimeout(()=> {
+					navigate('/login');
+				},1500);
+			})
+			.catch((err) => {
+				setErrMsg(err.response.data.message);
+			});
+	};
 
 	return (
 		<div>
 			<div className="container">
 				<div className="registerForm">
 					<div className="border formContainer p-4 rounded-2 shadow-sm">
+						{sucMsg && !errMsg && (
+							<div className="alert alert-success" role="alert">
+								{sucMsg}
+							</div>
+						)}
+						{errMsg && !sucMsg && (
+							<div className="alert alert-danger" role="alert">
+								{errMsg}
+							</div>
+						)}
+
 						<form>
 							<h4 className="text-center fw-bold">Register</h4>
 							<div className="mb-3">
@@ -55,9 +86,9 @@ const handleSubmit = (e) => {
 								/>
 							</div>
 							<div className="text-center">
-								<button 
-								className="btn btn-primary btnSubmit mb-2"
-								onClick={handleSubmit}
+								<button
+									className="btn btn-primary btnSubmit mb-2"
+									onClick={handleSubmit}
 								>
 									Register
 								</button>
