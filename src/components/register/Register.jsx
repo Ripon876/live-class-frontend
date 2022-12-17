@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 import "./Register.css";
 
 function Register() {
@@ -11,6 +12,15 @@ function Register() {
 	const [errMsg, setErrMsg] = useState("");
 	const [sucMsg, setSucMsg] = useState("");
 	const navigate = useNavigate();
+const [cookies, setCookie] = useCookies([]);
+
+	useEffect(() => {
+		if (cookies.token) {
+			navigate("/");
+		}
+	}, []);
+
+
 
 	const handleChange = (e) => {
 		let value = e.target.value;

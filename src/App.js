@@ -16,6 +16,7 @@ import NotFound from "./scenes/NotFound";
 import Register from "./components/register/Register";
 import Login from "./components/login/Login";
 import RequireAuth from "./requireAuth/RequireAuth";
+import NotRequireAuth from "./auth/NotRequireAuth";
 
 function App() {
   return (
@@ -31,8 +32,10 @@ function App() {
           </Route>
         </Route>
 
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+        <Route element={<NotRequireAuth />}>
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+        </Route>
       </Routes>
     </>
   );
