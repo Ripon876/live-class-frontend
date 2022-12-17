@@ -15,7 +15,7 @@ import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./scenes/NotFound";
 import Register from "./components/register/Register";
 import Login from "./components/login/Login";
-import RequireAuth from "./requireAuth/RequireAuth";
+import RequireAuth from "./auth/RequireAuth";
 import NotRequireAuth from "./auth/NotRequireAuth";
 
 function App() {
