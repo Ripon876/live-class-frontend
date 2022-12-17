@@ -24,6 +24,7 @@ const Topbar = () => {
 
   const logOut = () => {
     removeCookie("token");
+    removeCookie("userType");
     navigate('/login');
   };
 

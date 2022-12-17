@@ -40,6 +40,7 @@ function Login() {
 			.then((data) => {
 				setSucMsg("Logged In Successfully");
 				setCookie("token", data.data.token, { path: "/" });
+				setCookie("userType", data.data.type, { path: "/" });
 				setTimeout(() => {
 					navigate("/");
 				}, 1500);

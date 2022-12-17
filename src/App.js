@@ -1,10 +1,20 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
+import { useCookies } from "react-cookie";
+
 import Dashboard from "./scenes/Dashboard";
+// admin
 import Instructors from "./scenes/admin/Instructors";
 import Students from "./scenes/admin/Students";
 import Stations from "./scenes/admin/Stations";
 import HostClass from "./scenes/admin/HostClass";
+
+// teacher
+import TodaysClassesOfTeacher from "./scenes/teacher/TodaysClassesOfTeacher";
+
+// teacher
+import TodaysClassesOfStudent from "./scenes/student/TodaysClassesOfStudent";
+
 // import Bar from './scenes/bar'
 // import Form from './scenes/form'
 // import Pie from './scenes/pie'
@@ -19,17 +29,35 @@ import Login from "./components/login/Login";
 import RequireAuth from "./auth/RequireAuth";
 import NotRequireAuth from "./auth/NotRequireAuth";
 
+
 function App() {
+
   return (
     <>
       <Routes>
         <Route element={<RequireAuth />}>
           <Route path="/" element={<DashboardPage />}>
             <Route index element={<Dashboard />} />
+
+            {/*admin*/}
             <Route path="instructors" element={<Instructors />} />
             <Route path="students" element={<Students />} />
             <Route path="stations" element={<Stations />} />
             <Route path="host_class" element={<HostClass />} />
+
+            {/*teacher*/}
+           
+              <Route
+                path="classes"
+                element={  
+                  userType === "teacher" ? (
+                    <TodaysClassesOfTeacher />
+                  ) : (
+                    <TodaysClassesOfStudent />
+                  )
+                } />
+          
+
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>

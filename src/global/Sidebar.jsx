@@ -11,7 +11,7 @@ import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurned
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MenuOpenOutlinedIcon from "@mui/icons-material/MenuOpenOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-import ClassIcon from '@mui/icons-material/Class';
+import ClassIcon from "@mui/icons-material/Class";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -25,7 +25,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
       icon={icon}
       routerLink={<Link to={to} />}
     >
-      <Typography >{title}</Typography>
+      <Typography>{title}</Typography>
     </MenuItem>
   );
 };
@@ -55,34 +55,38 @@ const AppSidebar = () => {
         },
       }}
     >
-      <Sidebar style={{ height: "100vh"}}>
-        
-          {collapsed ? (
-            <Box textAlign="center" style={{ color: colors.primary[100] }}>
+      <Sidebar style={{ height: "100vh" }}>
+        {collapsed ? (
+          <Box textAlign="center" style={{ color: colors.primary[100] }}>
+            <IconButton
+              onClick={() => {
+                collapseSidebar();
+              }}
+            >
+              <MenuOutlinedIcon />
+            </IconButton>
+          </Box>
+        ) : (
+          <Box display="flex" justifyContent="space-between">
+            <Box>
               <IconButton
                 onClick={() => {
                   collapseSidebar();
                 }}
               >
-                <MenuOutlinedIcon />
+                <MenuOpenOutlinedIcon style={{ color: colors.primary[100] }} />
               </IconButton>
             </Box>
-          ) : (
-            <Box display="flex" justifyContent="space-between">
-            <Box>
-              <IconButton 
-                onClick={() => {
-                  collapseSidebar();
-                }}
-              >
-                <MenuOpenOutlinedIcon style={{ color: colors.primary[100] }}/>
-              </IconButton>
-            </Box>
-            <Typography variant="h4" pr={4} style={{ color: colors.primary[100] }}>Admin</Typography>
+            <Typography
+              variant="h4"
+              pr={4}
+              style={{ color: colors.primary[100] }}
+            >
+              Admin
+            </Typography>
           </Box>
-          )}
-          
-       
+        )}
+
         <Menu>
           <Item
             title="Dashboard"
@@ -91,6 +95,9 @@ const AppSidebar = () => {
             selected={selected}
             icon={<HomeOutlinedIcon />}
           />
+
+          {/* admin */}
+
           <Item
             title="Students"
             to="/students"
@@ -119,16 +126,26 @@ const AppSidebar = () => {
             selected={selected}
             icon={<AssignmentTurnedInOutlinedIcon />}
           />
-           <Item
+          <Item
             title="Analytics"
             to="/analytics"
             setSelected={setSelected}
             selected={selected}
             icon={<MapOutlinedIcon />}
           />
-           <Item
+          <Item
             title="Host Class"
             to="/host_class"
+            setSelected={setSelected}
+            selected={selected}
+            icon={<ClassIcon />}
+          />
+
+          {/* teacher */}
+
+          <Item
+            title="Today's Classes"
+            to="/classes"
             setSelected={setSelected}
             selected={selected}
             icon={<ClassIcon />}
