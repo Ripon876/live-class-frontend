@@ -14,6 +14,7 @@ import Stations from "./scenes/Stations";
 import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./scenes/NotFound";
 import Register from "./components/register/Register";
+import Login from "./components/login/Login";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   );

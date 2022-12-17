@@ -1,0 +1,23 @@
+.registerForm{
+    position: relative;
+    height: 100vh;
+}
+.formContainer{
+    width: 350px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.btnSubmit {
+    background-color: #141b2d;
+    border: none;
+    padding: 5px 20px;
+    border-radius: 20px;
+}
+.formFooterLink{
+text-decoration: none;
+color: #141b2d;
+padding-left: 5px;
+}
