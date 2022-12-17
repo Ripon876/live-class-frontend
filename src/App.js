@@ -1,6 +1,6 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import { useCookies } from "react-cookie";
+import { useSelector } from "react-redux";
 
 import Dashboard from "./scenes/Dashboard";
 // admin
@@ -29,8 +29,9 @@ import Login from "./components/login/Login";
 import RequireAuth from "./auth/RequireAuth";
 import NotRequireAuth from "./auth/NotRequireAuth";
 
-
 function App() {
+  const userType = useSelector((state) => state.type);
+  console.log(userType);
 
   return (
     <>
@@ -46,17 +47,17 @@ function App() {
             <Route path="host_class" element={<HostClass />} />
 
             {/*teacher*/}
-           
-              <Route
-                path="classes"
-                element={  
-                  userType === "teacher" ? (
-                    <TodaysClassesOfTeacher />
-                  ) : (
-                    <TodaysClassesOfStudent />
-                  )
-                } />
-          
+
+            <Route
+              path="classes"
+              element={
+                userType === "teacher" ? (
+                  <TodaysClassesOfTeacher />
+                ) : (
+                  <TodaysClassesOfStudent />
+                )
+              }
+            />
 
             <Route path="*" element={<NotFound />} />
           </Route>

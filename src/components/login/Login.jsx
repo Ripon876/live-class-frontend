@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import { useDispatch } from "react-redux";
 import "./Login.css";
 
 function Login() {
@@ -13,6 +14,7 @@ function Login() {
 	const [sucMsg, setSucMsg] = useState("");
 	const navigate = useNavigate();
 	const [cookies, setCookie] = useCookies([]);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		if (cookies.token) {
@@ -40,7 +42,14 @@ function Login() {
 			.then((data) => {
 				setSucMsg("Logged In Successfully");
 				setCookie("token", data.data.token, { path: "/" });
-				setCookie("userType", data.data.type, { path: "/" });
+
+				dispatch({
+					type: "SET_USER",
+					user: {
+						type: data.data.type,
+					},
+				});
+
 				setTimeout(() => {
 					navigate("/");
 				}, 1500);
