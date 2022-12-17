@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Login.css";
 
 function Login() {
@@ -7,6 +8,10 @@ function Login() {
 		email: "",
 		password: "",
 	});
+	const [errMsg, setErrMsg] = useState("");
+	const [sucMsg, setSucMsg] = useState("");
+	const navigate = useNavigate();
+
 	const handleChange = (e) => {
 		let value = e.target.value;
 		setFormData({
@@ -16,15 +21,40 @@ function Login() {
 	};
 
 	const handleSubmit = (e) => {
+		setSucMsg("");
+		setErrMsg("");
 		e.preventDefault();
-		console.log(formData);
-	};
 
+		axios
+			.post("http://localhost:5000/login", {
+				...formData,
+			})
+			.then((data) => {
+				setSucMsg("Logged In Successfully");
+				// setTimeout(() => {
+				// 	navigate("/login");
+				// }, 1500);
+			})
+			.catch((err) => {
+				setErrMsg(err.response.data.message);
+			});
+	};
 	return (
 		<div>
 			<div className="container">
 				<div className="loginForm">
 					<div className="border formContainer p-4 rounded-2 shadow-sm">
+						{sucMsg && !errMsg && (
+							<div className="alert alert-success" role="alert">
+								{sucMsg}. Taking you to the dashboard
+							</div>
+						)}
+						{errMsg && !sucMsg && (
+							<div className="alert alert-danger" role="alert">
+								{errMsg}
+							</div>
+						)}
+
 						<form>
 							<h4 className="text-center fw-bold">Login</h4>
 							<div className="mb-3">
