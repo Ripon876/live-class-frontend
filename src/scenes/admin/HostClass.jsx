@@ -112,9 +112,10 @@ function HostClass() {
 						}}
 					/>
 					<TextField
-						id="datetime-local"
-						label="Date"
-						type="datetime-local"
+						id="time"
+						label="Start Time"
+						type="time"
+						defaultValue="10:30"
 						variant="filled"
 						sx={{
 							minWidth: "300px",
@@ -122,7 +123,12 @@ function HostClass() {
 						InputLabelProps={{
 							shrink: true,
 						}}
+						inputProps={{
+							step: 300, // 5 min
+						}}
+						sx={{ width: 150 }}
 					/>
+					
 				</div>
 				<Button
 					variant="filled"
@@ -136,14 +142,9 @@ function HostClass() {
 				</Button>
 			</Box>
 
-			<Box
-				component="div"
-				m="40px 40px "
-				width="90%"
-				p='0 0 0 20px'
-			>
+			<Box component="div" m="40px 40px " width="90%" p="0 0 0 20px">
 				<Typography variant="h4" mb="20px">
-					Class Schedule
+					Today's Class Schedule
 				</Typography>
 
 				<TableContainer component={Paper}>
@@ -156,7 +157,7 @@ function HostClass() {
 								<TableCell align="right">
 									Class Duration
 								</TableCell>
-								<TableCell align="right">Date</TableCell>
+								<TableCell align="right">Start Time</TableCell>
 								<TableCell align="right">Actions</TableCell>
 							</TableRow>
 						</TableHead>
@@ -178,7 +179,7 @@ function HostClass() {
 									</TableCell>
 									<TableCell align="right">10</TableCell>
 									<TableCell align="right">
-										24 DEC 2022
+										10:30 AM
 									</TableCell>
 									<TableCell align="right">
 										<Button
