@@ -1,0 +1,134 @@
+import { useState } from "react";
+import { Sidebar, Menu, MenuItem, useProSidebar } from "react-pro-sidebar";
+import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Link } from "react-router-dom";
+import { tokens } from "../theme";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
+import TvOutlinedIcon from "@mui/icons-material/TvOutlined";
+import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
+import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurnedInOutlined";
+import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import MenuOpenOutlinedIcon from "@mui/icons-material/MenuOpenOutlined";
+import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+
+const Item = ({ title, to, icon, selected, setSelected }) => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+
+  return (
+    <MenuItem
+      active={selected === title}
+      style={{ color: colors.primary[100] }}
+      onClick={() => setSelected(title)}
+      icon={icon}
+      routerLink={<Link to={to} />}
+    >
+      <Typography >{title}</Typography>
+    </MenuItem>
+  );
+};
+
+const AppSidebar = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const [selected, setSelected] = useState(false);
+  const { collapseSidebar, collapsed } = useProSidebar();
+  return (
+    <Box
+      sx={{
+        "& .ps-sidebar-container": {
+          background: `${colors.primary[400]} !important`,
+        },
+        "& .pro-icon-wrapper": {
+          background: "transparent !important",
+        },
+        "& .pro-inner-item": {
+          padding: "5px 35px 5px 20px",
+        },
+        "& .pro-inner-item:hover": {
+          color: "#868dfb !important",
+        },
+        "& .ps-menuitem-root.ps-active span": {
+          color: "#6870fa !important",
+        },
+      }}
+    >
+      <Sidebar style={{ height: "100vh"}}>
+        
+          {collapsed ? (
+            <Box textAlign="center" style={{ color: colors.primary[100] }}>
+              <IconButton
+                onClick={() => {
+                  collapseSidebar();
+                }}
+              >
+                <MenuOutlinedIcon />
+              </IconButton>
+            </Box>
+          ) : (
+            <Box display="flex" justifyContent="space-between">
+            <Box>
+              <IconButton 
+                onClick={() => {
+                  collapseSidebar();
+                }}
+              >
+                <MenuOpenOutlinedIcon style={{ color: colors.primary[100] }}/>
+              </IconButton>
+            </Box>
+            <Typography variant="h4" pr={4} style={{ color: colors.primary[100] }}>Admin</Typography>
+          </Box>
+          )}
+          
+       
+        <Menu>
+          <Item
+            title="Dashboard"
+            to="/"
+            setSelected={setSelected}
+            selected={selected}
+            icon={<HomeOutlinedIcon />}
+          />
+          <Item
+            title="Students"
+            to="/students"
+            setSelected={setSelected}
+            selected={selected}
+            icon={<SchoolOutlinedIcon />}
+          />
+          <Item
+            title="Instructors"
+            to="/instructors"
+            setSelected={setSelected}
+            selected={selected}
+            icon={<PersonOutlinedIcon />}
+          />
+          <Item
+            title="Stations"
+            to="/stations"
+            setSelected={setSelected}
+            selected={selected}
+            icon={<TvOutlinedIcon />}
+          />
+          <Item
+            title="Results"
+            to="/results"
+            setSelected={setSelected}
+            selected={selected}
+            icon={<AssignmentTurnedInOutlinedIcon />}
+          />
+           <Item
+            title="Analytics"
+            to="/analytics"
+            setSelected={setSelected}
+            selected={selected}
+            icon={<MapOutlinedIcon />}
+          />
+        </Menu>
+      </Sidebar>
+    </Box>
+  );
+};
+
+export default AppSidebar;
