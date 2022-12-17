@@ -11,6 +11,7 @@ import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurned
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MenuOpenOutlinedIcon from "@mui/icons-material/MenuOpenOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import ClassIcon from '@mui/icons-material/Class';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -124,6 +125,13 @@ const AppSidebar = () => {
             setSelected={setSelected}
             selected={selected}
             icon={<MapOutlinedIcon />}
+          />
+           <Item
+            title="Host Class"
+            to="/host_class"
+            setSelected={setSelected}
+            selected={selected}
+            icon={<ClassIcon />}
           />
         </Menu>
       </Sidebar>

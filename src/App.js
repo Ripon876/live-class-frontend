@@ -4,6 +4,7 @@ import Dashboard from "./scenes/Dashboard";
 import Instructors from "./scenes/admin/Instructors";
 import Students from "./scenes/admin/Students";
 import Stations from "./scenes/admin/Stations";
+import HostClass from "./scenes/admin/HostClass";
 // import Bar from './scenes/bar'
 // import Form from './scenes/form'
 // import Pie from './scenes/pie'
@@ -28,6 +29,7 @@ function App() {
             <Route path="instructors" element={<Instructors />} />
             <Route path="students" element={<Students />} />
             <Route path="stations" element={<Stations />} />
+            <Route path="host_class" element={<HostClass />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
