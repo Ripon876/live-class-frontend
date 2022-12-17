@@ -1,9 +1,9 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Dashboard from "./scenes/Dashboard";
-import Instructors from "./scenes/Instructors";
-import Students from "./scenes/Students";
-import Stations from "./scenes/Stations";
+import Instructors from "./scenes/admin/Instructors";
+import Students from "./scenes/admin/Students";
+import Stations from "./scenes/admin/Stations";
 // import Bar from './scenes/bar'
 // import Form from './scenes/form'
 // import Pie from './scenes/pie'

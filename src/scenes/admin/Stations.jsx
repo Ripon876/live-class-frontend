@@ -1,5 +1,5 @@
-import React from 'react'
-import Header from '../components/Header'
+import React from 'react';
+import Header from '../../components/Header';
 import { Box, Typhography, useTheme } from "@mui/material";
 const stations=[
     {id:1, stationName:"Station A"},

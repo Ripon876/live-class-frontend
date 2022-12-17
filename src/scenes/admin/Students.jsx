@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, Typhography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { mockDataContacts } from "../data/mockdata";
-import Header from "../components/Header";
+import { mockDataContacts } from "../../data/mockdata";
+import Header from "../../components/Header";
 const Students = () => {
   const columns = [
     { field: "id", headerName: "ID" },
