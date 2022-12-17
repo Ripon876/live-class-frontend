@@ -4,10 +4,7 @@ import { Route, Routes,Outlet } from 'react-router-dom';
 import Topbar from "../global/Topbar";
 import AppSidebar from "../global/Sidebar";
 import { ProSidebarProvider } from "react-pro-sidebar";
-import Dashboard from "../scenes/Dashboard";
-import Instructors from "../scenes/Instructors";
-import Students from "../scenes/Students";
-import Stations from '../scenes/Stations';
+
 
 function DashboardPage() {
 	const [theme, colorMode] = useMode();
@@ -21,21 +18,6 @@ function DashboardPage() {
 						<AppSidebar />
 						<main className="content">
 							<Topbar />
-							{/*<Routes>
-								<Route path="/" element={<Dashboard />} />
-								<Route
-									path="/instructors"
-									element={<Instructors />}
-								/>
-								<Route
-									path="/students"
-									element={<Students />}
-								/>
-								<Route
-									path="/stations"
-									element={<Stations />}
-								/>
-							</Routes>*/}
 							<Outlet />
 						</main>
 					</div>
