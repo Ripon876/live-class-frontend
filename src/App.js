@@ -10,24 +10,27 @@ import Stations from "./scenes/Stations";
 // import Line from './scenes/line'
 // import Geography from './scenes/geography'
 
- // new files v
+// new files v
 import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./scenes/NotFound";
 import Register from "./components/register/Register";
 import Login from "./components/login/Login";
+import RequireAuth from "./requireAuth/RequireAuth";
 
 function App() {
   return (
     <>
-
       <Routes>
-        <Route path="/" element={<DashboardPage />}>
-        <Route index element={<Dashboard />} />
-          <Route path="instructors" element={<Instructors />} />
-          <Route path="students" element={<Students />} />
-          <Route path="stations" element={<Stations />} />
-          <Route path="*" element={<NotFound />} />
+        <Route element={<RequireAuth />}>
+          <Route path="/" element={<DashboardPage />}>
+            <Route index element={<Dashboard />} />
+            <Route path="instructors" element={<Instructors />} />
+            <Route path="students" element={<Students />} />
+            <Route path="stations" element={<Stations />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Route>
+
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
       </Routes>

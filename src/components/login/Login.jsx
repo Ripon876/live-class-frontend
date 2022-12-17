@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 import "./Login.css";
 
 function Login() {
@@ -11,6 +12,7 @@ function Login() {
 	const [errMsg, setErrMsg] = useState("");
 	const [sucMsg, setSucMsg] = useState("");
 	const navigate = useNavigate();
+	const [cookies, setCookie] = useCookies([]);
 
 	const handleChange = (e) => {
 		let value = e.target.value;
@@ -31,9 +33,10 @@ function Login() {
 			})
 			.then((data) => {
 				setSucMsg("Logged In Successfully");
-				// setTimeout(() => {
-				// 	navigate("/login");
-				// }, 1500);
+				setCookie("token", data.data.token, { path: "/" });
+				setTimeout(() => {
+					navigate("/");
+				}, 1500);
 			})
 			.catch((err) => {
 				setErrMsg(err.response.data.message);
