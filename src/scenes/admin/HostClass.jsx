@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -20,19 +20,22 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 
 function HostClass() {
-	const [formData, setFormData] = useState({
+	const initialFormData = {
 		title: "",
 		subject: "",
 		teacher: "",
 		classDuration: "",
 		startTime: "10:30",
-	});
+	};
+	const [formData, setFormData] = useState(initialFormData);
 	const [alert, setAlert] = useState({
 		show: false,
 		type: "",
 		msg: "",
 	});
 	const [cookies, setCookie] = useCookies([]);
+	const [classes, setClasses] = useState([]);
+	const [teachers, setTeachers] = useState([]);
 
 	const handleChange = (e) => {
 		setAlert({ ...alert, show: false });
@@ -45,18 +48,16 @@ function HostClass() {
 	const handleSubmit = () => {
 		console.log(formData);
 
-		setAlert({
-			show: true,
-			type: "error",
-			msg: "Something Went Wrong",
-		});
-
 		axios
 			.post("http://localhost:5000/admin/create-new-class", formData, {
 				headers: { Authorization: `Bearer ${cookies.token}` },
 			})
 			.then((data) => {
 				console.log(data.data);
+				setFormData({
+					...initialFormData
+				});
+				setClasses([...classes, data.data.class]);
 				setAlert({
 					show: true,
 					type: "success",
@@ -72,6 +73,32 @@ function HostClass() {
 				});
 			});
 	};
+
+
+const deleteClass = (id) => {
+	axios.delete('http://localhost:5000/admin/delete-class',{
+		data: {
+		id: id
+	}
+	}).then((data) => {
+				let newCLasses = classes.filter((cl) => cl._id === id );
+				setClasses(newCLasses);
+				// setClasses([...classes, data.data.class]);
+				setAlert({
+					show: true,
+					type: "success",
+					msg: data.data.message,
+				});
+			})
+			.catch((err) => {
+				console.log("err : ", err);
+				setAlert({
+					show: true,
+					type: "error",
+					msg: err.data.message,
+				});
+			});
+}
 
 	const subjects = [
 		{
@@ -92,24 +119,21 @@ function HostClass() {
 		},
 	];
 
-	const teachers = [
-		{
-			value: "639de44baf8fb5796c4e518b",
-			label: "Jhone Doe",
-		},
-		{
-			value: "639de44baf8fb5796c4e518b",
-			label: "Mark",
-		},
-		{
-			value: "639de44baf8fb5796c4e518b",
-			label: "Peter",
-		},
-		{
-			value: "639de44baf8fb5796c4e518b",
-			label: "Tony (:",
-		},
-	];
+	useEffect(() => {
+		axios
+			.get("http://localhost:5000/admin/get-classes")
+			.then((data) => setClasses([...data.data.classes]))
+			.catch((err) => console.log("err :", err));
+
+		axios
+			.get("http://localhost:5000/admin/get-teachers")
+			.then((data) => setTeachers([...data.data.teachers]))
+			.catch((err) => console.log("err :", err));
+	}, []);
+
+	useEffect(() => {
+		console.log(classes);
+	}, [classes]);
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
@@ -141,6 +165,7 @@ function HostClass() {
 						defaultValue=""
 						placeholder="class title"
 						variant="filled"
+						value={formData.title}
 						required
 						sx={{
 							minWidth: "300px",
@@ -155,6 +180,7 @@ function HostClass() {
 						name="subject"
 						defaultValue="Subject"
 						variant="filled"
+						value={formData.subject}
 						required
 						sx={{
 							minWidth: "300px",
@@ -174,15 +200,16 @@ function HostClass() {
 						name="teacher"
 						defaultValue="Jhone Doe"
 						variant="filled"
+						value={formData.teacher}
 						required
 						sx={{
 							minWidth: "300px",
 						}}
 						onChange={handleChange}
 					>
-						{teachers.map((option) => (
-							<MenuItem key={option.label} value={option.value}>
-								{option.label}
+						{teachers.map((teacher) => (
+							<MenuItem value={teacher}>
+								{teacher.name}
 							</MenuItem>
 						))}
 					</TextField>
@@ -191,6 +218,7 @@ function HostClass() {
 						label="Class Duration"
 						type="number"
 						name="classDuration"
+						value={formData.classDuration}
 						variant="filled"
 						required
 						sx={{
@@ -208,6 +236,7 @@ function HostClass() {
 						name="startTime"
 						defaultValue="10:30"
 						variant="filled"
+						value={formData.startTime}
 						required
 						sx={{
 							minWidth: "300px",
@@ -255,7 +284,8 @@ function HostClass() {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{new Array(5).fill(3).map(() => (
+							{/*{classes.length === 0 & <p>No claases today</p>}*/}
+							{classes?.map((singleClass) => (
 								<TableRow
 									sx={{
 										"&:last-child td, &:last-child th": {
@@ -264,20 +294,25 @@ function HostClass() {
 									}}
 								>
 									<TableCell component="th" scope="row">
-										Frozen yoghurt
+										{singleClass.title}
 									</TableCell>
-									<TableCell align="right">Math</TableCell>
 									<TableCell align="right">
-										Jhone Doe
+										{singleClass.subject}
 									</TableCell>
-									<TableCell align="right">10</TableCell>
 									<TableCell align="right">
-										10:30 AM
+										{singleClass.teacher.name}
+									</TableCell>
+									<TableCell align="right">
+										{singleClass.classDuration}
+									</TableCell>
+									<TableCell align="right">
+										{singleClass.startTime}
 									</TableCell>
 									<TableCell align="right">
 										<Button
 											variant="filled"
 											startIcon={<DeleteIcon />}
+											onClick={()=> { deleteClass(singleClass._id)}}
 										>
 											Delete
 										</Button>

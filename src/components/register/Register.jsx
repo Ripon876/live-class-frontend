@@ -6,6 +6,7 @@ import "./Register.css";
 
 function Register() {
 	const [formData, setFormData] = useState({
+		name: '',
 		email: "",
 		password: "",
 	});
@@ -68,6 +69,18 @@ const [cookies, setCookie] = useCookies([]);
 
 						<form>
 							<h4 className="text-center fw-bold">Register</h4>
+							<div className="mb-3">
+								<label htmlFor="name" className="form-label">
+									Name
+								</label>
+								<input
+									type="name"
+									className="form-control"
+									id="name"
+									name="name"
+									onChange={handleChange}
+								/>
+							</div>
 							<div className="mb-3">
 								<label htmlFor="email" className="form-label">
 									Email address
