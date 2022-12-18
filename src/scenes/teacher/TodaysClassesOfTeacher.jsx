@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,11 +10,27 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { useCookies } from "react-cookie";
+import axios from 'axios';
 
 
 function TodaysClassesOfTeacher() {
+
+const [cookies, setCookie] = useCookies([]);
+	const [classes, setClasses] = useState([]);
+
+		useEffect(() => {
+		axios
+			.get("http://localhost:5000/teacher/get-classes",{
+				headers: { Authorization: `Bearer ${cookies.token}` },
+			})
+			.then((data) => setClasses([...data.data.classes]))
+			.catch((err) => console.log("err :", err));
+
+	}, []);
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
+			
 			<Box component="div" m="40px 40px " width="90%" p="0 0 0 20px">
 				<Typography variant="h4" mb="20px">
 					Today's Class Schedule
@@ -25,6 +42,7 @@ function TodaysClassesOfTeacher() {
 							<TableRow>
 								<TableCell>Title</TableCell>
 								<TableCell align="right">Subject</TableCell>
+								<TableCell align="right">Teacher</TableCell>
 								<TableCell align="right">
 									Class Duration
 								</TableCell>
@@ -33,7 +51,8 @@ function TodaysClassesOfTeacher() {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{new Array(5).fill(3).map(() => (
+							{/*{classes.length === 0 & <p>No claases today</p>}*/}
+							{classes?.map((singleClass) => (
 								<TableRow
 									sx={{
 										"&:last-child td, &:last-child th": {
@@ -42,17 +61,25 @@ function TodaysClassesOfTeacher() {
 									}}
 								>
 									<TableCell component="th" scope="row">
-										Frozen yoghurt
+										{singleClass.title}
 									</TableCell>
-									<TableCell align="right">Math</TableCell>
-									<TableCell align="right">10</TableCell>
 									<TableCell align="right">
-										10:30 AM
+										{singleClass.subject}
+									</TableCell>
+									<TableCell align="right">
+										{singleClass.teacher.name}
+									</TableCell>
+									<TableCell align="right">
+										{singleClass.classDuration}
+									</TableCell>
+									<TableCell align="right">
+										{singleClass.startTime}
 									</TableCell>
 									<TableCell align="right">
 										<Button
 											variant="filled"
-											endIcon={<PlayArrowIcon />}
+											startIcon={<PlayArrowIcon />}
+											
 										>
 											Start
 										</Button>
