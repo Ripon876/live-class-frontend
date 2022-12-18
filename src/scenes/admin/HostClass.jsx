@@ -60,7 +60,7 @@ function HostClass() {
 				setAlert({
 					show: true,
 					type: "success",
-					msg: "Classs Added Successfully",
+					msg: data.data.message,
 				});
 			})
 			.catch((err) => {
@@ -68,7 +68,7 @@ function HostClass() {
 				setAlert({
 					show: true,
 					type: "error",
-					msg: "Something Went Wrong",
+					msg: err.data.message,
 				});
 			});
 	};
@@ -181,7 +181,7 @@ function HostClass() {
 						onChange={handleChange}
 					>
 						{teachers.map((option) => (
-							<MenuItem key={option.value} value={option.value}>
+							<MenuItem key={option.label} value={option.value}>
 								{option.label}
 							</MenuItem>
 						))}
