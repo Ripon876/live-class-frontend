@@ -12,6 +12,7 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MenuOpenOutlinedIcon from "@mui/icons-material/MenuOpenOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import ClassIcon from "@mui/icons-material/Class";
+import { useSelector } from "react-redux";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -31,6 +32,8 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 };
 
 const AppSidebar = () => {
+  const userType = useSelector((state) => state.type);
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [selected, setSelected] = useState(false);
@@ -98,58 +101,60 @@ const AppSidebar = () => {
 
           {/* admin */}
 
-          <Item
-            title="Students"
-            to="/students"
-            setSelected={setSelected}
-            selected={selected}
-            icon={<SchoolOutlinedIcon />}
-          />
-          <Item
-            title="Instructors"
-            to="/instructors"
-            setSelected={setSelected}
-            selected={selected}
-            icon={<PersonOutlinedIcon />}
-          />
-          <Item
-            title="Stations"
-            to="/stations"
-            setSelected={setSelected}
-            selected={selected}
-            icon={<TvOutlinedIcon />}
-          />
-          <Item
-            title="Results"
-            to="/results"
-            setSelected={setSelected}
-            selected={selected}
-            icon={<AssignmentTurnedInOutlinedIcon />}
-          />
-          <Item
-            title="Analytics"
-            to="/analytics"
-            setSelected={setSelected}
-            selected={selected}
-            icon={<MapOutlinedIcon />}
-          />
-          <Item
-            title="Host Class"
-            to="/host_class"
-            setSelected={setSelected}
-            selected={selected}
-            icon={<ClassIcon />}
-          />
-
-          {/* teacher */}
-
-          <Item
-            title="Today's Classes"
-            to="/classes"
-            setSelected={setSelected}
-            selected={selected}
-            icon={<ClassIcon />}
-          />
+          {userType === "admin" ? (
+            <>
+              <Item
+                title="Students"
+                to="/students"
+                setSelected={setSelected}
+                selected={selected}
+                icon={<SchoolOutlinedIcon />}
+              />
+              <Item
+                title="Instructors"
+                to="/instructors"
+                setSelected={setSelected}
+                selected={selected}
+                icon={<PersonOutlinedIcon />}
+              />
+              <Item
+                title="Stations"
+                to="/stations"
+                setSelected={setSelected}
+                selected={selected}
+                icon={<TvOutlinedIcon />}
+              />
+              <Item
+                title="Results"
+                to="/results"
+                setSelected={setSelected}
+                selected={selected}
+                icon={<AssignmentTurnedInOutlinedIcon />}
+              />
+              <Item
+                title="Analytics"
+                to="/analytics"
+                setSelected={setSelected}
+                selected={selected}
+                icon={<MapOutlinedIcon />}
+              />
+              <Item
+                title="Host Class"
+                to="/host_class"
+                setSelected={setSelected}
+                selected={selected}
+                icon={<ClassIcon />}
+              />
+            </>
+          ) : (
+            <Item
+              title="Today's Classes"
+              to="/classes"
+              setSelected={setSelected}
+              selected={selected}
+              icon={<ClassIcon />}
+            />
+          )}
         </Menu>
       </Sidebar>
     </Box>
