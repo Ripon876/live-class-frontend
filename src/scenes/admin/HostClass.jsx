@@ -16,6 +16,9 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Alert from "@mui/material/Alert";
 
+import axios from "axios";
+import { useCookies } from "react-cookie";
+
 function HostClass() {
 	const [formData, setFormData] = useState({
 		title: "",
@@ -29,6 +32,8 @@ function HostClass() {
 		type: "",
 		msg: "",
 	});
+	const [cookies, setCookie] = useCookies([]);
+
 	const handleChange = (e) => {
 		setAlert({ ...alert, show: false });
 		setFormData({
@@ -39,16 +44,33 @@ function HostClass() {
 
 	const handleSubmit = () => {
 		console.log(formData);
-		// setAlert({
-		// 	show: true,
-		// 	type: "success",
-		// 	msg: "Classs Added Successfully",
-		// });
+
 		setAlert({
 			show: true,
 			type: "error",
 			msg: "Something Went Wrong",
 		});
+
+		axios
+			.post("http://localhost:5000/create-new-class", formData, {
+				headers: { Authorization: `Bearer ${cookies.token}` },
+			})
+			.then((data) => {
+				console.log(data.data);
+				setAlert({
+					show: true,
+					type: "success",
+					msg: "Classs Added Successfully",
+				});
+			})
+			.catch((err) => {
+				console.log("err : ", err);
+				setAlert({
+					show: true,
+					type: "error",
+					msg: "Something Went Wrong",
+				});
+			});
 	};
 
 	const currencies = [
