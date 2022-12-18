@@ -7,7 +7,6 @@ import MenuItem from "@mui/material/MenuItem";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 // import Autocomplete from "@mui/material/Autocomplete";
-
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,10 +14,42 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import Alert from "@mui/material/Alert";
 
 function HostClass() {
-	// const [value, setValue] = useState("");
-	// const [inputValue, setInputValue] = useState("");
+	const [formData, setFormData] = useState({
+		title: "",
+		subject: "",
+		teacher: "",
+		classDuration: "",
+		startTime: "",
+	});
+	const [alert, setAlert] = useState({
+		show: false,
+		type: "",
+		msg: "",
+	});
+	const handleChange = (e) => {
+		setAlert({ ...alert, show: false });
+		setFormData({
+			...formData,
+			[e.target.name]: e.target.value,
+		});
+	};
+
+	const handleSubmit = () => {
+		console.log(formData);
+		// setAlert({
+		// 	show: true,
+		// 	type: "success",
+		// 	msg: "Classs Added Successfully",
+		// });
+		setAlert({
+			show: true,
+			type: "error",
+			msg: "Something Went Wrong",
+		});
+	};
 
 	const currencies = [
 		{
@@ -50,6 +81,12 @@ function HostClass() {
 				noValidate
 				autoComplete="off"
 			>
+				{alert.show && (
+					<Alert severity={alert.type} sx={{ mb: 2 }}>
+						{alert.msg}
+					</Alert>
+				)}
+
 				<Typography variant="h3" mb="20px">
 					Host a new class
 				</Typography>
@@ -59,23 +96,27 @@ function HostClass() {
 						required
 						id="title"
 						label="Title"
+						name="title"
 						defaultValue=""
 						placeholder="class title"
 						variant="filled"
 						sx={{
 							minWidth: "300px",
 						}}
+						onChange={handleChange}
 					/>
 
 					<TextField
 						id="filled-select-currency"
 						select
 						label="Subject"
+						name="subject"
 						defaultValue="Subject"
 						variant="filled"
 						sx={{
 							minWidth: "300px",
 						}}
+						onChange={handleChange}
 					>
 						{currencies.map((option) => (
 							<MenuItem key={option.value} value={option.value}>
@@ -87,11 +128,13 @@ function HostClass() {
 						id="filled-select-currency"
 						select
 						label="Select Teacher"
+						name="teacher"
 						defaultValue="Jhone Doe"
 						variant="filled"
 						sx={{
 							minWidth: "300px",
 						}}
+						onChange={handleChange}
 					>
 						{currencies.map((option) => (
 							<MenuItem key={option.value} value={option.value}>
@@ -103,6 +146,7 @@ function HostClass() {
 						id="standard-number"
 						label="Class Duration"
 						type="number"
+						name="classDuration"
 						variant="filled"
 						sx={{
 							minWidth: "300px",
@@ -110,11 +154,13 @@ function HostClass() {
 						InputLabelProps={{
 							shrink: true,
 						}}
+						onChange={handleChange}
 					/>
 					<TextField
 						id="time"
 						label="Start Time"
 						type="time"
+						name="startTime"
 						defaultValue="10:30"
 						variant="filled"
 						sx={{
@@ -127,8 +173,8 @@ function HostClass() {
 							step: 300, // 5 min
 						}}
 						sx={{ width: 150 }}
+						onChange={handleChange}
 					/>
-					
 				</div>
 				<Button
 					variant="filled"
@@ -137,6 +183,7 @@ function HostClass() {
 						ml: 2,
 					}}
 					startIcon={<AddIcon />}
+					onClick={handleSubmit}
 				>
 					Add
 				</Button>
