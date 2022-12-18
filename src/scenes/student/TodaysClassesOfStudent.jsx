@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,10 +9,21 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-
+import AddIcon from "@mui/icons-material/Add";
+import { useCookies } from "react-cookie";
+import axios from "axios";
 
 function TodaysClassesOfStudent() {
+	const [cookies, setCookie] = useCookies([]);
+	const [classes, setClasses] = useState([]);
+	useEffect(() => {
+		axios
+			.get("http://localhost:5000/student/get-classes", {
+				headers: { Authorization: `Bearer ${cookies.token}` },
+			})
+			.then((data) => setClasses([...data.data.classes]))
+			.catch((err) => console.log("err :", err));
+	}, []);
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
 			<Box component="div" m="40px 40px " width="90%" p="0 0 0 20px">
@@ -34,7 +46,8 @@ function TodaysClassesOfStudent() {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{new Array(5).fill(3).map(() => (
+							{/*{classes.length === 0 & <p>No claases today</p>}*/}
+							{classes?.map((singleClass) => (
 								<TableRow
 									sx={{
 										"&:last-child td, &:last-child th": {
@@ -43,20 +56,27 @@ function TodaysClassesOfStudent() {
 									}}
 								>
 									<TableCell component="th" scope="row">
-										Frozen yoghurt
+										{singleClass.title}
 									</TableCell>
-									<TableCell align="right">Math</TableCell>
-									<TableCell align="right">Jhone Doe</TableCell>
-									<TableCell align="right">10</TableCell>
 									<TableCell align="right">
-										10:30 AM
+										{singleClass.subject}
+									</TableCell>
+									<TableCell align="right">
+										{singleClass.teacher.name}
+									</TableCell>
+									<TableCell align="right">
+										{singleClass.classDuration}
+									</TableCell>
+									<TableCell align="right">
+										{singleClass.startTime}
 									</TableCell>
 									<TableCell align="right">
 										<Button
 											variant="filled"
-											endIcon={<PlayArrowIcon />}
+											startIcon={<AddIcon />}
+											// onClick={()=> { deleteClass(singleClass._id)}}
 										>
-											Start
+											Join
 										</Button>
 									</TableCell>
 								</TableRow>
@@ -66,7 +86,7 @@ function TodaysClassesOfStudent() {
 				</TableContainer>
 			</Box>
 		</div>
-	)
+	);
 }
 
 export default TodaysClassesOfStudent;
