@@ -52,7 +52,7 @@ function HostClass() {
 		});
 
 		axios
-			.post("http://localhost:5000/create-new-class", formData, {
+			.post("http://localhost:5000/admin/create-new-class", formData, {
 				headers: { Authorization: `Bearer ${cookies.token}` },
 			})
 			.then((data) => {
@@ -73,22 +73,41 @@ function HostClass() {
 			});
 	};
 
-	const currencies = [
+	const subjects = [
 		{
-			value: "USD",
+			value: "English",
 			label: "English",
 		},
 		{
-			value: "EUR",
+			value: "Math",
 			label: "Math",
 		},
 		{
-			value: "BTC",
+			value: "Physics",
 			label: "Physics",
 		},
 		{
-			value: "JPY",
+			value: "Biology",
 			label: "Biology",
+		},
+	];
+
+	const teachers = [
+		{
+			value: "Jhone Doe",
+			label: "Jhone Doe",
+		},
+		{
+			value: "Mark",
+			label: "Mark",
+		},
+		{
+			value: "Peter",
+			label: "Peter",
+		},
+		{
+			value: "Tony (:",
+			label: "Tony (:",
 		},
 	];
 
@@ -140,7 +159,7 @@ function HostClass() {
 						}}
 						onChange={handleChange}
 					>
-						{currencies.map((option) => (
+						{subjects.map((option) => (
 							<MenuItem key={option.value} value={option.value}>
 								{option.label}
 							</MenuItem>
@@ -158,7 +177,7 @@ function HostClass() {
 						}}
 						onChange={handleChange}
 					>
-						{currencies.map((option) => (
+						{teachers.map((option) => (
 							<MenuItem key={option.value} value={option.value}>
 								{option.label}
 							</MenuItem>
