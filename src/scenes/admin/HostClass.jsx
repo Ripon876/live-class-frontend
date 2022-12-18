@@ -25,7 +25,7 @@ function HostClass() {
 		subject: "",
 		teacher: "",
 		classDuration: "",
-		startTime: "",
+		startTime: "10:30",
 	});
 	const [alert, setAlert] = useState({
 		show: false,
@@ -94,19 +94,19 @@ function HostClass() {
 
 	const teachers = [
 		{
-			value: "Jhone Doe",
+			value: "639de44baf8fb5796c4e518b",
 			label: "Jhone Doe",
 		},
 		{
-			value: "Mark",
+			value: "639de44baf8fb5796c4e518b",
 			label: "Mark",
 		},
 		{
-			value: "Peter",
+			value: "639de44baf8fb5796c4e518b",
 			label: "Peter",
 		},
 		{
-			value: "Tony (:",
+			value: "639de44baf8fb5796c4e518b",
 			label: "Tony (:",
 		},
 	];
@@ -141,6 +141,7 @@ function HostClass() {
 						defaultValue=""
 						placeholder="class title"
 						variant="filled"
+						required
 						sx={{
 							minWidth: "300px",
 						}}
@@ -154,6 +155,7 @@ function HostClass() {
 						name="subject"
 						defaultValue="Subject"
 						variant="filled"
+						required
 						sx={{
 							minWidth: "300px",
 						}}
@@ -172,6 +174,7 @@ function HostClass() {
 						name="teacher"
 						defaultValue="Jhone Doe"
 						variant="filled"
+						required
 						sx={{
 							minWidth: "300px",
 						}}
@@ -189,6 +192,7 @@ function HostClass() {
 						type="number"
 						name="classDuration"
 						variant="filled"
+						required
 						sx={{
 							minWidth: "300px",
 						}}
@@ -204,6 +208,7 @@ function HostClass() {
 						name="startTime"
 						defaultValue="10:30"
 						variant="filled"
+						required
 						sx={{
 							minWidth: "300px",
 						}}
