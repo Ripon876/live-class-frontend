@@ -1,0 +1,43 @@
+
+.video-container {
+	max-width: 800px;
+	height: 600px;
+	position: relative;
+	padding: 16px;
+}
+
+.myVideo {
+	position: absolute;
+	bottom: 13px;
+	right: 15px;
+	width: 20%;
+	height: 20%;
+}
+.myVideo video {
+	width: 100%;
+	height: 100%;
+}
+.myVideo div{
+	position: relative;
+}
+.myVideo h2{
+	position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 25px;
+}
+
+.otherVideo {
+	width: 100%;
+	height: 100%;
+}
+.otherVideo video {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.caller {
+	text-align: center;
+	color: #fff;
+}
