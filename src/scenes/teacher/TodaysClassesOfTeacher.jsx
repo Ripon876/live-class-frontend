@@ -12,10 +12,12 @@ import Button from "@mui/material/Button";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function TodaysClassesOfTeacher() {
 	const [cookies, setCookie] = useCookies([]);
 	const [classes, setClasses] = useState([]);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		axios
@@ -71,6 +73,9 @@ function TodaysClassesOfTeacher() {
 										<Button
 											variant="filled"
 											startIcon={<PlayArrowIcon />}
+											onClick={()=> { 
+												navigate(`/live-class?id=${singleClass._id}`)
+											}}
 										>
 											Start
 										</Button>

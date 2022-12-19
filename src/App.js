@@ -29,6 +29,10 @@ import Login from "./components/login/Login";
 import RequireAuth from "./auth/RequireAuth";
 import NotRequireAuth from "./auth/NotRequireAuth";
 
+// components for live class
+import StartClassAsTeacher from "./scenes/teacher/StartClassAsTeacher";
+
+
 function App() {
   const userType = useSelector((state) => state.type);
   console.log(userType);
@@ -46,13 +50,23 @@ function App() {
             <Route path="stations" element={<Stations />} />
             <Route path="host_class" element={<HostClass />} />
 
-            {/*teacher*/}
+            {/*teacher & student */}
 
             <Route
               path="classes"
               element={
                 userType === "teacher" ? (
                   <TodaysClassesOfTeacher />
+                ) : (
+                  <TodaysClassesOfStudent />
+                )
+              }
+            />    
+                <Route
+              path="live-class"
+              element={
+                userType === "teacher" ? (
+                  <StartClassAsTeacher />
                 ) : (
                   <TodaysClassesOfStudent />
                 )
