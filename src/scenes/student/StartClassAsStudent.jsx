@@ -5,21 +5,24 @@ import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import { useSelector } from "react-redux";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import MoodIcon from "@mui/icons-material/Mood";
 
 import "./style.css";
 
 let socket = io.connect("http://localhost:5000");
 
-function StartClassAsTeacher() {
+function StartClassAsStudent() {
 	const [cls, setCls] = useState({});
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [cookies, setCookie] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
-
+	const stdId = useSelector((state) => state.id);
 	// for call
 
 	const [me, setMe] = useState("");
@@ -28,7 +31,7 @@ function StartClassAsTeacher() {
 	const [caller, setCaller] = useState("");
 	const [callerSignal, setCallerSignal] = useState();
 	const [callAccepted, setCallAccepted] = useState(false);
-	const [idToCall, setIdToCall] = useState("");
+	const [idToCall, setIdToCall] = useState(searchParams.get("id"));
 	const [callEnded, setCallEnded] = useState(false);
 	const [name, setName] = useState("");
 	const myVideo = useRef();
@@ -37,37 +40,29 @@ function StartClassAsTeacher() {
 
 	const [rerender, setRerender] = useState(false);
 
-	let callerPeer = new Peer({
-		initiator: true,
-		trickle: false,
-		stream: stream,
-	});
-	let receiverPeer = new Peer({
-		initiator: false,
-		trickle: false,
-		stream: stream,
-	});
+	// let callerPeer = ;
+	// let receiverPeer =
 
-	const updatePeers = () => {
-		callerPeer = new Peer({
-			initiator: true,
-			trickle: false,
-			stream: stream,
-		});
-		receiverPeer = new Peer({
-			initiator: false,
-			trickle: false,
-			stream: stream,
-		});
-	};
+	// const updatePeers = () => {
+	// 	callerPeer = new Peer({
+	// 		initiator: true,
+	// 		trickle: false,
+	// 		stream: stream,
+	// 	});
+	// 	receiverPeer = new Peer({
+	// 		initiator: false,
+	// 		trickle: false,
+	// 		stream: stream,
+	// 	});
+	// };
 
 	useEffect(() => {
-		navigator.mediaDevices
-			.getUserMedia({ video: true, audio: true })
-			.then((stream) => {
-				setStream(stream);
-				myVideo.current.srcObject = stream;
-			});
+		// navigator.mediaDevices
+		// 	.getUserMedia({ video: true, audio: true })
+		// 	.then((stream) => {
+		// 		setStream(stream);
+		// 		myVideo.current.srcObject = stream;
+		// 	});
 
 		socket.on("me", (id) => {
 			setMe(id);
@@ -81,59 +76,6 @@ function StartClassAsTeacher() {
 		});
 	}, []);
 
-	const callUser = (id) => {
-		const peer = callerPeer;
-		peer._debug = console.log;
-		peer.on("signal", (data) => {
-			socket.emit("callUser", {
-				userToCall: id,
-				signalData: data,
-				from: me,
-				name: name,
-			});
-		});
-		peer.on("stream", (stream) => {
-			userVideo.current.srcObject = stream;
-		});
-		peer.on("close", () => {
-			console.log("meeting closed");
-			setCallEnded(true);
-			updatePeers();
-		});
-		socket.on("callAccepted", (signal) => {
-			setCallAccepted(true);
-			peer.signal(signal);
-		});
-
-		connectionRef.current = peer;
-	};
-
-	const answerCall = () => {
-		setCallAccepted(true);
-		const peer = receiverPeer;
-
-		peer.on("signal", (data) => {
-			console.log("incoming request");
-			socket.emit("answerCall", { signal: data, to: caller });
-		});
-		peer.on("stream", (stream) => {
-			userVideo.current.srcObject = stream;
-		});
-
-		peer.on("close", () => {
-			console.log("meeting closed");
-			setCallEnded(true);
-			updatePeers();
-		});
-		peer.signal(callerSignal);
-		connectionRef.current = peer;
-	};
-
-	const leaveCall = () => {
-		setCallEnded(true);
-		connectionRef.current.destroy();
-	};
-
 	useEffect(() => {
 		axios
 			.get(
@@ -143,7 +85,10 @@ function StartClassAsTeacher() {
 					headers: { Authorization: `Bearer ${cookies.token}` },
 				}
 			)
-			.then((data) => setCls({ ...data.data.cls }))
+			.then((data) => {
+				setCls({ ...data.data.cls });
+				setIdToCall(data.data.cls._id);
+			})
 			.catch((err) => console.log("err :", err));
 	}, []);
 
@@ -157,11 +102,90 @@ function StartClassAsTeacher() {
 				console.log(stream);
 				setStream(stream);
 				myVideo.current.srcObject = stream;
+			})
+			.then(() => {
+				// setTimeout(()=> {
+				// 	callUser(idToCall);
+				// },2000)
 			});
 
-		socket.emit("clsStarted", { clsId: cls._id });
+		socket.emit("clsStarted", { clsId: stdId });
 	};
 
+	useEffect(() => {
+		setTimeout(() => {
+			startClass();
+			// callUser(idToCall);
+		}, 4000);
+	}, []);
+
+	useEffect(() => {
+		callUser(idToCall);
+	}, [stream]);
+
+	const callUser = (id) => {
+		const peer = new Peer({
+			initiator: true,
+			trickle: false,
+			stream: stream,
+		});
+		peer._debug = console.log;
+		peer.on("signal", (data) => {
+			console.log("calling teacher");
+
+			socket.emit("callUser", {
+				userToCall: id,
+				signalData: data,
+				from: me,
+				name: name,
+			});
+		});
+		peer.on("stream", (stream) => {
+			userVideo.current.srcObject = stream;
+		});
+		peer.on("close", () => {
+			console.log("meeting closed");
+			setCallEnded(true);
+			// updatePeers();
+		});
+		socket.on("callAccepted", (signal) => {
+			console.log("call callAccepted");
+			setCallAccepted(true);
+			peer.signal(signal);
+		});
+
+		connectionRef.current = peer;
+	};
+
+	const answerCall = () => {
+		setCallAccepted(true);
+		const peer = new Peer({
+			initiator: false,
+			trickle: false,
+			stream: stream,
+		});
+
+		peer.on("signal", (data) => {
+			console.log("incoming request");
+			socket.emit("answerCall", { signal: data, to: caller });
+		});
+		peer.on("stream", (stream) => {
+			userVideo.current.srcObject = stream;
+		});
+
+		peer.on("close", () => {
+			console.log("meeting closed");
+			setCallEnded(true);
+			// updatePeers();
+		});
+		peer.signal(callerSignal);
+		connectionRef.current = peer;
+	};
+
+	const leaveCall = () => {
+		setCallEnded(true);
+		connectionRef.current.destroy();
+	};
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
 			<Box
@@ -170,23 +194,35 @@ function StartClassAsTeacher() {
 				width="90%"
 				p="0 0 0 20px"
 				align="center"
+				display="flex"
+				justifyContent="center"
+				alignItems="center"
+				minHeight="70vh"
 			>
 				{!clsStarted && (
-					<>
-						<Typography variant="h3" mt="150px">
+					<div>
+						<CircularProgress
+							size="100px"
+							mt="50px"
+							color="success"
+						/>
+						<Typography variant="h3" mt="50px">
 							' {cls.title} '
 						</Typography>
 						<Typography variant="h4" mb="20px">
-							Each class will be : {cls.classDuration} min
+							Class will be taken for : {cls.classDuration} min
 						</Typography>
-						<Button
+						<Typography variant="h2" mb="20px">
+							Getting You In <MoodIcon />
+						</Typography>
+						{/*<Button
 							variant="contained"
 							size="large"
 							onClick={startClass}
 						>
 							Launch
-						</Button>
-					</>
+						</Button>*/}
+					</div>
 				)}
 
 				{clsStarted && (
@@ -222,21 +258,18 @@ function StartClassAsTeacher() {
 									</div>
 								) : null}
 							</div>
-							{/*<div className="myId">
-								<input
-									id="filled-basic"
-									value={name}
-									onChange={(e) => setName(e.target.value)}
-									style={{ marginBottom: "20px" }}
-								/>
-								<h4>{me}</h4>
-								<CopyToClipboard
-									text={me}
-									style={{ marginBottom: "2rem" }}
+							{/*
+								<div className="myId">
+								<Button
+									variant="contained"
+									size="large"
+									onClick={() => {
+										console.log("clicked");
+									callUser(idToCall);
+									}}
 								>
-									<button>Copy ID</button>
-								</CopyToClipboard>
-
+									Join
+								</Button>
 								<input
 									id="filled-basic"
 									value={idToCall}
@@ -250,11 +283,7 @@ function StartClassAsTeacher() {
 											End Call
 										</button>
 									) : (
-										<button
-											onClick={() => callUser(idToCall)}
-										>
-											Call
-										</button>
+										<button>Call</button>
 									)}
 									{idToCall}
 								</div>
@@ -277,4 +306,4 @@ function StartClassAsTeacher() {
 	);
 }
 
-export default StartClassAsTeacher;
+export default StartClassAsStudent;

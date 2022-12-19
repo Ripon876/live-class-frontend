@@ -12,10 +12,13 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function TodaysClassesOfStudent() {
 	const [cookies, setCookie] = useCookies([]);
 	const [classes, setClasses] = useState([]);
+	const navigate = useNavigate();
+
 	useEffect(() => {
 		axios
 			.get("http://localhost:5000/student/get-classes", {
@@ -74,7 +77,11 @@ function TodaysClassesOfStudent() {
 										<Button
 											variant="filled"
 											startIcon={<AddIcon />}
-											// onClick={()=> { deleteClass(singleClass._id)}}
+											onClick={() => {
+												navigate(
+													`/live-class?id=${singleClass._id}`
+												);
+											}}
 										>
 											Join
 										</Button>
