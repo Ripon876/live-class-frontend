@@ -85,7 +85,9 @@ const AppSidebar = () => {
               pr={4}
               style={{ color: colors.primary[100] }}
             >
-              Admin
+              {userType === 'admin' && 'Admin'}
+              {userType === 'teacher' && 'Teacher'}
+              {userType === 'student' && 'Student'}
             </Typography>
           </Box>
         )}
