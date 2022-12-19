@@ -9,6 +9,8 @@ import { useCookies } from "react-cookie";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import LinearProgress from "@mui/material/LinearProgress";
+
 
 import "./style.css";
 
@@ -37,37 +39,50 @@ function StartClassAsTeacher() {
 
 	const [rerender, setRerender] = useState(false);
 
-	let callerPeer = new Peer({
+	let callerPeer = new window.SimplePeer({
 		initiator: true,
 		trickle: false,
 		stream: stream,
 	});
-	let receiverPeer = new Peer({
+	let receiverPeer = new window.SimplePeer({
 		initiator: false,
 		trickle: false,
 		stream: stream,
 	});
 
 	const updatePeers = () => {
-		callerPeer = new Peer({
+		callerPeer = new window.SimplePeer({
 			initiator: true,
 			trickle: false,
 			stream: stream,
 		});
-		receiverPeer = new Peer({
+		receiverPeer = new window.SimplePeer({
 			initiator: false,
 			trickle: false,
 			stream: stream,
 		});
 	};
+	const [progress, setProgress] = useState(0);
 
 	useEffect(() => {
-		navigator.mediaDevices
-			.getUserMedia({ video: true, audio: true })
-			.then((stream) => {
-				setStream(stream);
-				myVideo.current.srcObject = stream;
+		const timer = setInterval(() => {
+			setProgress((oldProgress) => {
+				return oldProgress + 1;
 			});
+			
+		}, ((5 * 60) / 100) * 1000);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, []);
+
+	useEffect(() => {
+		setProgress(0);
+	}, [callAccepted]);
+
+	useEffect(() => {
+
 
 		socket.on("me", (id) => {
 			setMe(id);
@@ -164,6 +179,13 @@ function StartClassAsTeacher() {
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
+			{callAccepted && !callEnded && (
+				<LinearProgress
+					variant="determinate"
+					color="success"
+					value={progress}
+				/>
+			)}
 			<Box
 				component="div"
 				m="40px 40px "
@@ -171,6 +193,20 @@ function StartClassAsTeacher() {
 				p="0 0 0 20px"
 				align="center"
 			>
+				{receivingCall && !callAccepted && (
+					<Typography variant="h3" mt="150px">
+						'Student wants to join.'
+						<Button
+							variant="contained"
+							size="large"
+							onClick={answerCall}
+							ml="40px"
+						>
+							Alllow
+						</Button>
+					</Typography>
+				)}
+
 				{!clsStarted && (
 					<>
 						<Typography variant="h3" mt="150px">
@@ -184,7 +220,7 @@ function StartClassAsTeacher() {
 							size="large"
 							onClick={startClass}
 						>
-							Launch
+							Start Class
 						</Button>
 					</>
 				)}
@@ -222,6 +258,7 @@ function StartClassAsTeacher() {
 									</div>
 								) : null}
 							</div>
+
 							{/*<div className="myId">
 								<input
 									id="filled-basic"
@@ -259,7 +296,7 @@ function StartClassAsTeacher() {
 									{idToCall}
 								</div>
 							</div>*/}
-							<div>
+							{/*<div>
 								{receivingCall && !callAccepted ? (
 									<div className="caller">
 										<h1>{name} is calling...</h1>
@@ -268,8 +305,21 @@ function StartClassAsTeacher() {
 										</button>
 									</div>
 								) : null}
-							</div>
+							</div>*/}
 						</div>
+
+						{callAccepted && !callEnded && (
+							<div>
+								<Button
+									variant="contained"
+									size="large"
+									onClick={leaveCall}
+									ml="40px"
+								>
+									End
+								</Button>
+							</div>
+						)}
 					</div>
 				)}
 			</Box>

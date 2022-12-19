@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import MoodIcon from "@mui/icons-material/Mood";
+import LinearProgress from "@mui/material/LinearProgress";
 
 import "./style.css";
 
@@ -56,13 +57,27 @@ function StartClassAsStudent() {
 	// 	});
 	// };
 
+	const [progress, setProgress] = useState(0);
+
 	useEffect(() => {
-		// navigator.mediaDevices
-		// 	.getUserMedia({ video: true, audio: true })
-		// 	.then((stream) => {
-		// 		setStream(stream);
-		// 		myVideo.current.srcObject = stream;
-		// 	});
+		
+			const timer = setInterval(() => {
+				setProgress((oldProgress) => {
+					return oldProgress + 1;
+				});
+			}, ((5 * 60) / 100) * 1000);
+
+			return () => {
+				clearInterval(timer);
+			};
+		
+	}, []);
+
+	useEffect(() => {
+		setProgress(0);
+	}, [callAccepted]);
+
+	useEffect(() => {
 
 		socket.on("me", (id) => {
 			setMe(id);
@@ -124,7 +139,7 @@ function StartClassAsStudent() {
 	}, [stream]);
 
 	const callUser = (id) => {
-		const peer = new Peer({
+		const peer = new window.SimplePeer({
 			initiator: true,
 			trickle: false,
 			stream: stream,
@@ -159,7 +174,7 @@ function StartClassAsStudent() {
 
 	const answerCall = () => {
 		setCallAccepted(true);
-		const peer = new Peer({
+		const peer = new window.SimplePeer({
 			initiator: false,
 			trickle: false,
 			stream: stream,
@@ -188,6 +203,14 @@ function StartClassAsStudent() {
 	};
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
+			{callAccepted && !callEnded && (
+				<LinearProgress
+					variant="determinate"
+					color="success"
+					value={progress}
+				/>
+			)}
+
 			<Box
 				component="div"
 				m="40px 40px "
@@ -288,7 +311,7 @@ function StartClassAsStudent() {
 									{idToCall}
 								</div>
 							</div>*/}
-							<div>
+							{/*<div>
 								{receivingCall && !callAccepted ? (
 									<div className="caller">
 										<h1>{name} is calling...</h1>
@@ -297,7 +320,7 @@ function StartClassAsStudent() {
 										</button>
 									</div>
 								) : null}
-							</div>
+							</div>*/}
 						</div>
 					</div>
 				)}
