@@ -76,39 +76,7 @@ function StartClassAsTeacher() {
 		}
 	}, [progress]);
 
-	// const callUser = (id) => {
-	// 	const peer = new window.SimplePeer({
-	// 	initiator: true,
-	// 	trickle: false,
-	// 	stream: stream,
-	// });
-	// 	peer._debug = console.log;
-	// 	peer.on("signal", (data) => {
-	// 		socket.emit("callUser", {
-	// 			userToCall: id,
-	// 			signalData: data,
-	// 			from: me,
-	// 			name: name,
-	// 		});
-	// 	});
-	// 	peer.on("stream", (stream) => {
-	// 		userVideo.current.srcObject = stream;
-	// 	});
-	// 	peer.on("close", () => {
-	// 		console.log("meeting closed");
-	// 		setCallEnded(true);
 
-
-			
-	// 		// updatePeers();
-	// 	});
-	// 	socket.on("callAccepted", (signal) => {
-	// 		setCallAccepted(true);
-	// 		peer.signal(signal);
-	// 	});
-
-	// 	connectionRef.current = peer;
-	// };
 
 	const answerCall = () => {
 		setCallAccepted(true);
@@ -129,7 +97,7 @@ peer._debug = console.log;
 		peer.on("close", () => {
 			console.log("meeting closed");
 			setCallEnded(true);
-			// updatePeers();
+			
 		});
 		peer.signal(callerSignal);
 		connectionRef.current = peer;
@@ -266,54 +234,6 @@ peer._debug = console.log;
 									</div>
 								) : null}
 							</div>
-
-							{/*<div className="myId">
-								<input
-									id="filled-basic"
-									value={name}
-									onChange={(e) => setName(e.target.value)}
-									style={{ marginBottom: "20px" }}
-								/>
-								<h4>{me}</h4>
-								<CopyToClipboard
-									text={me}
-									style={{ marginBottom: "2rem" }}
-								>
-									<button>Copy ID</button>
-								</CopyToClipboard>
-
-								<input
-									id="filled-basic"
-									value={idToCall}
-									onChange={(e) =>
-										setIdToCall(e.target.value)
-									}
-								/>
-								<div className="call-button">
-									{callAccepted && !callEnded ? (
-										<button onClick={leaveCall}>
-											End Call
-										</button>
-									) : (
-										<button
-											onClick={() => callUser(idToCall)}
-										>
-											Call
-										</button>
-									)}
-									{idToCall}
-								</div>
-							</div>*/}
-							{/*<div>
-								{receivingCall && !callAccepted ? (
-									<div className="caller">
-										<h1>{name} is calling...</h1>
-										<button onClick={answerCall}>
-											Answer
-										</button>
-									</div>
-								) : null}
-							</div>*/}
 						</div>
 
 						{callAccepted && !callEnded && (

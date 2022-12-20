@@ -40,23 +40,8 @@ function StartClassAsStudent() {
 	const userVideo = useRef();
 	const connectionRef = useRef();
 
-	const [rerender, setRerender] = useState(false);
 
-	// let callerPeer = ;
-	// let receiverPeer =
-
-	// const updatePeers = () => {
-	// 	callerPeer = new Peer({
-	// 		initiator: true,
-	// 		trickle: false,
-	// 		stream: stream,
-	// 	});
-	// 	receiverPeer = new Peer({
-	// 		initiator: false,
-	// 		trickle: false,
-	// 		stream: stream,
-	// 	});
-	// };
+	
 
 	const [progress, setProgress] = useState(0);
 
@@ -78,12 +63,6 @@ function StartClassAsStudent() {
 
 
 
-// useEffect(() => {
-	
-// }, [input])
-
-
-
 
 	useEffect(() => {
 		socket.on("me", (id) => {
@@ -99,8 +78,6 @@ function StartClassAsStudent() {
 
 		socket.on("alreadyJoined", (data) => {
 			console.log("already Joined this class . msg: ", data.msg);
-
-			// setClsStarted(false);
 			setFinished(true);
 		});
 	}, []);
@@ -134,12 +111,8 @@ function StartClassAsStudent() {
 				console.log(stream);
 				setStream(stream);
 				myVideo.current.srcObject = stream;
-			})
-			.then(() => {
-				// setTimeout(()=> {
-				// 	callUser(idToCall);
-				// },2000)
 			});
+			
 
 		socket.emit("clsStarted", { clsId: stdId });
 	};
@@ -151,7 +124,6 @@ function StartClassAsStudent() {
 				startClass();
 			}
 
-			// callUser(idToCall);
 		}, 2000);
 	}, []);
 
@@ -185,7 +157,6 @@ function StartClassAsStudent() {
 		peer.on("close", () => {
 			console.log("meeting closed");
 			setCallEnded(true);
-			// updatePeers();
 		});
 		socket.on("callAccepted", (signal) => {
 			console.log("call callAccepted");
@@ -196,35 +167,11 @@ function StartClassAsStudent() {
 		connectionRef.current = peer;
 	};
 
-	// const answerCall = () => {
-	// 	setCallAccepted(true);
-	// 	const peer = new window.SimplePeer({
-	// 		initiator: false,
-	// 		trickle: false,
-	// 		stream: stream,
-	// 	});
 
-	// 	peer.on("signal", (data) => {
-	// 		console.log("incoming request");
-	// 		socket.emit("answerCall", { signal: data, to: caller });
-	// 	});
-	// 	peer.on("stream", (stream) => {
-	// 		userVideo.current.srcObject = stream;
-	// 	});
-
-	// 	peer.on("close", () => {
-	// 		console.log("meeting closed");
-	// 		setCallEnded(true);
-	// 		// updatePeers();
-	// 	});
-	// 	peer.signal(callerSignal);
-	// 	connectionRef.current = peer;
+	// const leaveCall = () => {
+	// 	setCallEnded(true);
+	// 	connectionRef.current.destroy();
 	// };
-
-	const leaveCall = () => {
-		setCallEnded(true);
-		connectionRef.current.destroy();
-	};
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
 			{callAccepted && !callEnded && (
@@ -323,46 +270,6 @@ function StartClassAsStudent() {
 									</div>
 								) : null}
 							</div>
-							{/*
-								<div className="myId">
-								<Button
-									variant="contained"
-									size="large"
-									onClick={() => {
-										console.log("clicked");
-									callUser(idToCall);
-									}}
-								>
-									Join
-								</Button>
-								<input
-									id="filled-basic"
-									value={idToCall}
-									onChange={(e) =>
-										setIdToCall(e.target.value)
-									}
-								/>
-								<div className="call-button">
-									{callAccepted && !callEnded ? (
-										<button onClick={leaveCall}>
-											End Call
-										</button>
-									) : (
-										<button>Call</button>
-									)}
-									{idToCall}
-								</div>
-							</div>*/}
-							{/*<div>
-								{receivingCall && !callAccepted ? (
-									<div className="caller">
-										<h1>{name} is calling...</h1>
-										<button onClick={answerCall}>
-											Answer
-										</button>
-									</div>
-								) : null}
-							</div>*/}
 						</div>
 					</div>
 				)}
