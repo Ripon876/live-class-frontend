@@ -45,6 +45,7 @@ function TodaysClassesOfStudent() {
 									Class Duration
 								</TableCell>
 								<TableCell align="right">Start Time</TableCell>
+								<TableCell align="right">Status</TableCell>
 								<TableCell align="right">Actions</TableCell>
 							</TableRow>
 						</TableHead>
@@ -72,6 +73,9 @@ function TodaysClassesOfStudent() {
 									</TableCell>
 									<TableCell align="right">
 										{singleClass.startTime}
+									</TableCell>
+									<TableCell align="right">
+										{singleClass.status}
 									</TableCell>
 									<TableCell align="right">
 										<Button

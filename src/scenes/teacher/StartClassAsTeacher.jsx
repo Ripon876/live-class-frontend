@@ -11,7 +11,6 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
 
-
 import "./style.css";
 
 let socket = io.connect("http://localhost:5000");
@@ -36,41 +35,18 @@ function StartClassAsTeacher() {
 	const myVideo = useRef();
 	const userVideo = useRef();
 	const connectionRef = useRef();
-
-	const [rerender, setRerender] = useState(false);
-
-	let callerPeer = new window.SimplePeer({
-		initiator: true,
-		trickle: false,
-		stream: stream,
-	});
-	let receiverPeer = new window.SimplePeer({
-		initiator: false,
-		trickle: false,
-		stream: stream,
-	});
-
-	const updatePeers = () => {
-		callerPeer = new window.SimplePeer({
-			initiator: true,
-			trickle: false,
-			stream: stream,
-		});
-		receiverPeer = new window.SimplePeer({
-			initiator: false,
-			trickle: false,
-			stream: stream,
-		});
-	};
 	const [progress, setProgress] = useState(0);
+
+
+
+
 
 	useEffect(() => {
 		const timer = setInterval(() => {
 			setProgress((oldProgress) => {
 				return oldProgress + 1;
 			});
-			
-		}, ((5 * 60) / 100) * 1000);
+		}, ((2 * 60) / 100) * 1000);
 
 		return () => {
 			clearInterval(timer);
@@ -82,8 +58,6 @@ function StartClassAsTeacher() {
 	}, [callAccepted]);
 
 	useEffect(() => {
-
-
 		socket.on("me", (id) => {
 			setMe(id);
 		});
@@ -96,37 +70,54 @@ function StartClassAsTeacher() {
 		});
 	}, []);
 
-	const callUser = (id) => {
-		const peer = callerPeer;
-		peer._debug = console.log;
-		peer.on("signal", (data) => {
-			socket.emit("callUser", {
-				userToCall: id,
-				signalData: data,
-				from: me,
-				name: name,
-			});
-		});
-		peer.on("stream", (stream) => {
-			userVideo.current.srcObject = stream;
-		});
-		peer.on("close", () => {
-			console.log("meeting closed");
-			setCallEnded(true);
-			updatePeers();
-		});
-		socket.on("callAccepted", (signal) => {
-			setCallAccepted(true);
-			peer.signal(signal);
-		});
+	useEffect(() => {
+		if (progress === 100) {
+			leaveCall();
+		}
+	}, [progress]);
 
-		connectionRef.current = peer;
-	};
+	// const callUser = (id) => {
+	// 	const peer = new window.SimplePeer({
+	// 	initiator: true,
+	// 	trickle: false,
+	// 	stream: stream,
+	// });
+	// 	peer._debug = console.log;
+	// 	peer.on("signal", (data) => {
+	// 		socket.emit("callUser", {
+	// 			userToCall: id,
+	// 			signalData: data,
+	// 			from: me,
+	// 			name: name,
+	// 		});
+	// 	});
+	// 	peer.on("stream", (stream) => {
+	// 		userVideo.current.srcObject = stream;
+	// 	});
+	// 	peer.on("close", () => {
+	// 		console.log("meeting closed");
+	// 		setCallEnded(true);
+
+
+			
+	// 		// updatePeers();
+	// 	});
+	// 	socket.on("callAccepted", (signal) => {
+	// 		setCallAccepted(true);
+	// 		peer.signal(signal);
+	// 	});
+
+	// 	connectionRef.current = peer;
+	// };
 
 	const answerCall = () => {
 		setCallAccepted(true);
-		const peer = receiverPeer;
-
+		const peer = new window.SimplePeer({
+		initiator: false,
+		trickle: false,
+		stream: stream,
+	});
+peer._debug = console.log;
 		peer.on("signal", (data) => {
 			console.log("incoming request");
 			socket.emit("answerCall", { signal: data, to: caller });
@@ -138,7 +129,7 @@ function StartClassAsTeacher() {
 		peer.on("close", () => {
 			console.log("meeting closed");
 			setCallEnded(true);
-			updatePeers();
+			// updatePeers();
 		});
 		peer.signal(callerSignal);
 		connectionRef.current = peer;
@@ -172,6 +163,20 @@ function StartClassAsTeacher() {
 				console.log(stream);
 				setStream(stream);
 				myVideo.current.srcObject = stream;
+			})
+			.then(() => {
+				axios
+					.get(
+						"http://localhost:5000/teacher/starting-class/" +
+							searchParams.get("id"),
+						{
+							headers: {
+								Authorization: `Bearer ${cookies.token}`,
+							},
+						}
+					)
+					.then((data) => console.log(data.data.msg))
+					.catch((err) => console.log("err :", err));
 			});
 
 		socket.emit("clsStarted", { clsId: cls._id });
@@ -215,13 +220,16 @@ function StartClassAsTeacher() {
 						<Typography variant="h4" mb="20px">
 							Each class will be : {cls.classDuration} min
 						</Typography>
-						<Button
-							variant="contained"
-							size="large"
-							onClick={startClass}
-						>
-							Start Class
-						</Button>
+
+						{cls.hasToJoin !== 0 && (
+							<Button
+								variant="contained"
+								size="large"
+								onClick={startClass}
+							>
+								Start Class
+							</Button>
+						)}
 					</>
 				)}
 

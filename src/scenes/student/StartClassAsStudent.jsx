@@ -34,6 +34,7 @@ function StartClassAsStudent() {
 	const [callAccepted, setCallAccepted] = useState(false);
 	const [idToCall, setIdToCall] = useState(searchParams.get("id"));
 	const [callEnded, setCallEnded] = useState(false);
+	const [finished, setFinished] = useState(false);
 	const [name, setName] = useState("");
 	const myVideo = useRef();
 	const userVideo = useRef();
@@ -64,7 +65,7 @@ function StartClassAsStudent() {
 			setProgress((oldProgress) => {
 				return oldProgress + 1;
 			});
-		}, ((5 * 60) / 100) * 1000);
+		}, ((2 * 60) / 100) * 1000);
 
 		return () => {
 			clearInterval(timer);
@@ -74,6 +75,15 @@ function StartClassAsStudent() {
 	useEffect(() => {
 		setProgress(0);
 	}, [callAccepted]);
+
+
+
+// useEffect(() => {
+	
+// }, [input])
+
+
+
 
 	useEffect(() => {
 		socket.on("me", (id) => {
@@ -89,6 +99,9 @@ function StartClassAsStudent() {
 
 		socket.on("alreadyJoined", (data) => {
 			console.log("already Joined this class . msg: ", data.msg);
+
+			// setClsStarted(false);
+			setFinished(true);
 		});
 	}, []);
 
@@ -104,10 +117,13 @@ function StartClassAsStudent() {
 			.then((data) => {
 				setCls({ ...data.data.cls });
 				setIdToCall(data.data.cls._id);
+				if (data.data.cls.hasToJoin === 0) {
+					setFinished(true);
+				}
 			})
 			.catch((err) => console.log("err :", err));
 	}, []);
-
+	
 	const startClass = () => {
 		document.querySelector(".MuiButtonBase-root").click();
 		setClsStarted(true);
@@ -130,13 +146,19 @@ function StartClassAsStudent() {
 
 	useEffect(() => {
 		setTimeout(() => {
-			startClass();
+			if (cls?.hasToJoin !== 0) {
+				console.log(cls);
+				startClass();
+			}
+
 			// callUser(idToCall);
 		}, 2000);
 	}, []);
 
 	useEffect(() => {
-		callUser(idToCall);
+		if (cls.hasToJoin !== 0) {
+			callUser(idToCall);
+		}
 	}, [stream]);
 
 	const callUser = (id) => {
@@ -158,6 +180,7 @@ function StartClassAsStudent() {
 		});
 		peer.on("stream", (stream) => {
 			userVideo.current.srcObject = stream;
+			console.log(stream);
 		});
 		peer.on("close", () => {
 			console.log("meeting closed");
@@ -173,30 +196,30 @@ function StartClassAsStudent() {
 		connectionRef.current = peer;
 	};
 
-	const answerCall = () => {
-		setCallAccepted(true);
-		const peer = new window.SimplePeer({
-			initiator: false,
-			trickle: false,
-			stream: stream,
-		});
+	// const answerCall = () => {
+	// 	setCallAccepted(true);
+	// 	const peer = new window.SimplePeer({
+	// 		initiator: false,
+	// 		trickle: false,
+	// 		stream: stream,
+	// 	});
 
-		peer.on("signal", (data) => {
-			console.log("incoming request");
-			socket.emit("answerCall", { signal: data, to: caller });
-		});
-		peer.on("stream", (stream) => {
-			userVideo.current.srcObject = stream;
-		});
+	// 	peer.on("signal", (data) => {
+	// 		console.log("incoming request");
+	// 		socket.emit("answerCall", { signal: data, to: caller });
+	// 	});
+	// 	peer.on("stream", (stream) => {
+	// 		userVideo.current.srcObject = stream;
+	// 	});
 
-		peer.on("close", () => {
-			console.log("meeting closed");
-			setCallEnded(true);
-			// updatePeers();
-		});
-		peer.signal(callerSignal);
-		connectionRef.current = peer;
-	};
+	// 	peer.on("close", () => {
+	// 		console.log("meeting closed");
+	// 		setCallEnded(true);
+	// 		// updatePeers();
+	// 	});
+	// 	peer.signal(callerSignal);
+	// 	connectionRef.current = peer;
+	// };
 
 	const leaveCall = () => {
 		setCallEnded(true);
@@ -223,7 +246,7 @@ function StartClassAsStudent() {
 				alignItems="center"
 				minHeight="70vh"
 			>
-				{!clsStarted && (
+				{!clsStarted && !finished && (
 					<div>
 						<CircularProgress
 							size="100px"
@@ -249,7 +272,25 @@ function StartClassAsStudent() {
 					</div>
 				)}
 
-				{clsStarted && (
+				{finished && (
+					<div>
+						<Typography variant="h1" mb="20px">
+							<MoodIcon mt="50px" fontSize="200px" color="success" />
+						</Typography>
+						
+						<Typography variant="h3" mt="50px">
+							' {cls.title} '
+						</Typography>
+						<Typography variant="h4" mb="20px">
+							Class will be taken for : {cls.classDuration} min
+						</Typography>
+						<Typography variant="h2" mb="20px">
+							You already Take this class
+						</Typography>
+					</div>
+				)}
+
+				{clsStarted && !finished && (
 					<div>
 						<div className="container">
 							<div className="video-container">

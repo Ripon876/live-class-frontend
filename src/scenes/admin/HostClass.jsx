@@ -81,7 +81,7 @@ const deleteClass = (id) => {
 		id: id
 	}
 	}).then((data) => {
-				let newCLasses = classes.filter((cl) => cl._id === id );
+				let newCLasses = classes.filter((cl) => cl._id !== id );
 				setClasses(newCLasses);
 				// setClasses([...classes, data.data.class]);
 				setAlert({
