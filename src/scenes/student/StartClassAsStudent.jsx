@@ -60,17 +60,15 @@ function StartClassAsStudent() {
 	const [progress, setProgress] = useState(0);
 
 	useEffect(() => {
-		
-			const timer = setInterval(() => {
-				setProgress((oldProgress) => {
-					return oldProgress + 1;
-				});
-			}, ((5 * 60) / 100) * 1000);
+		const timer = setInterval(() => {
+			setProgress((oldProgress) => {
+				return oldProgress + 1;
+			});
+		}, ((5 * 60) / 100) * 1000);
 
-			return () => {
-				clearInterval(timer);
-			};
-		
+		return () => {
+			clearInterval(timer);
+		};
 	}, []);
 
 	useEffect(() => {
@@ -78,7 +76,6 @@ function StartClassAsStudent() {
 	}, [callAccepted]);
 
 	useEffect(() => {
-
 		socket.on("me", (id) => {
 			setMe(id);
 		});
@@ -88,6 +85,10 @@ function StartClassAsStudent() {
 			setCaller(data.from);
 			setName(data.name);
 			setCallerSignal(data.signal);
+		});
+
+		socket.on("alreadyJoined", (data) => {
+			console.log("already Joined this class . msg: ", data.msg);
 		});
 	}, []);
 
