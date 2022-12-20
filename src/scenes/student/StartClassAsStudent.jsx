@@ -131,7 +131,7 @@ function StartClassAsStudent() {
 		setTimeout(() => {
 			startClass();
 			// callUser(idToCall);
-		}, 4000);
+		}, 2000);
 	}, []);
 
 	useEffect(() => {
