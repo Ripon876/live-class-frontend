@@ -54,6 +54,9 @@ function StartClassAsStudent() {
 		};
 	}, []);
 
+
+
+
 	useEffect(() => {
 		setProgress(0);
 	}, [callAccepted]);

@@ -24,6 +24,7 @@ function StartClassAsStudent2() {
 	const [cookies, setCookie] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
 	const stdId = useSelector((state) => state.id);
+	const [onGoing, setOngoing] = useState(false);
 	// for call
 
 	const [peerId, setPeerId] = useState("");
@@ -31,6 +32,59 @@ function StartClassAsStudent2() {
 	const remoteVideoRef = useRef(null);
 	const currentUserVideoRef = useRef(null);
 	const peerInstance = useRef(null);
+	const [clsId, setClsId] = useState(searchParams.get("id"));
+	const [progress, setProgress] = useState(0);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			if (progress === 100) {
+				clearInterval(timer);
+			}
+
+			setProgress((oldProgress) => {
+				return oldProgress + 1;
+			});
+		}, ((1 * 60) / 100) * 1000);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, []);
+
+
+
+
+
+	useEffect(() => {
+
+console.log('stdId : ', stdId)
+
+		socket.on("connect", () => {
+			console.log("socket connected");
+			socket.emit("setActive", { id: stdId });
+		});
+
+		socket.on("nextClass", (id) => {
+			console.log("next class Id : ", id);
+
+call(id); // calling next teacher
+ 
+
+		});
+
+		socket.on("allClassEnd", (text) => {
+			console.log("classes end : ", text);
+		});
+	}, []);
+
+
+// useEffect(() => {
+// 		if (progress === 10 && onGoing) {
+// 			console.log("100 dfsdfd");
+
+// 		}
+// 	}, [progress]);
+
 
 	useEffect(() => {
 		const peer = new Peer();
@@ -58,19 +112,9 @@ function StartClassAsStudent2() {
 
 		peerInstance.current = peer;
 
-
-
-return(()=> {
-	console.log('component unmount')
-})
-
-
-
-
-
-
-
-
+		return () => {
+			console.log("component unmount");
+		};
 	}, []);
 
 	const call = (remotePeerId) => {
@@ -83,17 +127,39 @@ return(()=> {
 			currentUserVideoRef.current.srcObject = mediaStream;
 			currentUserVideoRef.current.play();
 
-			const call = peerInstance.current.call(remotePeerId, mediaStream);
+			let options = {
+				metadata: {
+					std: { id: stdId },
+				},
+			};
+			const call = peerInstance.current.call(
+				remotePeerId,
+				mediaStream,
+				options
+			);
+
+			console.log("calling teacher");
 
 			call.on("stream", (remoteStream) => {
 				remoteVideoRef.current.srcObject = remoteStream;
 				remoteVideoRef.current.play();
+				setOngoing(true);
+				setProgress(0);
+				console.log("call accepted");
 			});
 		});
 	};
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
+			{onGoing && (
+				<LinearProgress
+					variant="determinate"
+					color="success"
+					value={progress}
+				/>
+			)}
+
 			<Box
 				component="div"
 				m="40px 40px "

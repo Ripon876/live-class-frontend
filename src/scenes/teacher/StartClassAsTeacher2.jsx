@@ -6,7 +6,7 @@ import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
-
+import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -21,7 +21,7 @@ function StartClassAsTeacher2() {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [cookies, setCookie] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
-
+const teacherId = useSelector((state) => state.id);
 	// for call
 	const [calling, setCaling] = useState(false);
 	const [myStream, setMyStream] = useState();
@@ -32,6 +32,37 @@ function StartClassAsTeacher2() {
 	const currentUserVideoRef = useRef(null);
 	const peerInstance = useRef(null);
 	const callerRef = useRef(null);
+	const [std, setStd] = useState({});
+
+	const [progress, setProgress] = useState(0);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			setProgress((oldProgress) => {
+				return oldProgress + 1;
+			});
+		}, ((1 * 60) / 100) * 1000);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, []);
+
+	useEffect(() => {
+		if (progress === 50 && onGoing) {
+			console.log("100 dfsdfd");
+			socket.emit("clsEnd", {stdId : std?.std?.id,clsId : cls?._id});
+		}
+	}, [progress]);
+
+useEffect(() => {
+
+socket.on('connect',() => {
+	console.log('socket connected');
+	socket.emit("setActive",{id: teacherId});
+})
+}, [])
+
 
 	useEffect(() => {
 		const peer = new Peer(searchParams.get("id"));
@@ -57,6 +88,8 @@ function StartClassAsTeacher2() {
 				// call.answer(mediaStream);
 
 				call.on("stream", function (remoteStream) {
+					setStd(call.metadata);
+					console.log("data : ", call.metadata);
 					remoteVideoRef.current.srcObject = remoteStream;
 					remoteVideoRef.current.play();
 				});
@@ -70,6 +103,7 @@ function StartClassAsTeacher2() {
 		callerRef.current.answer(myStream);
 		setCaling(false);
 		setOngoing(true);
+		setProgress(0);
 	};
 
 	// fetching class
@@ -113,6 +147,14 @@ function StartClassAsTeacher2() {
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
+			{onGoing && (
+				<LinearProgress
+					variant="determinate"
+					color="success"
+					value={progress}
+				/>
+			)}
+
 			<Box
 				component="div"
 				m="40px 40px "
