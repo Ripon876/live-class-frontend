@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Peer } from "peerjs";
 import io from "socket.io-client";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
@@ -25,6 +25,7 @@ function StartClassAsStudent2() {
 	const [clsStarted, setClsStarted] = useState(false);
 	const stdId = useSelector((state) => state.id);
 	const [onGoing, setOngoing] = useState(false);
+	const [clsEnd, setClsEnd] = useState(false);
 	// for call
 
 	const [peerId, setPeerId] = useState("");
@@ -51,13 +52,25 @@ function StartClassAsStudent2() {
 		};
 	}, []);
 
+	useEffect(() => {
+		if (progress === 50 && onGoing) {
+			console.log("100 dfsdfd");
+			socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
+				if (res.type === "joinNextClass") {
+					console.log("next class is their ,id : ", res.id);
+					call(res.id); 
+					setClsId(res.id);
+				}
 
-
-
+				if (res.type === "allClassEnd") {
+					console.log("no more cls , msg: ", res.text);
+				}
+			});
+		}
+	}, [progress]);
 
 	useEffect(() => {
-
-console.log('stdId : ', stdId)
+		console.log("stdId : ", stdId);
 
 		socket.on("connect", () => {
 			console.log("socket connected");
@@ -67,24 +80,26 @@ console.log('stdId : ', stdId)
 		socket.on("nextClass", (id) => {
 			console.log("next class Id : ", id);
 
-call(id); // calling next teacher
- 
-
+			console.log("moving to next one");
+			call(id); // calling next teacher
 		});
 
 		socket.on("allClassEnd", (text) => {
 			console.log("classes end : ", text);
+			setClsEnd(true);
+		});
+		socket.on("checkingClass", (text) => {
+			console.log("classes end : ", text);
+			setClsEnd(true);
 		});
 	}, []);
 
+	// useEffect(() => {
+	// 		if (progress === 10 && onGoing) {
+	// 			console.log("100 dfsdfd");
 
-// useEffect(() => {
-// 		if (progress === 10 && onGoing) {
-// 			console.log("100 dfsdfd");
-
-// 		}
-// 	}, [progress]);
-
+	// 		}
+	// 	}, [progress]);
 
 	useEffect(() => {
 		const peer = new Peer();
@@ -152,7 +167,7 @@ call(id); // calling next teacher
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
-			{onGoing && (
+			{onGoing && !clsEnd && (
 				<LinearProgress
 					variant="determinate"
 					color="success"
@@ -167,42 +182,69 @@ call(id); // calling next teacher
 				p="0 0 0 20px"
 				align="center"
 			>
-				<Typography variant="h3" mt="150px">
-					{peerId}
-				</Typography>
+				{!clsEnd ? (
+					<div>
+						<Typography variant="h3" mt="150px">
+							{peerId}
+						</Typography>
 
-				<input
-					type="text"
-					value={remotePeerIdValue}
-					onChange={(e) => setRemotePeerIdValue(e.target.value)}
-				/>
-				<button onClick={() => call(remotePeerIdValue)}>Call</button>
+						<input
+							type="text"
+							value={remotePeerIdValue}
+							onChange={(e) =>
+								setRemotePeerIdValue(e.target.value)
+							}
+						/>
+						<button onClick={() => call(remotePeerIdValue)}>
+							Call
+						</button>
 
-				<div>
-					<div className="container">
-						<div className="video-container">
-							<div className="video myVideo">
-								<div>
-									<video
-										playsInline
-										muted
-										ref={currentUserVideoRef}
-										autoPlay
-									/>
+						<div>
+							<div className="container">
+								<div className="video-container">
+									<div className="video myVideo">
+										<div>
+											<video
+												playsInline
+												muted
+												ref={currentUserVideoRef}
+												autoPlay
+											/>
 
-									<h2>You</h2>
+											<h2>You</h2>
+										</div>
+									</div>
+									<div className="video otherVideo">
+										<video
+											playsInline
+											ref={remoteVideoRef}
+											autoPlay
+										/>
+									</div>
 								</div>
-							</div>
-							<div className="video otherVideo">
-								<video
-									playsInline
-									ref={remoteVideoRef}
-									autoPlay
-								/>
 							</div>
 						</div>
 					</div>
-				</div>
+				) : (
+					<div>
+						<div>
+							<MoodIcon
+								// size="100px"
+								style={{ fontSize: "200px" }}
+								mt="50px"
+								color="success"
+							/>
+							<Typography variant="h2" mb="20px">
+								No More Classes Left Today
+							</Typography>
+							<Link to="/" style={{ textDecoration: "none" }}>
+								<Button variant="contained" size="large">
+									Back to dashboard
+								</Button>
+							</Link>
+						</div>
+					</div>
+				)}
 			</Box>
 		</div>
 	);
