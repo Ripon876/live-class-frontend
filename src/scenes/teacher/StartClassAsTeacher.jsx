@@ -37,9 +37,17 @@ function StartClassAsTeacher() {
 	const connectionRef = useRef();
 	const [progress, setProgress] = useState(0);
 
+	const [currentPeer, setCurrentPeer] = useState(0);
 
+	const myPeer = useRef();
 
+	let peers = {};
 
+	useEffect(() => {
+		socket.on("me", (id) => {
+			setMe(id);
+		});
+	}, []);
 
 	useEffect(() => {
 		const timer = setInterval(() => {
@@ -58,11 +66,16 @@ function StartClassAsTeacher() {
 	}, [callAccepted]);
 
 	useEffect(() => {
-		socket.on("me", (id) => {
-			setMe(id);
-		});
-
 		socket.on("callUser", (data) => {
+
+
+
+
+console.log('calling');
+
+
+
+
 			setReceivingCall(true);
 			setCaller(data.from);
 			setName(data.name);
@@ -76,16 +89,21 @@ function StartClassAsTeacher() {
 		}
 	}, [progress]);
 
-
-
 	const answerCall = () => {
 		setCallAccepted(true);
 		const peer = new window.SimplePeer({
-		initiator: false,
-		trickle: false,
-		stream: stream,
-	});
-peer._debug = console.log;
+			initiator: false,
+			trickle: false,
+			config: {
+				iceServers: [
+					{
+						urls: "stun:stun.stunprotocol.org",
+					},
+				],
+			},
+			stream: stream,
+		});
+		peer._debug = console.log;
 		peer.on("signal", (data) => {
 			console.log("incoming request");
 			socket.emit("answerCall", { signal: data, to: caller });
@@ -97,7 +115,6 @@ peer._debug = console.log;
 		peer.on("close", () => {
 			console.log("meeting closed");
 			setCallEnded(true);
-			
 		});
 		peer.signal(callerSignal);
 		connectionRef.current = peer;

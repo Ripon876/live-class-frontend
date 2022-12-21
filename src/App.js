@@ -30,8 +30,10 @@ import RequireAuth from "./auth/RequireAuth";
 import NotRequireAuth from "./auth/NotRequireAuth";
 
 // components for live class
-import StartClassAsTeacher from "./scenes/teacher/StartClassAsTeacher";
-import StartClassAsStudent from "./scenes/student/StartClassAsStudent";
+// import StartClassAsTeacher from "./scenes/teacher/StartClassAsTeacher";
+import StartClassAsTeacher2 from "./scenes/teacher/StartClassAsTeacher2";
+// import StartClassAsStudent from "./scenes/student/StartClassAsStudent";
+import StartClassAsStudent2 from "./scenes/student/StartClassAsStudent2";
 
 
 function App() {
@@ -67,9 +69,9 @@ function App() {
               path="live-class"
               element={
                 userType === "teacher" ? (
-                  <StartClassAsTeacher />
+                  <StartClassAsTeacher2 />
                 ) : (
-                  <StartClassAsStudent />
+                  <StartClassAsStudent2 />
                 )
               }
             />

@@ -40,9 +40,6 @@ function StartClassAsStudent() {
 	const userVideo = useRef();
 	const connectionRef = useRef();
 
-
-	
-
 	const [progress, setProgress] = useState(0);
 
 	useEffect(() => {
@@ -60,9 +57,6 @@ function StartClassAsStudent() {
 	useEffect(() => {
 		setProgress(0);
 	}, [callAccepted]);
-
-
-
 
 	useEffect(() => {
 		socket.on("me", (id) => {
@@ -100,7 +94,7 @@ function StartClassAsStudent() {
 			})
 			.catch((err) => console.log("err :", err));
 	}, []);
-	
+
 	const startClass = () => {
 		document.querySelector(".MuiButtonBase-root").click();
 		setClsStarted(true);
@@ -112,7 +106,6 @@ function StartClassAsStudent() {
 				setStream(stream);
 				myVideo.current.srcObject = stream;
 			});
-			
 
 		socket.emit("clsStarted", { clsId: stdId });
 	};
@@ -123,7 +116,6 @@ function StartClassAsStudent() {
 				console.log(cls);
 				startClass();
 			}
-
 		}, 2000);
 	}, []);
 
@@ -137,6 +129,13 @@ function StartClassAsStudent() {
 		const peer = new window.SimplePeer({
 			initiator: true,
 			trickle: false,
+			config: {
+				iceServers: [
+					{
+						urls: "stun:stun.stunprotocol.org",
+					},
+				],
+			},
 			stream: stream,
 		});
 		peer._debug = console.log;
@@ -166,7 +165,6 @@ function StartClassAsStudent() {
 
 		connectionRef.current = peer;
 	};
-
 
 	// const leaveCall = () => {
 	// 	setCallEnded(true);
@@ -222,9 +220,13 @@ function StartClassAsStudent() {
 				{finished && (
 					<div>
 						<Typography variant="h1" mb="20px">
-							<MoodIcon mt="50px" fontSize="200px" color="success" />
+							<MoodIcon
+								mt="50px"
+								fontSize="200px"
+								color="success"
+							/>
 						</Typography>
-						
+
 						<Typography variant="h3" mt="50px">
 							' {cls.title} '
 						</Typography>
