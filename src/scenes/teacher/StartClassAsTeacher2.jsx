@@ -27,6 +27,7 @@ function StartClassAsTeacher2() {
 	const [myStream, setMyStream] = useState();
 	const [peerId, setPeerId] = useState(searchParams.get("id"));
 	const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
+	const [onGoing, setOngoing] = useState(false);
 	const remoteVideoRef = useRef(null);
 	const currentUserVideoRef = useRef(null);
 	const peerInstance = useRef(null);
@@ -38,11 +39,9 @@ function StartClassAsTeacher2() {
 		peer.on("open", (id) => {
 			setPeerId(id);
 		});
-console.log(peer)
+		console.log(peer);
 		peer.on("call", (call) => {
-
-console.log('calling')
-
+			console.log("calling");
 
 			var getUserMedia =
 				navigator.getUserMedia ||
@@ -70,6 +69,7 @@ console.log('calling')
 	const answerCall = () => {
 		callerRef.current.answer(myStream);
 		setCaling(false);
+		setOngoing(true);
 	};
 
 	// fetching class
@@ -88,6 +88,27 @@ console.log('calling')
 
 	const startClass = () => {
 		setClsStarted(true);
+
+		axios
+			.get(
+				"http://localhost:5000/teacher/starting-class/" +
+					searchParams.get("id"),
+				{
+					headers: {
+						Authorization: `Bearer ${cookies.token}`,
+					},
+				}
+			)
+			.then((data) => console.log(data.data.msg))
+			.then(() => {
+				// navigator.mediaDevices
+				// 	.getUserMedia({ video: true, audio: true })
+				// 	.then((stream) => {
+				// 		currentUserVideoRef.current.srcObject = stream;
+				// 		currentUserVideoRef.current.play();
+				// 	});
+			})
+			.catch((err) => console.log("err :", err));
 	};
 
 	return (
@@ -152,6 +173,11 @@ console.log('calling')
 										ref={remoteVideoRef}
 										autoPlay
 									/>
+									{!onGoing && (
+										<h3 className="watingText">
+											Wating for student
+										</h3>
+									)}
 								</div>
 							</div>
 						</div>
