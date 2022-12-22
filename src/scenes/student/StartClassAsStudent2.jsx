@@ -53,7 +53,7 @@ function StartClassAsStudent2() {
 	}, []);
 
 	useEffect(() => {
-		if (progress === 50 && onGoing) {
+		if (progress === 80 && onGoing) {
 			console.log("100 dfsdfd");
 			socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
 				if (res.type === "joinNextClass") {
@@ -64,6 +64,7 @@ function StartClassAsStudent2() {
 
 				if (res.type === "allClassEnd") {
 					console.log("no more cls , msg: ", res.text);
+					setClsEnd(true);
 				}
 			});
 		}
