@@ -74,7 +74,8 @@ function TodaysClassesOfTeacher() {
 											variant="filled"
 											startIcon={<PlayArrowIcon />}
 											onClick={()=> { 
-												navigate(`/live-class?id=${singleClass._id}`)
+												// navigate(`/live-class?id=${singleClass._id}`)
+												window.location.href = `/live-class?id=${singleClass._id}`;
 											}}
 										>
 											Start

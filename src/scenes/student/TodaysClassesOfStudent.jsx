@@ -82,9 +82,10 @@ function TodaysClassesOfStudent() {
 											variant="filled"
 											startIcon={<AddIcon />}
 											onClick={() => {
-												navigate(
-													`/live-class?id=${singleClass._id}`
-												);
+												// navigate(
+													
+												// );
+												window.location.href = `/live-class?id=${singleClass._id}`;
 											}}
 										>
 											Join

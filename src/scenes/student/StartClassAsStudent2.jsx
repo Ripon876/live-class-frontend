@@ -58,7 +58,7 @@ function StartClassAsStudent2() {
 			socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
 				if (res.type === "joinNextClass") {
 					console.log("next class is their ,id : ", res.id);
-					call(res.id); 
+					call(res.id);
 					setClsId(res.id);
 				}
 
@@ -76,6 +76,9 @@ function StartClassAsStudent2() {
 		socket.on("connect", () => {
 			console.log("socket connected");
 			socket.emit("setActive", { id: stdId });
+			socket.emit("getClass", searchParams.get("id"), (cls) => {
+				setCls(cls);
+			});
 		});
 
 		socket.on("nextClass", (id) => {
@@ -161,6 +164,7 @@ function StartClassAsStudent2() {
 				remoteVideoRef.current.play();
 				setOngoing(true);
 				setProgress(0);
+				setClsStarted(true);
 				console.log("call accepted");
 			});
 		});
@@ -185,7 +189,30 @@ function StartClassAsStudent2() {
 			>
 				{!clsEnd ? (
 					<div>
-						<Typography variant="h3" mt="150px">
+						{!clsStarted && (
+							<>
+								<Typography variant="h3" mt="150px">
+									' {cls?.title} '
+								</Typography>
+
+								<Typography variant="h4">
+									Subject : {cls?.subject}
+								</Typography>
+								<Typography variant="h4"  mb="20px">
+									Class will be : {cls?.classDuration} min
+								</Typography>
+
+								<Button
+									variant="contained"
+									size="large"
+									onClick={() => call(cls._id)}
+								>
+									Join
+								</Button>
+							</>
+						)}
+
+						{/* <Typography variant="h3" mt="150px">
 							{peerId}
 						</Typography>
 
@@ -198,7 +225,7 @@ function StartClassAsStudent2() {
 						/>
 						<button onClick={() => call(remotePeerIdValue)}>
 							Call
-						</button>
+						</button> */}
 
 						<div>
 							<div className="container">

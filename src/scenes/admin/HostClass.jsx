@@ -57,7 +57,7 @@ function HostClass() {
 				setFormData({
 					...initialFormData
 				});
-				setClasses([...classes, data.data.class]);
+				setClasses([ data.data.class,...classes]);
 				setAlert({
 					show: true,
 					type: "success",
@@ -122,7 +122,7 @@ const deleteClass = (id) => {
 	useEffect(() => {
 		axios
 			.get("http://localhost:5000/admin/get-classes")
-			.then((data) => setClasses([...data.data.classes]))
+			.then((data) => setClasses([...data.data.classes].reverse()))
 			.catch((err) => console.log("err :", err));
 
 		axios
