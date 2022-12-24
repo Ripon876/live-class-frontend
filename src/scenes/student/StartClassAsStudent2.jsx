@@ -40,6 +40,8 @@ function StartClassAsStudent2() {
 	useEffect(() => {
 		socket = io.connect("http://localhost:5000");
 
+
+
 		console.log("stdId : ", stdId);
 
 		socket.on("connect", () => {
@@ -72,6 +74,7 @@ function StartClassAsStudent2() {
 	}, []);
 
 	useEffect(() => {
+
 		const timer = setInterval(() => {
 			if (progress === 100) {
 				clearInterval(timer);
@@ -80,15 +83,15 @@ function StartClassAsStudent2() {
 			setProgress((oldProgress) => {
 				return oldProgress + 1;
 			});
-		}, ((1 * 60) / 100) * 1000);
+		}, ((cls.classDuration  * 60) / 100) * 1000);
 
 		return () => {
 			clearInterval(timer);
 		};
-	}, []);
+	}, [cls]);
 
 	useEffect(() => {
-		if (progress === 80 && onGoing) {
+		if (progress === 100 && onGoing) {
 			console.log("100 dfsdfd");
 			socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
 				if (res.type === "joinNextClass") {

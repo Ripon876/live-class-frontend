@@ -45,6 +45,7 @@ function StartClassAsTeacher2() {
 		socket.on("connect", () => {
 			console.log("socket connected");
 			socket.emit("setActive", { id: teacherId });
+
 		});
 
 		socket.on("allClassEnd", (text) => {
@@ -53,24 +54,24 @@ function StartClassAsTeacher2() {
 		});
 	}, []);
 
+
 	useEffect(() => {
+
 		const timer = setInterval(() => {
+			if (progress === 100) {
+				clearInterval(timer);
+			}
+
 			setProgress((oldProgress) => {
 				return oldProgress + 1;
 			});
-		}, ((1 * 60) / 100) * 1000);
+		}, ((cls.classDuration  * 60) / 100) * 1000);
 
 		return () => {
 			clearInterval(timer);
 		};
-	}, []);
+	}, [cls]);
 
-	// useEffect(() => {
-	// 	if (progress === 50 && onGoing) {
-	// 		console.log("100 dfsdfd");
-	// 		socket.emit("clsEnd", { stdId: std?.std?.id, clsId: cls?._id });
-	// 	}
-	// }, [progress]);
 
 	useEffect(() => {
 		const peer = new Peer(searchParams.get("id"));
@@ -126,7 +127,11 @@ function StartClassAsTeacher2() {
 					headers: { Authorization: `Bearer ${cookies.token}` },
 				}
 			)
-			.then((data) => setCls({ ...data.data.cls }))
+			.then((data) => {
+				setCls({ ...data.data.cls });
+
+				console.log("getting class using axios : ", data.data.cls);
+			})
 			.catch((err) => console.log("err :", err));
 	}, []);
 
