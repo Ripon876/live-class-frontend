@@ -6,6 +6,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
+import Countdown from "react-countdown";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -27,6 +28,8 @@ function StartClassAsStudent2() {
 	const stdId = useSelector((state) => state.id);
 	const [onGoing, setOngoing] = useState(false);
 	const [clsEnd, setClsEnd] = useState(false);
+	const [remainingTIme, setRemainingTime] = useState(0);
+	const [currentTime, setCurrentgTime] = useState(Date.now());
 	// for call
 
 	const [peerId, setPeerId] = useState("");
@@ -40,8 +43,6 @@ function StartClassAsStudent2() {
 	useEffect(() => {
 		socket = io.connect("http://localhost:5000");
 
-
-
 		console.log("stdId : ", stdId);
 
 		socket.on("connect", () => {
@@ -49,6 +50,7 @@ function StartClassAsStudent2() {
 			socket.emit("setActive", { id: stdId });
 			socket.emit("getClass", searchParams.get("id"), (cls) => {
 				setCls(cls);
+				setRemainingTime(cls.classDuration);
 			});
 		});
 
@@ -74,7 +76,6 @@ function StartClassAsStudent2() {
 	}, []);
 
 	useEffect(() => {
-
 		const timer = setInterval(() => {
 			if (progress === 100) {
 				clearInterval(timer);
@@ -83,7 +84,7 @@ function StartClassAsStudent2() {
 			setProgress((oldProgress) => {
 				return oldProgress + 1;
 			});
-		}, ((cls.classDuration  * 60) / 100) * 1000);
+		}, ((cls.classDuration * 60) / 100) * 1000);
 
 		return () => {
 			clearInterval(timer);
@@ -174,10 +175,20 @@ function StartClassAsStudent2() {
 				remoteVideoRef.current.play();
 				setOngoing(true);
 				setProgress(0);
+				setCurrentgTime(Date.now());
 				setClsStarted(true);
 				console.log("call accepted");
 			});
 		});
+	};
+
+	const TimeRenderer = ({ minutes, seconds }) => {
+		return (
+			<span>
+				{minutes < 10 ? "0" + minutes : minutes}:
+				{seconds < 10 ? "0" + seconds : seconds}
+			</span>
+		);
 	};
 
 	return (
@@ -236,32 +247,72 @@ function StartClassAsStudent2() {
 						<button onClick={() => call(remotePeerIdValue)}>
 							Call
 						</button> */}
+						
+							<div style={{ display: clsStarted ? 'block' : 'none'}}>
+								<div className="container">
+									<div className="video-container">
+										{remainingTIme !== 0 && (
+											<Typography
+												variant="h4"
+												align="right"
+												pr="10px"
+												mb="5px"
+											>
+												Remainig Time :{" "}
+												<b pl="5px">
+													<Countdown
+														date={
+															currentTime +
+															remainingTIme *
+																60 *
+																1000
+														}
+														renderer={TimeRenderer}
+													/>{" "}
+												</b>
+												min
+											</Typography>
+										)}
+										<div className="video myVideo">
+											<div>
+												<video
+													playsInline
+													muted
+													ref={currentUserVideoRef}
+													autoPlay
+												/>
 
-						<div>
-							<div className="container">
-								<div className="video-container">
-									<div className="video myVideo">
-										<div>
+												<h2>You</h2>
+											</div>
+										</div>
+										<div className="video otherVideo">
 											<video
 												playsInline
-												muted
-												ref={currentUserVideoRef}
+												ref={remoteVideoRef}
 												autoPlay
 											/>
-
-											<h2>You</h2>
+											{!onGoing && (
+												<h3 className="watingText">
+													Joining
+												</h3>
+											)}
 										</div>
 									</div>
-									<div className="video otherVideo">
-										<video
-											playsInline
-											ref={remoteVideoRef}
-											autoPlay
-										/>
+									<div>
+										<Typography variant="h4">
+											Ongoing : <b>{cls?.title}</b>
+										</Typography>
+										<Typography variant="h4">
+											Subject : <b>{cls?.subject}</b>
+										</Typography>
+										<Typography variant="h4">
+											Teacher :{" "}
+											<b>{cls?.teacher?.name}</b>
+										</Typography>
 									</div>
 								</div>
 							</div>
-						</div>
+						
 					</div>
 				) : (
 					<div>

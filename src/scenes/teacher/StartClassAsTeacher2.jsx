@@ -7,6 +7,8 @@ import { useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
+import Countdown from "react-countdown";
+
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -25,6 +27,8 @@ function StartClassAsTeacher2() {
 	const [clsStarted, setClsStarted] = useState(false);
 	const teacherId = useSelector((state) => state.id);
 	const [clsEnd, setClsEnd] = useState(false);
+	const [remainingTIme, setRemainingTime] = useState(0);
+	const [currentTime, setCurrentgTime] = useState(Date.now());
 	// for call
 	const [calling, setCaling] = useState(false);
 	const [myStream, setMyStream] = useState();
@@ -45,7 +49,6 @@ function StartClassAsTeacher2() {
 		socket.on("connect", () => {
 			console.log("socket connected");
 			socket.emit("setActive", { id: teacherId });
-
 		});
 
 		socket.on("allClassEnd", (text) => {
@@ -54,9 +57,7 @@ function StartClassAsTeacher2() {
 		});
 	}, []);
 
-
 	useEffect(() => {
-
 		const timer = setInterval(() => {
 			if (progress === 100) {
 				clearInterval(timer);
@@ -65,13 +66,12 @@ function StartClassAsTeacher2() {
 			setProgress((oldProgress) => {
 				return oldProgress + 1;
 			});
-		}, ((cls.classDuration  * 60) / 100) * 1000);
+		}, ((cls.classDuration * 60) / 100) * 1000);
 
 		return () => {
 			clearInterval(timer);
 		};
 	}, [cls]);
-
 
 	useEffect(() => {
 		const peer = new Peer(searchParams.get("id"));
@@ -96,6 +96,7 @@ function StartClassAsTeacher2() {
 				// setMyStream(mediaStream);
 				setOngoing(true);
 				setProgress(0);
+				setCurrentgTime(Date.now());
 				call.answer(mediaStream);
 
 				call.on("stream", function (remoteStream) {
@@ -104,7 +105,7 @@ function StartClassAsTeacher2() {
 					remoteVideoRef.current.srcObject = remoteStream;
 					remoteVideoRef.current.play();
 					// get joined student info
-					socket.emit('getStudent',call.metadata.std.id,(std)=> {
+					socket.emit("getStudent", call.metadata.std.id, (std) => {
 						setStd(std);
 						console.log(std);
 					});
@@ -134,7 +135,7 @@ function StartClassAsTeacher2() {
 			)
 			.then((data) => {
 				setCls({ ...data.data.cls });
-
+				setRemainingTime(data.data.cls.classDuration);
 				console.log("getting class using axios : ", data.data.cls);
 			})
 			.catch((err) => console.log("err :", err));
@@ -163,6 +164,16 @@ function StartClassAsTeacher2() {
 				// 	});
 			})
 			.catch((err) => console.log("err :", err));
+	};
+
+	// const EndMsg = () => <span>Class is over</span>;
+	const TimeRenderer = ({ minutes, seconds }) => {
+		return (
+			<span>
+				{minutes < 10 ? "0" + minutes : minutes}:
+				{seconds < 10 ? "0" + seconds : seconds}
+			</span>
+		);
 	};
 
 	return (
@@ -219,6 +230,29 @@ function StartClassAsTeacher2() {
 							<div>
 								<div className="container">
 									<div className="video-container">
+										{remainingTIme !== 0 && (
+											<Typography
+												variant="h4"
+												align="right"
+												pr="10px"
+												mb="5px"
+												style={{opacity: onGoing ? '1': 0}}
+											>
+												Remainig Time :{" "}
+												<b pl="5px">
+													<Countdown
+														date={
+															currentTime +
+															remainingTIme *
+																60 *
+																1000
+														}
+														renderer={TimeRenderer}
+													/>{" "}
+												</b>
+												min
+											</Typography>
+										)}
 										<div className="video myVideo">
 											<div>
 												<video
@@ -246,9 +280,12 @@ function StartClassAsTeacher2() {
 									</div>
 
 									<div>
-								<Typography variant="h4">
-									Currently Joined Student :  <b>{std?.name}</b>
-								</Typography>
+										<Typography variant="h4" 
+										style={{opacity: onGoing ? '1': 0}}
+										>
+											Currently Joined Student :{" "}
+											<b>{std?.name}</b>
+										</Typography>
 									</div>
 								</div>
 							</div>
