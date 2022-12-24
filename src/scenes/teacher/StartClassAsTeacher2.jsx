@@ -99,10 +99,15 @@ function StartClassAsTeacher2() {
 				call.answer(mediaStream);
 
 				call.on("stream", function (remoteStream) {
-					setStd(call.metadata);
+					// setStd(call.metadata);
 					console.log("data : ", call.metadata);
 					remoteVideoRef.current.srcObject = remoteStream;
 					remoteVideoRef.current.play();
+					// get joined student info
+					socket.emit('getStudent',call.metadata.std.id,(std)=> {
+						setStd(std);
+						console.log(std);
+					});
 				});
 			});
 		});
@@ -238,6 +243,12 @@ function StartClassAsTeacher2() {
 												</h3>
 											)}
 										</div>
+									</div>
+
+									<div>
+								<Typography variant="h4">
+									Currently Joined Student :  <b>{std?.name}</b>
+								</Typography>
 									</div>
 								</div>
 							</div>
