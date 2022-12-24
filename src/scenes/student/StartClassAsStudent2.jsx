@@ -17,8 +17,9 @@ import LinearProgress from "@mui/material/LinearProgress";
 
 import "./style.css";
 
-// let socket = io.connect("http://localhost:5000");
 let socket;
+
+
 
 function StartClassAsStudent2() {
 	const [cls, setCls] = useState({});
@@ -54,21 +55,6 @@ function StartClassAsStudent2() {
 			});
 		});
 
-		/*		socket.on("nextClass", (id) => {
-			console.log("next class Id : ", id);
-
-			console.log("moving to next one");
-			call(id); // calling next teacher
-		});
-
-		socket.on("allClassEnd", (text) => {
-			console.log("classes end : ", text);
-			setClsEnd(true);
-		});
-		socket.on("checkingClass", (text) => {
-			console.log("classes end : ", text);
-			setClsEnd(true);
-		});*/
 
 		return () => {
 			socket.disconnect();
@@ -114,12 +100,6 @@ function StartClassAsStudent2() {
 		}
 	}, [progress]);
 
-	// useEffect(() => {
-	// 		if (progress === 10 && onGoing) {
-	// 			console.log("100 dfsdfd");
-
-	// 		}
-	// 	}, [progress]);
 
 	useEffect(() => {
 		const peer = new Peer();
@@ -238,21 +218,6 @@ function StartClassAsStudent2() {
 							</>
 						)}
 
-						{/* <Typography variant="h3" mt="150px">
-							{peerId}
-						</Typography>
-
-						<input
-							type="text"
-							value={remotePeerIdValue}
-							onChange={(e) =>
-								setRemotePeerIdValue(e.target.value)
-							}
-						/>
-						<button onClick={() => call(remotePeerIdValue)}>
-							Call
-						</button> */}
-
 						<div style={{ display: clsStarted ? "block" : "none" }}>
 							<div className="container">
 								<div className="video-container">
@@ -322,7 +287,6 @@ function StartClassAsStudent2() {
 					<div>
 						<div>
 							<MoodIcon
-								// size="100px"
 								style={{ fontSize: "200px" }}
 								mt="50px"
 								color="success"

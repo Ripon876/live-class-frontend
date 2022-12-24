@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-// import Peer from "simple-peer";
 import { Peer } from "peerjs";
 import io from "socket.io-client";
 import { useSearchParams, Link } from "react-router-dom";
@@ -17,8 +16,8 @@ import MoodIcon from "@mui/icons-material/Mood";
 
 import "./style.css";
 
-// let socket = io.connect("http://localhost:5000");
 let socket;
+
 
 function StartClassAsTeacher2() {
 	const [cls, setCls] = useState({});
@@ -92,15 +91,13 @@ function StartClassAsTeacher2() {
 				currentUserVideoRef.current.srcObject = mediaStream;
 				currentUserVideoRef.current.play();
 				callerRef.current = call;
-				// setCaling(true);
-				// setMyStream(mediaStream);
 				setOngoing(true);
 				setProgress(0);
 				setCurrentgTime(Date.now());
 				call.answer(mediaStream);
 
 				call.on("stream", function (remoteStream) {
-					// setStd(call.metadata);
+					
 					console.log("data : ", call.metadata);
 					remoteVideoRef.current.srcObject = remoteStream;
 					remoteVideoRef.current.play();
@@ -117,12 +114,7 @@ function StartClassAsTeacher2() {
 		peerInstance.current = peer;
 	}, []);
 
-	// const answerCall = () => {
-	// 	callerRef.current.answer(myStream);
-	// 	setCaling(false);
-	// 	setOngoing(true);
-	// 	setProgress(0);
-	// };
+
 
 	// fetching class
 	useEffect(() => {
@@ -156,18 +148,10 @@ function StartClassAsTeacher2() {
 				}
 			)
 			.then((data) => console.log(data.data.msg))
-			.then(() => {
-				// navigator.mediaDevices
-				// 	.getUserMedia({ video: true, audio: true })
-				// 	.then((stream) => {
-				// 		currentUserVideoRef.current.srcObject = stream;
-				// 		currentUserVideoRef.current.play();
-				// 	});
-			})
 			.catch((err) => console.log("err :", err));
 	};
 
-	// const EndMsg = () => <span>Class is over</span>;
+	
 	const TimeRenderer = ({ minutes, seconds }) => {
 		return (
 			<span>
@@ -196,16 +180,6 @@ function StartClassAsTeacher2() {
 			>
 				{!clsEnd ? (
 					<div>
-						{/* calling && (
-						<Button
-							variant="contained"
-							size="large"
-							onClick={answerCall}
-						>
-							Allow
-						</Button>
-					) */}
-
 						{!clsStarted && (
 							<>
 								<Typography variant="h3" mt="150px">
@@ -297,7 +271,6 @@ function StartClassAsTeacher2() {
 					<div>
 						<div>
 							<MoodIcon
-								// size="100px"
 								style={{ fontSize: "200px" }}
 								mt="50px"
 								color="success"
