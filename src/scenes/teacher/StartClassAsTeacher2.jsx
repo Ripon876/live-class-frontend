@@ -3,7 +3,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 // import Peer from "simple-peer";
 import { Peer } from "peerjs";
 import io from "socket.io-client";
-import { useSearchParams ,Link} from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
@@ -15,7 +15,8 @@ import MoodIcon from "@mui/icons-material/Mood";
 
 import "./style.css";
 
-let socket = io.connect("http://localhost:5000");
+// let socket = io.connect("http://localhost:5000");
+let socket;
 
 function StartClassAsTeacher2() {
 	const [cls, setCls] = useState({});
@@ -39,6 +40,20 @@ function StartClassAsTeacher2() {
 	const [progress, setProgress] = useState(0);
 
 	useEffect(() => {
+		socket = io.connect("http://localhost:5000");
+
+		socket.on("connect", () => {
+			console.log("socket connected");
+			socket.emit("setActive", { id: teacherId });
+		});
+
+		socket.on("allClassEnd", (text) => {
+			console.log("classes end : ", text);
+			setClsEnd(true);
+		});
+	}, []);
+
+	useEffect(() => {
 		const timer = setInterval(() => {
 			setProgress((oldProgress) => {
 				return oldProgress + 1;
@@ -56,18 +71,6 @@ function StartClassAsTeacher2() {
 	// 		socket.emit("clsEnd", { stdId: std?.std?.id, clsId: cls?._id });
 	// 	}
 	// }, [progress]);
-
-	useEffect(() => {
-		socket.on("connect", () => {
-			console.log("socket connected");
-			socket.emit("setActive", { id: teacherId });
-		});
-
-		socket.on("allClassEnd", (text) => {
-			console.log("classes end : ", text);
-			setClsEnd(true);
-		});
-	}, []);
 
 	useEffect(() => {
 		const peer = new Peer(searchParams.get("id"));
@@ -90,8 +93,8 @@ function StartClassAsTeacher2() {
 				callerRef.current = call;
 				// setCaling(true);
 				// setMyStream(mediaStream);
-		setOngoing(true);
-		setProgress(0);
+				setOngoing(true);
+				setProgress(0);
 				call.answer(mediaStream);
 
 				call.on("stream", function (remoteStream) {
@@ -154,7 +157,7 @@ function StartClassAsTeacher2() {
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
-			{(onGoing && !clsEnd) && (
+			{onGoing && !clsEnd && (
 				<LinearProgress
 					variant="determinate"
 					color="success"
@@ -169,9 +172,9 @@ function StartClassAsTeacher2() {
 				p="0 0 0 20px"
 				align="center"
 			>
-			{!clsEnd ?
-				<div>
-					{/* calling && (
+				{!clsEnd ? (
+					<div>
+						{/* calling && (
 						<Button
 							variant="contained"
 							size="large"
@@ -181,81 +184,80 @@ function StartClassAsTeacher2() {
 						</Button>
 					) */}
 
-					{!clsStarted && (
-						<>
-							<Typography variant="h3" mt="150px">
-								' {cls.title} '
-							</Typography>
-							<Typography variant="h4" mb="20px">
-								Each class will be : {cls.classDuration} min
-							</Typography>
+						{!clsStarted && (
+							<>
+								<Typography variant="h3" mt="150px">
+									' {cls.title} '
+								</Typography>
+								<Typography variant="h4" mb="20px">
+									Each class will be : {cls.classDuration} min
+								</Typography>
 
-							{cls.hasToJoin !== 0 && (
-								<Button
-									variant="contained"
-									size="large"
-									onClick={startClass}
-								>
-									Start Class
-								</Button>
-							)}
-						</>
-					)}
+								{cls.hasToJoin !== 0 && (
+									<Button
+										variant="contained"
+										size="large"
+										onClick={startClass}
+									>
+										Start Class
+									</Button>
+								)}
+							</>
+						)}
 
-					{clsStarted && (
-						<div>
-							<div className="container">
-								<div className="video-container">
-									<div className="video myVideo">
-										<div>
+						{clsStarted && (
+							<div>
+								<div className="container">
+									<div className="video-container">
+										<div className="video myVideo">
+											<div>
+												<video
+													playsInline
+													muted
+													ref={currentUserVideoRef}
+													autoPlay
+												/>
+
+												<h2>You</h2>
+											</div>
+										</div>
+										<div className="video otherVideo">
 											<video
 												playsInline
-												muted
-												ref={currentUserVideoRef}
+												ref={remoteVideoRef}
 												autoPlay
 											/>
-
-											<h2>You</h2>
+											{!onGoing && (
+												<h3 className="watingText">
+													Wating for student
+												</h3>
+											)}
 										</div>
-									</div>
-									<div className="video otherVideo">
-										<video
-											playsInline
-											ref={remoteVideoRef}
-											autoPlay
-										/>
-										{!onGoing && (
-											<h3 className="watingText">
-												Wating for student
-											</h3>
-										)}
 									</div>
 								</div>
 							</div>
-						</div>
-					)}
-				</div>
-				:
-				<div>
-					<div>
-						<MoodIcon 
-							// size="100px"
-						style={{fontSize: '200px'}}
-							mt="50px"
-							color="success"
-						/>
-						<Typography variant="h2" mb="20px" >
-							No More Classes Left Today 
-						</Typography>
-						<Link to='/' style={{textDecoration: 'none'}}><Button
-							variant="contained"
-							size="large"
-						>
-							Back to dashboard
-						</Button></Link>
+						)}
 					</div>
-				</div>
-			}
+				) : (
+					<div>
+						<div>
+							<MoodIcon
+								// size="100px"
+								style={{ fontSize: "200px" }}
+								mt="50px"
+								color="success"
+							/>
+							<Typography variant="h2" mb="20px">
+								No More Classes Left Today
+							</Typography>
+							<Link to="/" style={{ textDecoration: "none" }}>
+								<Button variant="contained" size="large">
+									Back to dashboard
+								</Button>
+							</Link>
+						</div>
+					</div>
+				)}
 			</Box>
 		</div>
 	);

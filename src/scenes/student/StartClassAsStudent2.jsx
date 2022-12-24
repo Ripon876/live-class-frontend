@@ -16,7 +16,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 
 import "./style.css";
 
-let socket = io.connect("http://localhost:5000");
+// let socket = io.connect("http://localhost:5000");
+let socket;
 
 function StartClassAsStudent2() {
 	const [cls, setCls] = useState({});
@@ -35,6 +36,40 @@ function StartClassAsStudent2() {
 	const peerInstance = useRef(null);
 	const [clsId, setClsId] = useState(searchParams.get("id"));
 	const [progress, setProgress] = useState(0);
+
+	useEffect(() => {
+		socket = io.connect("http://localhost:5000");
+
+		console.log("stdId : ", stdId);
+
+		socket.on("connect", () => {
+			console.log("socket connected");
+			socket.emit("setActive", { id: stdId });
+			socket.emit("getClass", searchParams.get("id"), (cls) => {
+				setCls(cls);
+			});
+		});
+
+		/*		socket.on("nextClass", (id) => {
+			console.log("next class Id : ", id);
+
+			console.log("moving to next one");
+			call(id); // calling next teacher
+		});
+
+		socket.on("allClassEnd", (text) => {
+			console.log("classes end : ", text);
+			setClsEnd(true);
+		});
+		socket.on("checkingClass", (text) => {
+			console.log("classes end : ", text);
+			setClsEnd(true);
+		});*/
+
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
 
 	useEffect(() => {
 		const timer = setInterval(() => {
@@ -69,34 +104,6 @@ function StartClassAsStudent2() {
 			});
 		}
 	}, [progress]);
-
-	useEffect(() => {
-		console.log("stdId : ", stdId);
-
-		socket.on("connect", () => {
-			console.log("socket connected");
-			socket.emit("setActive", { id: stdId });
-			socket.emit("getClass", searchParams.get("id"), (cls) => {
-				setCls(cls);
-			});
-		});
-
-		socket.on("nextClass", (id) => {
-			console.log("next class Id : ", id);
-
-			console.log("moving to next one");
-			call(id); // calling next teacher
-		});
-
-		socket.on("allClassEnd", (text) => {
-			console.log("classes end : ", text);
-			setClsEnd(true);
-		});
-		socket.on("checkingClass", (text) => {
-			console.log("classes end : ", text);
-			setClsEnd(true);
-		});
-	}, []);
 
 	// useEffect(() => {
 	// 		if (progress === 10 && onGoing) {
@@ -198,7 +205,7 @@ function StartClassAsStudent2() {
 								<Typography variant="h4">
 									Subject : {cls?.subject}
 								</Typography>
-								<Typography variant="h4"  mb="20px">
+								<Typography variant="h4" mb="20px">
 									Class will be : {cls?.classDuration} min
 								</Typography>
 
