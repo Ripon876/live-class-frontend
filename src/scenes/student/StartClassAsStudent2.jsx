@@ -77,7 +77,7 @@ function StartClassAsStudent2() {
 
 	useEffect(() => {
 		const timer = setInterval(() => {
-			if (progress === 100) {
+			if (progress === 110) {
 				clearInterval(timer);
 			}
 
@@ -99,6 +99,11 @@ function StartClassAsStudent2() {
 					console.log("next class is their ,id : ", res.id);
 					call(res.id);
 					setClsId(res.id);
+					 setSearchParams({id: res.id});
+					socket.emit("getClass", res.id, (cls) => {
+						setCls(cls);
+						setRemainingTime(cls.classDuration);
+					});
 				}
 
 				if (res.type === "allClassEnd") {
@@ -247,72 +252,71 @@ function StartClassAsStudent2() {
 						<button onClick={() => call(remotePeerIdValue)}>
 							Call
 						</button> */}
-						
-							<div style={{ display: clsStarted ? 'block' : 'none'}}>
-								<div className="container">
-									<div className="video-container">
-										{remainingTIme !== 0 && (
-											<Typography
-												variant="h4"
-												align="right"
-												pr="10px"
-												mb="5px"
-											>
-												Remainig Time :{" "}
-												<b pl="5px">
-													<Countdown
-														date={
-															currentTime +
-															remainingTIme *
-																60 *
-																1000
-														}
-														renderer={TimeRenderer}
-													/>{" "}
-												</b>
-												min
-											</Typography>
-										)}
-										<div className="video myVideo">
-											<div>
-												<video
-													playsInline
-													muted
-													ref={currentUserVideoRef}
-													autoPlay
-												/>
 
-												<h2>You</h2>
-											</div>
-										</div>
-										<div className="video otherVideo">
+						<div style={{ display: clsStarted ? "block" : "none" }}>
+							<div className="container">
+								<div className="video-container">
+									{remainingTIme !== 0 && (
+										<Typography
+											variant="h4"
+											align="right"
+											pr="10px"
+											mb="5px"
+										>
+											Remainig Time :{" "}
+											<b pl="5px">
+												<Countdown
+												 key={currentTime}
+													date={
+														currentTime +
+														remainingTIme *
+															60 *
+															1000
+													}
+													renderer={TimeRenderer}
+												/>{" "}
+											</b>
+											min
+										</Typography>
+									)}
+									<div className="video myVideo">
+										<div>
 											<video
 												playsInline
-												ref={remoteVideoRef}
+												muted
+												ref={currentUserVideoRef}
 												autoPlay
 											/>
-											{!onGoing && (
-												<h3 className="watingText">
-													Joining
-												</h3>
-											)}
+
+											<h2>You</h2>
 										</div>
 									</div>
-									<div>
-										<Typography variant="h4">
-											Ongoing : <b>{cls?.title}</b>
-										</Typography>
-										<Typography variant="h4">
-											Subject : <b>{cls?.subject}</b>
-										</Typography>
-										<Typography variant="h4">
-											Teacher :{" "}
-											<b>{cls?.teacher?.name}</b>
-										</Typography>
+									<div className="video otherVideo">
+										<video
+											playsInline
+											ref={remoteVideoRef}
+											autoPlay
+										/>
+										{!onGoing && (
+											<h3 className="watingText">
+												Joining
+											</h3>
+										)}
 									</div>
 								</div>
+								<div>
+									<Typography variant="h4">
+										Ongoing : <b>{cls?.title}</b>
+									</Typography>
+									<Typography variant="h4">
+										Subject : <b>{cls?.subject}</b>
+									</Typography>
+									<Typography variant="h4">
+										Teacher : <b>{cls?.teacher?.name}</b>
+									</Typography>
+								</div>
 							</div>
-						
+						</div>
 					</div>
 				) : (
 					<div>

@@ -59,7 +59,7 @@ function StartClassAsTeacher2() {
 
 	useEffect(() => {
 		const timer = setInterval(() => {
-			if (progress === 100) {
+			if (progress === 110) {
 				clearInterval(timer);
 			}
 
@@ -109,6 +109,7 @@ function StartClassAsTeacher2() {
 						setStd(std);
 						console.log(std);
 					});
+
 				});
 			});
 		});
@@ -241,6 +242,7 @@ function StartClassAsTeacher2() {
 												Remainig Time :{" "}
 												<b pl="5px">
 													<Countdown
+													key={currentTime}
 														date={
 															currentTime +
 															remainingTIme *
