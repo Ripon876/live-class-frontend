@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import AddIcon from "@mui/icons-material/Add";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DeleteIcon from "@mui/icons-material/Delete";
 // import Autocomplete from "@mui/material/Autocomplete";
 import Table from "@mui/material/Table";
@@ -18,6 +19,9 @@ import Alert from "@mui/material/Alert";
 
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import io from "socket.io-client";
+
+let socket;
 
 function HostClass() {
 	const initialFormData = {
@@ -55,9 +59,9 @@ function HostClass() {
 			.then((data) => {
 				console.log(data.data);
 				setFormData({
-					...initialFormData
+					...initialFormData,
 				});
-				setClasses([ data.data.class,...classes]);
+				setClasses([data.data.class, ...classes]);
 				setAlert({
 					show: true,
 					type: "success",
@@ -74,14 +78,15 @@ function HostClass() {
 			});
 	};
 
-
-const deleteClass = (id) => {
-	axios.delete('http://localhost:5000/admin/delete-class',{
-		data: {
-		id: id
-	}
-	}).then((data) => {
-				let newCLasses = classes.filter((cl) => cl._id !== id );
+	const deleteClass = (id) => {
+		axios
+			.delete("http://localhost:5000/admin/delete-class", {
+				data: {
+					id: id,
+				},
+			})
+			.then((data) => {
+				let newCLasses = classes.filter((cl) => cl._id !== id);
 				setClasses(newCLasses);
 				// setClasses([...classes, data.data.class]);
 				setAlert({
@@ -98,7 +103,7 @@ const deleteClass = (id) => {
 					msg: err.data.message,
 				});
 			});
-}
+	};
 
 	const subjects = [
 		{
@@ -120,6 +125,8 @@ const deleteClass = (id) => {
 	];
 
 	useEffect(() => {
+		socket = io.connect("http://localhost:5000");
+
 		axios
 			.get("http://localhost:5000/admin/get-classes")
 			.then((data) => setClasses([...data.data.classes].reverse()))
@@ -131,9 +138,24 @@ const deleteClass = (id) => {
 			.catch((err) => console.log("err :", err));
 	}, []);
 
-	useEffect(() => {
-		console.log(classes);
-	}, [classes]);
+	const startClasses = () => {
+		console.log('starting class')
+		socket.emit("startClasses", (msg, err) => {
+			if (msg) {
+				setAlert({
+					show: true,
+					type: "success",
+					msg: msg,
+				});
+			} else {
+				setAlert({
+					show: true,
+					type: "error",
+					msg: err,
+				});
+			}
+		});
+	};
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
@@ -208,9 +230,7 @@ const deleteClass = (id) => {
 						onChange={handleChange}
 					>
 						{teachers.map((teacher) => (
-							<MenuItem value={teacher}>
-								{teacher.name}
-							</MenuItem>
+							<MenuItem value={teacher}>{teacher.name}</MenuItem>
 						))}
 					</TextField>
 					<TextField
@@ -256,6 +276,7 @@ const deleteClass = (id) => {
 					sx={{
 						mt: 1,
 						ml: 2,
+						boxShadow: 3,
 					}}
 					startIcon={<AddIcon />}
 					onClick={handleSubmit}
@@ -265,9 +286,25 @@ const deleteClass = (id) => {
 			</Box>
 
 			<Box component="div" m="40px 40px " width="90%" p="0 0 0 20px">
-				<Typography variant="h4" mb="20px">
-					Today's Class Schedule
-				</Typography>
+				<Box
+					component="div"
+					mb="20px"
+					sx={{ display: "flex", justifyContent: "space-between" }}
+				>
+					<Typography variant="h4" className="mt-3">
+						Today's Class Schedule
+					</Typography>
+					<Button
+						variant="filled"
+						sx={{
+							boxShadow: 3,
+						}}
+						startIcon={<PlayArrowIcon />}
+						onClick={startClasses}
+					>
+						Start Today's Classes
+					</Button>
+				</Box>
 
 				<TableContainer component={Paper}>
 					<Table sx={{ minWidth: "90%" }} aria-label="simple table">
@@ -316,7 +353,9 @@ const deleteClass = (id) => {
 										<Button
 											variant="filled"
 											startIcon={<DeleteIcon />}
-											onClick={()=> { deleteClass(singleClass._id)}}
+											onClick={() => {
+												deleteClass(singleClass._id);
+											}}
 										>
 											Delete
 										</Button>

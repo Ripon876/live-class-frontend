@@ -19,8 +19,6 @@ import "./style.css";
 
 let socket;
 
-
-
 function StartClassAsStudent2() {
 	const [cls, setCls] = useState({});
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -31,6 +29,7 @@ function StartClassAsStudent2() {
 	const [clsEnd, setClsEnd] = useState(false);
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
+	const stratClsBtn = useRef(null);
 	// for call
 
 	const [peerId, setPeerId] = useState("");
@@ -54,7 +53,17 @@ function StartClassAsStudent2() {
 				setRemainingTime(cls.classDuration);
 			});
 		});
-
+		/*		socket.on("startClass", async (cb) => {
+			console.log('starting cls')
+			call(cls._id);
+			cb(stdId);
+		});*/
+		socket.on("startClass", async () => {
+			console.log("starting cls");
+			// await call(cls._id);
+			stratClsBtn.current.click();
+			// cb(stdId);
+		});
 
 		return () => {
 			socket.disconnect();
@@ -85,7 +94,7 @@ function StartClassAsStudent2() {
 					console.log("next class is their ,id : ", res.id);
 					call(res.id);
 					setClsId(res.id);
-					 setSearchParams({id: res.id});
+					setSearchParams({ id: res.id });
 					socket.emit("getClass", res.id, (cls) => {
 						setCls(cls);
 						setRemainingTime(cls.classDuration);
@@ -99,7 +108,6 @@ function StartClassAsStudent2() {
 			});
 		}
 	}, [progress]);
-
 
 	useEffect(() => {
 		const peer = new Peer();
@@ -196,8 +204,13 @@ function StartClassAsStudent2() {
 				{!clsEnd ? (
 					<div>
 						{!clsStarted && (
-							<>
-								<Typography variant="h3" mt="150px">
+							<div style={{marginTop: '100px'}}>
+								<CircularProgress
+									size="100px"
+									mt="50px"
+									color="success"
+								/>
+								<Typography variant="h3" mt="40px">
 									' {cls?.title} '
 								</Typography>
 
@@ -207,15 +220,19 @@ function StartClassAsStudent2() {
 								<Typography variant="h4" mb="20px">
 									Class will be : {cls?.classDuration} min
 								</Typography>
-
+								<Typography variant="h2" mb="20px">
+									Getting You In
+								</Typography>
 								<Button
 									variant="contained"
 									size="large"
+									style={{ display: "none" }}
 									onClick={() => call(cls._id)}
+									ref={stratClsBtn}
 								>
 									Join
 								</Button>
-							</>
+							</div>
 						)}
 
 						<div style={{ display: clsStarted ? "block" : "none" }}>
@@ -231,7 +248,7 @@ function StartClassAsStudent2() {
 											Remainig Time :{" "}
 											<b pl="5px">
 												<Countdown
-												 key={currentTime}
+													key={currentTime}
 													date={
 														currentTime +
 														remainingTIme *
