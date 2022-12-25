@@ -21,7 +21,7 @@ function TodaysClassesOfTeacher() {
 
 	useEffect(() => {
 		axios
-			.get("http://localhost:5000/teacher/get-classes", {
+			.get(process.env.REACT_APP_SERVER_URL + "/teacher/get-classes", {
 				headers: { Authorization: `Bearer ${cookies.token}` },
 			})
 			.then((data) => setClasses([...data.data.classes]))

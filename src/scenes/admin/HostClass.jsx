@@ -53,7 +53,7 @@ function HostClass() {
 		console.log(formData);
 
 		axios
-			.post("http://localhost:5000/admin/create-new-class", formData, {
+			.post(process.env.REACT_APP_SERVER_URL + "/admin/create-new-class", formData, {
 				headers: { Authorization: `Bearer ${cookies.token}` },
 			})
 			.then((data) => {
@@ -80,7 +80,7 @@ function HostClass() {
 
 	const deleteClass = (id) => {
 		axios
-			.delete("http://localhost:5000/admin/delete-class", {
+			.delete(process.env.REACT_APP_SERVER_URL + "/admin/delete-class", {
 				data: {
 					id: id,
 				},
@@ -125,15 +125,15 @@ function HostClass() {
 	];
 
 	useEffect(() => {
-		socket = io.connect("http://localhost:5000");
+		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 		axios
-			.get("http://localhost:5000/admin/get-classes")
+			.get(process.env.REACT_APP_SERVER_URL + "/admin/get-classes")
 			.then((data) => setClasses([...data.data.classes].reverse()))
 			.catch((err) => console.log("err :", err));
 
 		axios
-			.get("http://localhost:5000/admin/get-teachers")
+			.get(process.env.REACT_APP_SERVER_URL + "/admin/get-teachers")
 			.then((data) => setTeachers([...data.data.teachers]))
 			.catch((err) => console.log("err :", err));
 	}, []);

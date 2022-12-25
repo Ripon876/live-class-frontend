@@ -13,7 +13,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 
 import "./style.css";
 
-let socket = io.connect("http://localhost:5000");
+let socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 function StartClassAsTeacher() {
 	const [cls, setCls] = useState({});
@@ -127,8 +127,7 @@ console.log('calling');
 
 	useEffect(() => {
 		axios
-			.get(
-				"http://localhost:5000/teacher/get-class/" +
+			.get(process.env.REACT_APP_SERVER_URL + "/teacher/get-class/" +
 					searchParams.get("id"),
 				{
 					headers: { Authorization: `Bearer ${cookies.token}` },
@@ -151,8 +150,7 @@ console.log('calling');
 			})
 			.then(() => {
 				axios
-					.get(
-						"http://localhost:5000/teacher/starting-class/" +
+					.get(process.env.REACT_APP_SERVER_URL + "/teacher/starting-class/" +
 							searchParams.get("id"),
 						{
 							headers: {

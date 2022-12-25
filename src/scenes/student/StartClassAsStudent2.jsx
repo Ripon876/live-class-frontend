@@ -17,7 +17,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 
 import "./style.css";
 
-let socket;
+let socket; 
 
 function StartClassAsStudent2() {
 	const [cls, setCls] = useState({});
@@ -41,7 +41,7 @@ function StartClassAsStudent2() {
 	const [progress, setProgress] = useState(0);
 
 	useEffect(() => {
-		socket = io.connect("http://localhost:5000");
+		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 		console.log("stdId : ", stdId);
 

@@ -23,7 +23,7 @@ function TodaysClassesOfStudent() {
 
 	useEffect(() => {
 		axios
-			.get("http://localhost:5000/student/get-classes", {
+			.get(process.env.REACT_APP_SERVER_URL + "/student/get-classes", {
 				headers: { Authorization: `Bearer ${cookies.token}` },
 			})
 			.then((data) => {

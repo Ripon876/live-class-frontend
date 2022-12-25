@@ -43,7 +43,7 @@ function StartClassAsTeacher2() {
 	const [progress, setProgress] = useState(0);
 
 	useEffect(() => {
-		socket = io.connect("http://localhost:5000");
+		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 		socket.on("connect", () => {
 			console.log("socket connected");
@@ -119,8 +119,7 @@ function StartClassAsTeacher2() {
 	// fetching class
 	useEffect(() => {
 		axios
-			.get(
-				"http://localhost:5000/teacher/get-class/" +
+			.get(process.env.REACT_APP_SERVER_URL + "/teacher/get-class/" +
 					searchParams.get("id"),
 				{
 					headers: { Authorization: `Bearer ${cookies.token}` },
@@ -138,8 +137,7 @@ function StartClassAsTeacher2() {
 		setClsStarted(true);
 
 		axios
-			.get(
-				"http://localhost:5000/teacher/starting-class/" +
+			.get(process.env.REACT_APP_SERVER_URL + "/teacher/starting-class/" +
 					searchParams.get("id"),
 				{
 					headers: {

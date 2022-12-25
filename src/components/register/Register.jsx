@@ -37,7 +37,7 @@ const [cookies, setCookie] = useCookies([]);
 		e.preventDefault();
 
 		axios
-			.post("http://localhost:5000/register", {
+			.post(process.env.REACT_APP_SERVER_URL + "/register", {
 				...formData,
 			})
 			.then((data) => {

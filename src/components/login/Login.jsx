@@ -36,7 +36,7 @@ function Login() {
 		e.preventDefault();
 
 		axios
-			.post("http://localhost:5000/login", {
+			.post(process.env.REACT_APP_SERVER_URL + "/login", {
 				...formData,
 			})
 			.then((data) => {
