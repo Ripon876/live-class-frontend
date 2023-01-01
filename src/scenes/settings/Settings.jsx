@@ -32,6 +32,7 @@ function Settings() {
 	}, []);
 
 	const handleChange = (e) => {
+		setAlert({ ...alert, show: false });
 		setUser({
 			...user,
 			[e.target.name]: e.target.value,
