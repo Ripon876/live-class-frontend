@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import Dashboard from "./scenes/Dashboard";
+import Settings from "./scenes/settings/Settings";
 // admin
 import Instructors from "./scenes/admin/Instructors";
 import Students from "./scenes/admin/Students";
@@ -12,7 +13,7 @@ import HostClass from "./scenes/admin/HostClass";
 // teacher
 import TodaysClassesOfTeacher from "./scenes/teacher/TodaysClassesOfTeacher";
 
-// teacher
+// student
 import TodaysClassesOfStudent from "./scenes/student/TodaysClassesOfStudent";
 
 // import Bar from './scenes/bar'
@@ -76,6 +77,7 @@ function App() {
               }
             />
 
+            <Route path="settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>

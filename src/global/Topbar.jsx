@@ -25,7 +25,11 @@ const Topbar = () => {
   const logOut = () => {
     removeCookie("token");
     removeCookie("userType");
-    navigate('/login');
+    navigate("/login");
+  };
+
+  const settings = () => {
+    navigate("/settings");
   };
 
   return (
@@ -52,7 +56,7 @@ const Topbar = () => {
         <IconButton>
           <NotificationsOutlinedIcon />
         </IconButton>
-        <IconButton>
+        <IconButton onClick={settings}>
           <SettingsOutlinedIcon />
         </IconButton>
         <IconButton>
