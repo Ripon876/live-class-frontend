@@ -6,11 +6,12 @@ import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import { useSelector } from "react-redux";
 
 function Settings() {
 	const [cookies, setCookie] = useCookies([]);
 	const [user, setUser] = useState({});
-
+	const userType = useSelector((state) => state.type);
 	const [alert, setAlert] = useState({
 		show: false,
 		type: "",
@@ -85,7 +86,6 @@ function Settings() {
 				{user.name && (
 					<div>
 						<TextField
-							id="name"
 							label="Name"
 							name="name"
 							defaultValue={user.name}
@@ -98,7 +98,6 @@ function Settings() {
 							onChange={handleChange}
 						/>
 						<TextField
-							id="standard-number"
 							label="Email"
 							type="email"
 							name="email"
@@ -114,7 +113,6 @@ function Settings() {
 							onChange={handleChange}
 						/>
 						<TextField
-							id="standard-number"
 							label="Age"
 							type="number"
 							name="age"
@@ -128,9 +126,8 @@ function Settings() {
 								shrink: true,
 							}}
 							onChange={handleChange}
-						/>{" "}
+						/>
 						<TextField
-							id="standard-number"
 							label="Phone Number"
 							type="tel"
 							name="phone"
@@ -145,6 +142,40 @@ function Settings() {
 							}}
 							onChange={handleChange}
 						/>
+						{userType === "student" && (
+							<>
+								<TextField
+									label="Address"
+									type="text"
+									name="address"
+									variant="filled"
+									defaultValue={user?.address}
+									required
+									sx={{
+										minWidth: "300px",
+									}}
+									InputLabelProps={{
+										shrink: true,
+									}}
+									onChange={handleChange}
+								/>
+								<TextField
+									label="City"
+									type="text"
+									name="city"
+									variant="filled"
+									defaultValue={user?.city}
+									required
+									sx={{
+										minWidth: "300px",
+									}}
+									InputLabelProps={{
+										shrink: true,
+									}}
+									onChange={handleChange}
+								/>
+							</>
+						)}
 					</div>
 				)}
 				<Button

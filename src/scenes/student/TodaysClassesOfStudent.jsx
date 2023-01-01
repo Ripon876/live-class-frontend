@@ -13,13 +13,11 @@ import AddIcon from "@mui/icons-material/Add";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { useCookies } from "react-cookie";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 function TodaysClassesOfStudent() {
 	const [cookies, setCookie] = useCookies([]);
 	const [classes, setClasses] = useState([]);
-	const [firstClassId, setFCI] = useState('');
-	const navigate = useNavigate();
+	const [firstClassId, setFCI] = useState("");
 
 	useEffect(() => {
 		axios
@@ -29,8 +27,8 @@ function TodaysClassesOfStudent() {
 			.then((data) => {
 				setClasses([...data.data.classes]);
 				setFCI(data.data.classes[data.data.firstClassIndex]._id);
-				console.log(data.data.classes[data.data.firstClassIndex]._id);
-		})
+				// console.log(data.data.classes[data.data.firstClassIndex]._id);
+			})
 			.catch((err) => console.log("err :", err));
 	}, []);
 
@@ -53,11 +51,9 @@ function TodaysClassesOfStudent() {
 								</TableCell>
 								<TableCell align="right">Start Time</TableCell>
 								<TableCell align="center">Status</TableCell>
-								{/*<TableCell align="right">Actions</TableCell> */}
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{/*{classes.length === 0 & <p>No claases today</p>}*/}
 							{classes?.map((singleClass) => (
 								<TableRow
 									sx={{
@@ -84,17 +80,6 @@ function TodaysClassesOfStudent() {
 									<TableCell align="center">
 										{singleClass.status}
 									</TableCell>
-									{/*{/*<TableCell align="right">
-										<Button
-											variant="filled"
-											startIcon={<AddIcon />}
-											onClick={() => {
-												window.location.href = `/live-class?id=${singleClass._id}`;
-											}}
-										>
-											Join
-										</Button>
-									</TableCell>*/}
 								</TableRow>
 							))}
 						</TableBody>

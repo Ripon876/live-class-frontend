@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import Peer from "simple-peer";
+import { Peer } from "peerjs";
 import io from "socket.io-client";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
-
+import Countdown from "react-countdown";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -16,7 +16,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 
 import "./style.css";
 
-let socket = io.connect("http://localhost:5000");
+let socket;
 
 function StartClassAsStudent() {
 	const [cls, setCls] = useState({});
@@ -24,158 +24,163 @@ function StartClassAsStudent() {
 	const [cookies, setCookie] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
 	const stdId = useSelector((state) => state.id);
+	const [onGoing, setOngoing] = useState(false);
+	const [clsEnd, setClsEnd] = useState(false);
+	const [remainingTIme, setRemainingTime] = useState(0);
+	const [currentTime, setCurrentgTime] = useState(Date.now());
+	const stratClsBtn = useRef(null);
 	// for call
 
-	const [me, setMe] = useState("");
-	const [stream, setStream] = useState();
-	const [receivingCall, setReceivingCall] = useState(false);
-	const [caller, setCaller] = useState("");
-	const [callerSignal, setCallerSignal] = useState();
-	const [callAccepted, setCallAccepted] = useState(false);
-	const [idToCall, setIdToCall] = useState(searchParams.get("id"));
-	const [callEnded, setCallEnded] = useState(false);
-	const [finished, setFinished] = useState(false);
-	const [name, setName] = useState("");
-	const myVideo = useRef();
-	const userVideo = useRef();
-	const connectionRef = useRef();
-
+	const [peerId, setPeerId] = useState("");
+	const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
+	const remoteVideoRef = useRef(null);
+	const currentUserVideoRef = useRef(null);
+	const peerInstance = useRef(null);
+	const [clsId, setClsId] = useState(searchParams.get("id"));
 	const [progress, setProgress] = useState(0);
 
 	useEffect(() => {
+		socket = io.connect(process.env.REACT_APP_SERVER_URL);
+
+		// console.log("stdId : ", stdId);
+
+		socket.on("connect", () => {
+			// console.log("socket connected");
+			socket.emit("setActive", { id: stdId });
+			socket.emit("getClass", searchParams.get("id"), (cls) => {
+				setCls(cls);
+				setRemainingTime(cls.classDuration);
+			});
+		});
+
+		socket.on("startClass", async () => {
+			// console.log("starting cls");
+
+			stratClsBtn.current.click();
+		});
+
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
+
+	useEffect(() => {
 		const timer = setInterval(() => {
+			if (progress === 110) {
+				clearInterval(timer);
+			}
+
 			setProgress((oldProgress) => {
 				return oldProgress + 1;
 			});
-		}, ((2 * 60) / 100) * 1000);
+		}, ((cls.classDuration * 60) / 100) * 1000);
 
 		return () => {
 			clearInterval(timer);
 		};
-	}, []);
-
-
-
+	}, [cls]);
 
 	useEffect(() => {
-		setProgress(0);
-	}, [callAccepted]);
-
-	useEffect(() => {
-		socket.on("me", (id) => {
-			setMe(id);
-		});
-
-		socket.on("callUser", (data) => {
-			setReceivingCall(true);
-			setCaller(data.from);
-			setName(data.name);
-			setCallerSignal(data.signal);
-		});
-
-		socket.on("alreadyJoined", (data) => {
-			console.log("already Joined this class . msg: ", data.msg);
-			setFinished(true);
-		});
-	}, []);
-
-	useEffect(() => {
-		axios
-			.get(
-				"http://localhost:5000/teacher/get-class/" +
-					searchParams.get("id"),
-				{
-					headers: { Authorization: `Bearer ${cookies.token}` },
+		if (progress === 100 && onGoing) {
+			console.log("100 dfsdfd");
+			socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
+				if (res.type === "joinNextClass") {
+					// console.log("next class is their ,id : ", res.id);
+					call(res.id);
+					setClsId(res.id);
+					setSearchParams({ id: res.id });
+					socket.emit("getClass", res.id, (cls) => {
+						setCls(cls);
+						setRemainingTime(cls.classDuration);
+					});
 				}
-			)
-			.then((data) => {
-				setCls({ ...data.data.cls });
-				setIdToCall(data.data.cls._id);
-				if (data.data.cls.hasToJoin === 0) {
-					setFinished(true);
+
+				if (res.type === "allClassEnd") {
+					// console.log("no more cls , msg: ", res.text);
+					setClsEnd(true);
 				}
-			})
-			.catch((err) => console.log("err :", err));
-	}, []);
-
-	const startClass = () => {
-		document.querySelector(".MuiButtonBase-root").click();
-		setClsStarted(true);
-
-		navigator.mediaDevices
-			.getUserMedia({ video: true, audio: true })
-			.then((stream) => {
-				console.log(stream);
-				setStream(stream);
-				myVideo.current.srcObject = stream;
 			});
-
-		socket.emit("clsStarted", { clsId: stdId });
-	};
-
-	useEffect(() => {
-		setTimeout(() => {
-			if (cls?.hasToJoin !== 0) {
-				console.log(cls);
-				startClass();
-			}
-		}, 2000);
-	}, []);
-
-	useEffect(() => {
-		if (cls.hasToJoin !== 0) {
-			callUser(idToCall);
 		}
-	}, [stream]);
+	}, [progress]);
 
-	const callUser = (id) => {
-		const peer = new window.SimplePeer({
-			initiator: true,
-			trickle: false,
-			config: {
-				iceServers: [
-					{
-						urls: "stun:stun.stunprotocol.org",
-					},
-				],
-			},
-			stream: stream,
+	useEffect(() => {
+		const peer = new Peer();
+
+		peer.on("open", (id) => {
+			setPeerId(id);
 		});
-		peer._debug = console.log;
-		peer.on("signal", (data) => {
-			console.log("calling teacher");
 
-			socket.emit("callUser", {
-				userToCall: id,
-				signalData: data,
-				from: me,
-				name: name,
+		peer.on("call", (call) => {
+			var getUserMedia =
+				navigator.getUserMedia ||
+				navigator.webkitGetUserMedia ||
+				navigator.mozGetUserMedia;
+
+			getUserMedia({ video: true, audio: true }, (mediaStream) => {
+				currentUserVideoRef.current.srcObject = mediaStream;
+				currentUserVideoRef.current.play();
+				call.answer(mediaStream);
+				call.on("stream", function (remoteStream) {
+					remoteVideoRef.current.srcObject = remoteStream;
+					remoteVideoRef.current.play();
+				});
 			});
 		});
-		peer.on("stream", (stream) => {
-			userVideo.current.srcObject = stream;
-			console.log(stream);
-		});
-		peer.on("close", () => {
-			console.log("meeting closed");
-			setCallEnded(true);
-		});
-		socket.on("callAccepted", (signal) => {
-			console.log("call callAccepted");
-			setCallAccepted(true);
-			peer.signal(signal);
-		});
 
-		connectionRef.current = peer;
+		peerInstance.current = peer;
+
+		return () => {
+			// console.log("component unmount");
+		};
+	}, []);
+
+	const call = (remotePeerId) => {
+		var getUserMedia =
+			navigator.getUserMedia ||
+			navigator.webkitGetUserMedia ||
+			navigator.mozGetUserMedia;
+
+		getUserMedia({ video: true, audio: true }, (mediaStream) => {
+			currentUserVideoRef.current.srcObject = mediaStream;
+			currentUserVideoRef.current.play();
+
+			let options = {
+				metadata: {
+					std: { id: stdId },
+				},
+			};
+			const call = peerInstance.current.call(
+				remotePeerId,
+				mediaStream,
+				options
+			);
+
+			// console.log("calling teacher");
+
+			call.on("stream", (remoteStream) => {
+				remoteVideoRef.current.srcObject = remoteStream;
+				remoteVideoRef.current.play();
+				setOngoing(true);
+				setProgress(0);
+				setCurrentgTime(Date.now());
+				setClsStarted(true);
+				// console.log("call accepted");
+			});
+		});
 	};
 
-	// const leaveCall = () => {
-	// 	setCallEnded(true);
-	// 	connectionRef.current.destroy();
-	// };
+	const TimeRenderer = ({ minutes, seconds }) => {
+		return (
+			<span>
+				{minutes < 10 ? "0" + minutes : minutes}:
+				{seconds < 10 ? "0" + seconds : seconds}
+			</span>
+		);
+	};
+
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
-			{callAccepted && !callEnded && (
+			{onGoing && !clsEnd && (
 				<LinearProgress
 					variant="determinate"
 					color="success"
@@ -189,92 +194,122 @@ function StartClassAsStudent() {
 				width="90%"
 				p="0 0 0 20px"
 				align="center"
-				display="flex"
-				justifyContent="center"
-				alignItems="center"
-				minHeight="70vh"
 			>
-				{!clsStarted && !finished && (
+				{!clsEnd ? (
 					<div>
-						<CircularProgress
-							size="100px"
-							mt="50px"
-							color="success"
-						/>
-						<Typography variant="h3" mt="50px">
-							' {cls.title} '
-						</Typography>
-						<Typography variant="h4" mb="20px">
-							Class will be taken for : {cls.classDuration} min
-						</Typography>
-						<Typography variant="h2" mb="20px">
-							Getting You In <MoodIcon />
-						</Typography>
-						{/*<Button
-							variant="contained"
-							size="large"
-							onClick={startClass}
-						>
-							Launch
-						</Button>*/}
-					</div>
-				)}
+						{!clsStarted && (
+							<div style={{ marginTop: "100px" }}>
+								<CircularProgress
+									size="100px"
+									mt="50px"
+									color="success"
+								/>
+								<Typography variant="h3" mt="40px">
+									' {cls?.title} '
+								</Typography>
 
-				{finished && (
-					<div>
-						<Typography variant="h1" mb="20px">
-							<MoodIcon
-								mt="50px"
-								fontSize="200px"
-								color="success"
-							/>
-						</Typography>
-
-						<Typography variant="h3" mt="50px">
-							' {cls.title} '
-						</Typography>
-						<Typography variant="h4" mb="20px">
-							Class will be taken for : {cls.classDuration} min
-						</Typography>
-						<Typography variant="h2" mb="20px">
-							You already Take this class
-						</Typography>
-					</div>
-				)}
-
-				{clsStarted && !finished && (
-					<div>
-						<div className="container">
-							<div className="video-container">
-								<div
-									className={
-										callAccepted && !callEnded
-											? "video myVideo"
-											: "video"
-									}
+								<Typography variant="h4">
+									Subject : {cls?.subject}
+								</Typography>
+								<Typography variant="h4" mb="20px">
+									Class will be : {cls?.classDuration} min
+								</Typography>
+								<Typography variant="h2" mb="20px">
+									Getting You In
+								</Typography>
+								<Button
+									variant="contained"
+									size="large"
+									style={{ display: "none" }}
+									onClick={() => call(cls._id)}
+									ref={stratClsBtn}
 								>
-									<div>
-										<video
-											playsInline
-											muted
-											ref={myVideo}
-											autoPlay
-										/>
+									Join
+								</Button>
+							</div>
+						)}
 
-										<h2>You</h2>
+						<div style={{ display: clsStarted ? "block" : "none" }}>
+							<div className="container">
+								<div className="video-container">
+									{remainingTIme !== 0 && (
+										<Typography
+											variant="h4"
+											align="right"
+											pr="10px"
+											mb="5px"
+										>
+											Remainig Time :{" "}
+											<b pl="5px">
+												<Countdown
+													key={currentTime}
+													date={
+														currentTime +
+														remainingTIme *
+															60 *
+															1000
+													}
+													renderer={TimeRenderer}
+												/>{" "}
+											</b>
+											min
+										</Typography>
+									)}
+									<div className="video myVideo">
+										<div>
+											<video
+												playsInline
+												muted
+												ref={currentUserVideoRef}
+												autoPlay
+											/>
+
+											<h2>You</h2>
+										</div>
 									</div>
-								</div>
-
-								{callAccepted && !callEnded ? (
 									<div className="video otherVideo">
 										<video
 											playsInline
-											ref={userVideo}
+											ref={remoteVideoRef}
 											autoPlay
 										/>
+										{!onGoing && (
+											<h3 className="watingText">
+												Joining
+											</h3>
+										)}
 									</div>
-								) : null}
+								</div>
+								<div>
+									<Typography variant="h4">
+										Ongoing : <b>{cls?.title}</b>
+									</Typography>
+									<Typography variant="h4">
+										Subject : <b>{cls?.subject}</b>
+									</Typography>
+									<Typography variant="h4">
+										Teacher : <b>{cls?.teacher?.name}</b>
+									</Typography>
+								</div>
 							</div>
+						</div>
+					</div>
+				) : (
+					<div>
+						<div>
+							<MoodIcon
+								style={{ fontSize: "200px" }}
+								mt="50px"
+								color="success"
+							/>
+							<Typography variant="h2" mb="20px">
+								No More Classes Left Today
+							</Typography>
+							<Link to="/" style={{ textDecoration: "none" }}>
+								<Button variant="contained" size="large">
+									Back to dashboard
+								</Button>
+							</Link>
 						</div>
 					</div>
 				)}

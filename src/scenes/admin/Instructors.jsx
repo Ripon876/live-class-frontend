@@ -20,8 +20,6 @@ const Instructors = () => {
       .then((data) => {
         data.data.teachers.map((user, i) => (user.id = i + 1));
         setInstructors([...data.data.teachers]);
-
-        console.log(data.data.teachers);
       })
       .catch((err) => console.log("err :", err));
   }, []);

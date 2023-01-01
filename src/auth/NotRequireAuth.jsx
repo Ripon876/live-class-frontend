@@ -5,7 +5,7 @@ import { Outlet, Navigate } from "react-router-dom";
 function RequireAuth() {
 	const [cookies, setCookie] = useCookies([]);
 
-	console.log(cookies.token);
+	// console.log(cookies.token);
 
 	return cookies.token ?  <Navigate to="/" /> : <Outlet />;
 }

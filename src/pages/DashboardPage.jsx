@@ -1,10 +1,9 @@
 import { ColorModeContext, useMode } from "../theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { Route, Routes,Outlet } from 'react-router-dom';
+import { Route, Routes, Outlet } from "react-router-dom";
 import Topbar from "../global/Topbar";
 import AppSidebar from "../global/Sidebar";
 import { ProSidebarProvider } from "react-pro-sidebar";
-
 
 function DashboardPage() {
 	const [theme, colorMode] = useMode();
