@@ -7,7 +7,6 @@ import MenuItem from "@mui/material/MenuItem";
 import AddIcon from "@mui/icons-material/Add";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DeleteIcon from "@mui/icons-material/Delete";
-// import Autocomplete from "@mui/material/Autocomplete";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -50,14 +49,18 @@ function HostClass() {
 	};
 
 	const handleSubmit = () => {
-		console.log(formData);
+		// console.log(formData);
 
 		axios
-			.post(process.env.REACT_APP_SERVER_URL + "/admin/create-new-class", formData, {
-				headers: { Authorization: `Bearer ${cookies.token}` },
-			})
+			.post(
+				process.env.REACT_APP_SERVER_URL + "/admin/create-new-class",
+				formData,
+				{
+					headers: { Authorization: `Bearer ${cookies.token}` },
+				}
+			)
 			.then((data) => {
-				console.log(data.data);
+				// console.log(data.data);
 				setFormData({
 					...initialFormData,
 				});
@@ -139,7 +142,7 @@ function HostClass() {
 	}, []);
 
 	const startClasses = () => {
-		console.log('starting class')
+		// console.log('starting class')
 		socket.emit("startClasses", (msg, err) => {
 			if (msg) {
 				setAlert({
