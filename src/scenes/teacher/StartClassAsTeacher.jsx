@@ -104,6 +104,7 @@ function StartClassAsTeacher() {
 						setStd(std);
 						// console.log(std);
 					});
+					socket.emit('newClassStarted',call.metadata.std.id,searchParams.get("id"));
 				});
 			});
 		});

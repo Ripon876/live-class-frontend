@@ -85,9 +85,9 @@ const AppSidebar = () => {
               pr={4}
               style={{ color: colors.primary[100] }}
             >
-              {userType === 'admin' && 'Admin'}
-              {userType === 'teacher' && 'Teacher'}
-              {userType === 'student' && 'Student'}
+              {userType === "admin" && "Admin"}
+              {userType === "teacher" && "Teacher"}
+              {userType === "student" && "Student"}
             </Typography>
           </Box>
         )}
@@ -119,13 +119,13 @@ const AppSidebar = () => {
                 selected={selected}
                 icon={<PersonOutlinedIcon />}
               />
-              <Item
+              {/* <Item
                 title="Stations"
                 to="/stations"
                 setSelected={setSelected}
                 selected={selected}
                 icon={<TvOutlinedIcon />}
-              />
+              />*/}
               <Item
                 title="Results"
                 to="/results"

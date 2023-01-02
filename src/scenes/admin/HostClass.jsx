@@ -15,10 +15,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Alert from "@mui/material/Alert";
-
+import CachedIcon from "@mui/icons-material/Cached";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import io from "socket.io-client";
+import "./style.css";
 
 let socket;
 
@@ -39,6 +40,9 @@ function HostClass() {
 	const [cookies, setCookie] = useCookies([]);
 	const [classes, setClasses] = useState([]);
 	const [teachers, setTeachers] = useState([]);
+	const [studentsStates, setSS] = useState([]);
+	const [canStart, setCanStart] = useState(false);
+	const [spin, setSpin] = useState(false);
 
 	const handleChange = (e) => {
 		setAlert({ ...alert, show: false });
@@ -65,11 +69,13 @@ function HostClass() {
 					...initialFormData,
 				});
 				setClasses([data.data.class, ...classes]);
+				checkClasses([data.data.class]);
 				setAlert({
 					show: true,
 					type: "success",
 					msg: data.data.message,
 				});
+				closeAlert();
 			})
 			.catch((err) => {
 				console.log("err : ", err);
@@ -78,6 +84,7 @@ function HostClass() {
 					type: "error",
 					msg: err.data.message,
 				});
+				closeAlert();
 			});
 	};
 
@@ -91,12 +98,14 @@ function HostClass() {
 			.then((data) => {
 				let newCLasses = classes.filter((cl) => cl._id !== id);
 				setClasses(newCLasses);
+				checkClasses(newCLasses);
 				// setClasses([...classes, data.data.class]);
 				setAlert({
 					show: true,
 					type: "success",
 					msg: data.data.message,
 				});
+				closeAlert();
 			})
 			.catch((err) => {
 				console.log("err : ", err);
@@ -105,6 +114,7 @@ function HostClass() {
 					type: "error",
 					msg: err.data.message,
 				});
+				closeAlert();
 			});
 	};
 
@@ -130,9 +140,29 @@ function HostClass() {
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
+		socket.on("studentsStates", (states) => {
+			setSS(Object.values(states));
+			// console.log(states);
+		});
+
+		socket.on("allClsTaken", () => {
+			setSS([]);
+			setAlert({
+				show: true,
+				type: "success",
+				msg: "All classes has been taken",
+			});
+			closeAlert();
+			setSpin(false);
+			checkClasses(classes);
+		});
+
 		axios
 			.get(process.env.REACT_APP_SERVER_URL + "/admin/get-classes")
-			.then((data) => setClasses([...data.data.classes].reverse()))
+			.then((data) => {
+				setClasses([...data.data.classes].reverse());
+				checkClasses(data.data.classes);
+			})
 			.catch((err) => console.log("err :", err));
 
 		axios
@@ -143,21 +173,51 @@ function HostClass() {
 
 	const startClasses = () => {
 		// console.log('starting class')
+		axios
+			.get(process.env.REACT_APP_SERVER_URL + "/admin/get-classes")
+			.then((data) => setClasses([...data.data.classes].reverse()))
+			.catch((err) => console.log("err :", err));
 		socket.emit("startClasses", (msg, err) => {
 			if (msg) {
+				setSpin(true);
 				setAlert({
 					show: true,
 					type: "success",
 					msg: msg,
 				});
+				closeAlert();
 			} else {
 				setAlert({
 					show: true,
 					type: "error",
 					msg: err,
 				});
+				closeAlert();
 			}
 		});
+	};
+
+	const closeAlert = () => {
+		setTimeout(() => {
+			setAlert({
+				show: false,
+				type: "",
+				msg: "",
+			});
+		}, 3500);
+	};
+
+	const checkClasses = (clses) => {
+		if (clses.length === 0) {
+			setCanStart(false);
+			return;
+		}
+		for (let cls of clses) {
+			if (cls.status === "Not Started") {
+				setCanStart(true);
+				return;
+			}
+		}
 	};
 
 	return (
@@ -297,16 +357,19 @@ function HostClass() {
 					<Typography variant="h4" className="mt-3">
 						Today's Class Schedule
 					</Typography>
-					<Button
-						variant="filled"
-						sx={{
-							boxShadow: 3,
-						}}
-						startIcon={<PlayArrowIcon />}
-						onClick={startClasses}
-					>
-						Start Today's Classes
-					</Button>
+					<div style={{ cursor: spin ? "not-allowed" : "pointer" }}>
+						<Button
+							variant="filled"
+							sx={{
+								boxShadow: 3,
+							}}
+							disabled={spin || !canStart}
+							startIcon={<PlayArrowIcon />}
+							onClick={startClasses}
+						>
+							Start Today's Classes
+						</Button>
+					</div>
 				</Box>
 
 				<TableContainer component={Paper}>
@@ -368,6 +431,70 @@ function HostClass() {
 						</TableBody>
 					</Table>
 				</TableContainer>
+			</Box>
+
+			<Box component="div" m="40px 40px " width="90%" p="0 0 0 20px">
+				<Box
+					component="div"
+					mb="20px"
+					// sx={{ display: "flex", justifyContent: "space-between" }}
+				>
+					<Typography variant="h4" className="mb-3 mt-4">
+						Joined Students
+						{spin && <CachedIcon className="ms-2 spin" />}
+					</Typography>
+					<TableContainer component={Paper}>
+						<Table
+							sx={{ minWidth: "90%" }}
+							aria-label="simple table"
+						>
+							{/*
+}
+{
+    "cls": {
+        "subject": "English",
+        "teacher": "Teacher 1"
+    },
+    "student": "Student  1"
+}
+*/}
+
+							<TableHead>
+								<TableRow>
+									<TableCell>#</TableCell>
+									<TableCell align="right">Student</TableCell>
+									<TableCell align="right">Subject</TableCell>
+									<TableCell align="right">Teacher</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{studentsStates?.map((state, i) => (
+									<TableRow
+										sx={{
+											"&:last-child td, &:last-child th":
+												{
+													border: 0,
+												},
+										}}
+									>
+										<TableCell component="th" scope="row">
+											{i + 1}
+										</TableCell>
+										<TableCell align="right">
+											{state.student}
+										</TableCell>
+										<TableCell align="right">
+											{state.cls.subject}
+										</TableCell>
+										<TableCell align="right">
+											{state.cls.teacher}
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</TableContainer>
+				</Box>
 			</Box>
 		</div>
 	);
