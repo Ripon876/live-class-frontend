@@ -3,8 +3,9 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import { subjects } from "./helpers";
+import CheckList from './CheckList';
 
-function AddExam({ fd, hc, hs, examiners, roleplayers }) {
+function AddExam({ fd, hc, hs, examiners, roleplayers ,sfd}) {
 	return (
 		<div>
 			<div>
@@ -113,6 +114,9 @@ function AddExam({ fd, hc, hs, examiners, roleplayers }) {
 					sx={{ width: 150 }}
 					onChange={hc}
 				/>
+			</div>
+			<div>
+				<CheckList  fd={fd} sfd={sfd}/>
 			</div>
 			<div>
 				<Button

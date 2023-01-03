@@ -10,40 +10,37 @@ const initialFormData = {
 
 // handle form submit
 export const Submit = (fd, token, cls, setClss, setFd, setAlt, setCS) => {
-	
-console.log(fd);
-
-	// axios
-	// 	.post(
-	// 		process.env.REACT_APP_SERVER_URL + "/admin/create-new-class",
-	// 		fd,
-	// 		{
-	// 			headers: { Authorization: `Bearer ${token}` },
-	// 		}
-	// 	)
-	// 	.then((data) => {
-	// 		// console.log(data.data);
-	// 		setFd({
-	// 			...initialFormData,
-	// 		});
-	// 		setClss([data.data.class, ...cls]);
-	// 		checkExams([data.data.class], setCS);
-	// 		setAlt({
-	// 			show: true,
-	// 			type: "success",
-	// 			msg: data.data.message,
-	// 		});
-	// 		closeAlert(setAlt);
-	// 	})
-	// 	.catch((err) => {
-	// 		console.log("err : ", err);
-	// 		setAlt({
-	// 			show: true,
-	// 			type: "error",
-	// 			msg: err.data.message,
-	// 		});
-	// 		closeAlert(setAlt);
-	// 	});
+	axios
+		.post(
+			process.env.REACT_APP_SERVER_URL + "/admin/create-new-class",
+			fd,
+			{
+				headers: { Authorization: `Bearer ${token}` },
+			}
+		)
+		.then((data) => {
+			// console.log(data.data);
+			setFd({
+				...initialFormData,
+			});
+			setClss([data.data.class, ...cls]);
+			checkExams([data.data.class], setCS);
+			setAlt({
+				show: true,
+				type: "success",
+				msg: data.data.message,
+			});
+			closeAlert(setAlt);
+		})
+		.catch((err) => {
+			console.log("err : ", err);
+			setAlt({
+				show: true,
+				type: "error",
+				msg: err.data.message,
+			});
+			closeAlert(setAlt);
+		});
 };
 
 // handle exam delete

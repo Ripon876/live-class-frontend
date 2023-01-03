@@ -33,6 +33,8 @@ function HostClass() {
 		teacher: "",
 		classDuration: "",
 		startTime: "10:30",
+		roleplayer: "",
+		checklist: [],
 	};
 	const [formData, setFormData] = useState(initialFormData);
 	const [cookies, setCookie] = useCookies([]);
@@ -127,6 +129,7 @@ function HostClass() {
 					hs={handleSubmit}
 					examiners={examiners}
 					roleplayers={roleplayers}
+					sfd={setFormData}
 				/>
 			</Box>
 
