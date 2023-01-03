@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import { subjects } from "./helpers";
 
-function AddExam({ fd, hc, hs, examiners }) {
+function AddExam({ fd, hc, hs, examiners, roleplayers }) {
 	return (
 		<div>
 			<div>
@@ -57,6 +57,24 @@ function AddExam({ fd, hc, hs, examiners }) {
 				>
 					{examiners.map((examiner) => (
 						<MenuItem value={examiner}>{examiner.name}</MenuItem>
+					))}
+				</TextField>
+				<TextField
+					id="filled-select-currency"
+					select
+					label="Select Roleplayer"
+					name="roleplayer"
+					variant="filled"
+					value={fd.roleplayer}
+					sx={{
+						minWidth: "300px",
+					}}
+					onChange={hc}
+				>
+					{roleplayers.map((roleplayer) => (
+						<MenuItem value={roleplayer}>
+							{roleplayer.name}
+						</MenuItem>
 					))}
 				</TextField>
 				<TextField

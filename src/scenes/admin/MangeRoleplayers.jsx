@@ -50,7 +50,7 @@ function MangeRoleplayers() {
 
 		axios
 			.post(
-				process.env.REACT_APP_SERVER_URL + "/admin/add-instructor",
+				process.env.REACT_APP_SERVER_URL + "/admin/add-roleplayer",
 				formData,
 				{
 					headers: { Authorization: `Bearer ${cookies.token}` },

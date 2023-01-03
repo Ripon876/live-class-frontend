@@ -20,6 +20,7 @@ import {
 	closeAlert,
 	getExams,
 	getExaminers,
+	getRoleplayers,
 	Start,
 } from "./helpers";
 
@@ -37,6 +38,7 @@ function HostClass() {
 	const [cookies, setCookie] = useCookies([]);
 	const [exams, setExams] = useState([]);
 	const [examiners, setExaminers] = useState([]);
+	const [roleplayers, setRoleplayers] = useState([]);
 	const [studentsStates, setSS] = useState([]);
 	const [canStart, setCanStart] = useState(false);
 	const [spin, setSpin] = useState(false);
@@ -67,6 +69,7 @@ function HostClass() {
 
 		getExams(setExams, setCanStart);
 		getExaminers(setExaminers);
+		getRoleplayers(setRoleplayers);
 	}, []);
 
 	const handleChange = (e) => {
@@ -123,6 +126,7 @@ function HostClass() {
 					hc={handleChange}
 					hs={handleSubmit}
 					examiners={examiners}
+					roleplayers={roleplayers}
 				/>
 			</Box>
 
