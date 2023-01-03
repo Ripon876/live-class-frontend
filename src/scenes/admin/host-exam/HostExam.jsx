@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button"; 
-import PlayArrowIcon from "@mui/icons-material/PlayArrow"; 
+import Button from "@mui/material/Button";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Alert from "@mui/material/Alert";
-import CachedIcon from "@mui/icons-material/Cached"; 
+import CachedIcon from "@mui/icons-material/Cached";
 import { useCookies } from "react-cookie";
 import io from "socket.io-client";
 import AddExam from "./AddExam";
@@ -16,7 +16,7 @@ import "./style.css";
 import {
 	Submit,
 	Delete,
-	checkClasses,
+	checkExams,
 	closeAlert,
 	getExams,
 	getExaminers,
@@ -35,8 +35,8 @@ function HostClass() {
 	};
 	const [formData, setFormData] = useState(initialFormData);
 	const [cookies, setCookie] = useCookies([]);
-	const [classes, setClasses] = useState([]);
-	const [teachers, setTeachers] = useState([]);
+	const [exams, setExams] = useState([]);
+	const [examiners, setExaminers] = useState([]);
 	const [studentsStates, setSS] = useState([]);
 	const [canStart, setCanStart] = useState(false);
 	const [spin, setSpin] = useState(false);
@@ -58,15 +58,15 @@ function HostClass() {
 			setAlert({
 				show: true,
 				type: "success",
-				msg: "All classes has been taken",
+				msg: "All exams has been taken",
 			});
 			closeAlert(setAlert);
 			setSpin(false);
-			checkClasses(classes, setCanStart);
+			checkExams(exams, setCanStart);
 		});
 
-		getExams(setClasses, setCanStart);
-		getExaminers(setTeachers);
+		getExams(setExams, setCanStart);
+		getExaminers(setExaminers);
 	}, []);
 
 	const handleChange = (e) => {
@@ -81,8 +81,8 @@ function HostClass() {
 		Submit(
 			formData,
 			cookies.token,
-			classes,
-			setClasses,
+			exams,
+			setExams,
 			setFormData,
 			setAlert,
 			setCanStart
@@ -90,11 +90,11 @@ function HostClass() {
 	};
 
 	const deleteClass = (id) => {
-		Delete(id, classes, setClasses, setAlert, setCanStart);
+		Delete(id, exams, setExams, setAlert, setCanStart);
 	};
 
-	const startClasses = () => {
-		Start(socket, setClasses, setAlert, setSpin);
+	const startexams = () => {
+		Start(socket, setExams, setAlert, setSpin);
 	};
 
 	return (
@@ -122,7 +122,7 @@ function HostClass() {
 					fd={formData}
 					hc={handleChange}
 					hs={handleSubmit}
-					examiners={teachers}
+					examiners={examiners}
 				/>
 			</Box>
 
@@ -143,14 +143,14 @@ function HostClass() {
 							}}
 							disabled={spin || !canStart}
 							startIcon={<PlayArrowIcon />}
-							onClick={startClasses}
+							onClick={startexams}
 						>
 							Start Today's Exams
 						</Button>
 					</div>
 				</Box>
 
-				<ExamsTable exams={classes} dltExm={deleteClass} />
+				<ExamsTable exams={exams} dltExm={deleteClass} />
 			</Box>
 
 			<Box component="div" m="40px 40px " width="90%" p="0 0 0 20px">

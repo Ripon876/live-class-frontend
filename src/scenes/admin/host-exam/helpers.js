@@ -24,7 +24,7 @@ export const Submit = (fd, token, cls, setClss, setFd, setAlt, setCS) => {
 				...initialFormData,
 			});
 			setClss([data.data.class, ...cls]);
-			checkClasses([data.data.class], setCS);
+			checkExams([data.data.class], setCS);
 			setAlt({
 				show: true,
 				type: "success",
@@ -54,7 +54,7 @@ export const Delete = (id, cls, setClss, setAlt, setCS) => {
 		.then((data) => {
 			let newCLasses = cls.filter((cl) => cl._id !== id);
 			setClss(newCLasses);
-			checkClasses(newCLasses, setCS);
+			checkExams(newCLasses, setCS);
 			setAlt({
 				show: true,
 				type: "success",
@@ -73,7 +73,7 @@ export const Delete = (id, cls, setClss, setAlt, setCS) => {
 		});
 };
 
-export const checkClasses = (clses, setCS) => {
+export const checkExams = (clses, setCS) => {
 	if (clses.length === 0) {
 		setCS(false);
 		return;
@@ -119,15 +119,15 @@ export const getExams = (setExms, setCS) => {
 		.get(process.env.REACT_APP_SERVER_URL + "/admin/get-classes")
 		.then((data) => {
 			setExms([...data.data.classes].reverse());
-			checkClasses(data.data.classes, setCS);
+			checkExams(data.data.classes, setCS);
 		})
 		.catch((err) => console.log("err :", err));
 };
 
 export const getExaminers = (setE) => {
 	axios
-		.get(process.env.REACT_APP_SERVER_URL + "/admin/get-teachers")
-		.then((data) => setE([...data.data.teachers]))
+		.get(process.env.REACT_APP_SERVER_URL + "/admin/get-examiners")
+		.then((data) => setE([...data.data.roles]))
 		.catch((err) => console.log("err :", err));
 };
 

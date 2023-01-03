@@ -45,7 +45,7 @@ function AddExam({ fd, hc, hs, examiners }) {
 				<TextField
 					id="filled-select-currency"
 					select
-					label="Select Teacher"
+					label="Select Examiner"
 					name="teacher"
 					variant="filled"
 					value={fd.teacher}
@@ -61,7 +61,7 @@ function AddExam({ fd, hc, hs, examiners }) {
 				</TextField>
 				<TextField
 					id="standard-number"
-					label="Class Duration"
+					label="Exam Duration"
 					type="number"
 					name="classDuration"
 					value={fd.classDuration}
