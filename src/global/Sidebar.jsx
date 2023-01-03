@@ -156,8 +156,8 @@ const AppSidebar = () => {
                 icon={<MapOutlinedIcon />}
               />*/}
               <Item
-                title="Host Class"
-                to="/host_class"
+                title="Host Exam"
+                to="/host_exam"
                 setSelected={setSelected}
                 selected={selected}
                 icon={<ClassIcon />}

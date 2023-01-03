@@ -238,7 +238,7 @@ function HostClass() {
 				)}
 
 				<Typography variant="h3" mb="20px">
-					Host a new class
+					Host a new exam
 				</Typography>
 
 				<div>
@@ -355,7 +355,7 @@ function HostClass() {
 					sx={{ display: "flex", justifyContent: "space-between" }}
 				>
 					<Typography variant="h4" className="mt-3">
-						Today's Class Schedule
+						Today's Exam Schedule
 					</Typography>
 					<div style={{ cursor: spin ? "not-allowed" : "pointer" }}>
 						<Button
@@ -367,7 +367,7 @@ function HostClass() {
 							startIcon={<PlayArrowIcon />}
 							onClick={startClasses}
 						>
-							Start Today's Classes
+							Start Today's Exams
 						</Button>
 					</div>
 				</Box>
@@ -380,7 +380,7 @@ function HostClass() {
 								<TableCell align="right">Subject</TableCell>
 								<TableCell align="right">Teacher</TableCell>
 								<TableCell align="right">
-									Class Duration
+									Exam Duration
 								</TableCell>
 								<TableCell align="right">Start Time</TableCell>
 								<TableCell align="right">Status</TableCell>
