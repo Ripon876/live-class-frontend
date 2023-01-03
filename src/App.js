@@ -28,7 +28,7 @@ import NotRequireAuth from "./auth/NotRequireAuth";
 
 // components for live class
 import StartClassAsTeacher from "./scenes/teacher/StartClassAsTeacher";
-import StartClassAsStudent from "./scenes/student/StartClassAsStudent";
+import StartClassAsStudent from "./scenes/student/start-class/StartClassAsStudent";
 
 function App() {
   const userType = useSelector((state) => state.type);
