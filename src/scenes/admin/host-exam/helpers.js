@@ -10,9 +10,6 @@ const initialFormData = {
 
 // handle form submit
 export const Submit = (fd, token, cls, setClss, setFd, setAlt, setCS) => {
-	
-console.log(fd)
-
 	axios
 		.post(
 			process.env.REACT_APP_SERVER_URL + "/admin/create-new-class",

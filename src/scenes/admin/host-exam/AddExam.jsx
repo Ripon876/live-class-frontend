@@ -1,12 +1,22 @@
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
+import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { subjects } from "./helpers";
-import CheckList from './CheckList';
-import AddPDF from './AddPDF';
+import CheckList from "./CheckList";
+import AddPDF from "./AddPDF";
 
-function AddExam({ fd, hc, hs, examiners, roleplayers ,sfd}) {
+function AddExam({ fd, hc, hs, examiners, roleplayers, sfd }) {
+	const [key1, setK1] = useState(true);
+	const [key2, setK2] = useState(true);
+
+	const handleSubmit = () => {
+		hs();
+		setK1(!key1);
+		setK2(!key2);
+	};
+
 	return (
 		<div>
 			<div>
@@ -117,10 +127,10 @@ function AddExam({ fd, hc, hs, examiners, roleplayers ,sfd}) {
 				/>
 			</div>
 			<div>
-				<CheckList  fd={fd} sfd={sfd}/>
+				<CheckList fd={fd} sfd={sfd} key={key1} />
 			</div>
 			<div>
-				<AddPDF  fd={fd} sfd={sfd}/>
+				<AddPDF fd={fd} sfd={sfd} key={key2} />
 			</div>
 			<div>
 				<Button
@@ -131,7 +141,7 @@ function AddExam({ fd, hc, hs, examiners, roleplayers ,sfd}) {
 						boxShadow: 3,
 					}}
 					startIcon={<AddIcon />}
-					onClick={hs}
+					onClick={handleSubmit}
 				>
 					Add
 				</Button>
