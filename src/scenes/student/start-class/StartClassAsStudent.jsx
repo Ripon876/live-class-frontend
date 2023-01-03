@@ -53,6 +53,7 @@ function StartClassAsStudent() {
 			socket.emit("setActive", { id: stdId });
 			socket.emit("getClass", searchParams.get("id"), (cls) => {
 				setCls(cls);
+				console.log(cls)
 				setRemainingTime(cls.classDuration);
 			});
 		});
@@ -67,45 +68,6 @@ function StartClassAsStudent() {
 			socket.disconnect();
 		};
 	}, []);
-
-	useEffect(() => {
-		const timer = setInterval(() => {
-			if (progress === 110) {
-				clearInterval(timer);
-			}
-
-			setProgress((oldProgress) => {
-				return oldProgress + 1;
-			});
-		}, ((cls.classDuration * 60) / 100) * 1000);
-
-		return () => {
-			clearInterval(timer);
-		};
-	}, [cls]);
-
-	useEffect(() => {
-		if (progress === 100 && onGoing) {
-			console.log("100 dfsdfd");
-			socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
-				if (res.type === "joinNextClass") {
-					// console.log("next class is their ,id : ", res.id);
-					call(res.id);
-					setClsId(res.id);
-					setSearchParams({ id: res.id });
-					socket.emit("getClass", res.id, (cls) => {
-						setCls(cls);
-						setRemainingTime(cls.classDuration);
-					});
-				}
-
-				if (res.type === "allClassEnd") {
-					// console.log("no more cls , msg: ", res.text);
-					setClsEnd(true);
-				}
-			});
-		}
-	}, [progress]);
 
 	useEffect(() => {
 		const peer = new Peer();
@@ -137,6 +99,43 @@ function StartClassAsStudent() {
 			// console.log("component unmount");
 		};
 	}, []);
+	useEffect(() => {
+		const timer = setInterval(() => {
+			if (progress === 110) {
+				clearInterval(timer);
+			}
+
+			setProgress((oldProgress) => {
+				return oldProgress + 1;
+			});
+		}, ((cls.classDuration * 60) / 100) * 1000);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, [cls]);
+
+	useEffect(() => {
+		if (progress === 100 && onGoing) {
+			socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
+				if (res.type === "joinNextClass") {
+					// console.log("next class is their ,id : ", res.id);
+					call(res.id);
+					setClsId(res.id);
+					setSearchParams({ id: res.id });
+					socket.emit("getClass", res.id, (cls) => {
+						setCls(cls);
+						setRemainingTime(cls.classDuration);
+					});
+				}
+
+				if (res.type === "allClassEnd") {
+					// console.log("no more cls , msg: ", res.text);
+					setClsEnd(true);
+				}
+			});
+		}
+	}, [progress]);
 
 	const call = (remotePeerId) => {
 		var getUserMedia =
@@ -253,6 +252,11 @@ function StartClassAsStudent() {
 						</div>
 					</div>
 				)}
+
+{/*				<object>
+   <embed id="pdfID" type="text/html" width="100%"  height="600" src={cls?.pdf.file} />
+</object>*/}
+				 <iframe src={cls?.pdf.file + '#toolbar=0'} width="100%" height="500px" />
 			</Box>
 		</div>
 	);
