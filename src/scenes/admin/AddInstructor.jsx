@@ -4,7 +4,9 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import Alert from "@mui/material/Alert";
+import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import io from "socket.io-client";
@@ -24,10 +26,30 @@ function AddInstructor() {
 		age: "",
 	};
 	const [formData, setFormData] = useState(initialFormData);
-
+	const [teachers, setTeachers] = useState([]);
+	const [instructor, setInstructor] = useState("");
 	const [cookies, setCookie] = useCookies([]);
+
+	useEffect(() => {
+		axios
+			.get(process.env.REACT_APP_SERVER_URL + "/admin/get-teachers")
+			.then((data) => setTeachers([...data.data.teachers]))
+			.catch((err) => console.log("err :", err));
+	}, []);
+
 	const handleSubmit = () => {
 		// console.log(formData);
+
+		let emptyfield = Object.values(formData).some((item) => item == "");
+		if (emptyfield) {
+			setAlert({
+				show: true,
+				type: "error",
+				msg: "enter all info proparly",
+			});
+			closeAlert();
+			return;
+		}
 
 		axios
 			.post(
@@ -51,7 +73,7 @@ function AddInstructor() {
 				setAlert({
 					show: true,
 					type: "error",
-					msg: err.data.message,
+					msg: err.response.data.message,
 				});
 				closeAlert();
 			});
@@ -71,6 +93,41 @@ function AddInstructor() {
 				msg: "",
 			});
 		}, 3500);
+	};
+
+	const removeInstructor = () => {
+		axios
+			.delete(
+				process.env.REACT_APP_SERVER_URL + "/admin/remove-instructor",
+				{
+					data: {
+						id: instructor,
+					},
+				}
+			)
+			.then((data) => {
+				axios
+					.get(
+						process.env.REACT_APP_SERVER_URL + "/admin/get-teachers"
+					)
+					.then((data) => setTeachers([...data.data.teachers]))
+					.catch((err) => console.log("err :", err));
+				setAlert({
+					show: true,
+					type: "success",
+					msg: data.data.message,
+				});
+				closeAlert();
+			})
+			.catch((err) => {
+				console.log("err : ", err);
+				setAlert({
+					show: true,
+					type: "error",
+					msg: err.data.message,
+				});
+				closeAlert();
+			});
 	};
 
 	return (
@@ -101,7 +158,7 @@ function AddInstructor() {
 						defaultValue=""
 						placeholder="Instructor name"
 						variant="filled"
-						// value={formData.title}
+						value={formData.name}
 						required
 						sx={{
 							minWidth: "300px",
@@ -113,7 +170,7 @@ function AddInstructor() {
 						label="Email"
 						type="email"
 						name="email"
-						// value={formData.classDuration}
+						value={formData.email}
 						variant="filled"
 						required
 						sx={{
@@ -129,7 +186,7 @@ function AddInstructor() {
 						type="password"
 						name="password"
 						variant="filled"
-						// value={formData.startTime}
+						value={formData.password}
 						required
 						sx={{
 							minWidth: "300px",
@@ -148,7 +205,7 @@ function AddInstructor() {
 						type="number"
 						name="phone"
 						variant="filled"
-						// value={formData.startTime}
+						value={formData.phone}
 						required
 						sx={{
 							minWidth: "300px",
@@ -167,7 +224,7 @@ function AddInstructor() {
 						type="number"
 						name="age"
 						variant="filled"
-						// value={formData.startTime}
+						value={formData.age}
 						required
 						sx={{
 							minWidth: "300px",
@@ -193,6 +250,56 @@ function AddInstructor() {
 					onClick={handleSubmit}
 				>
 					Add
+				</Button>
+			</Box>
+			<Box
+				component="form"
+				sx={{
+					"& .MuiTextField-root": { m: 2 },
+				}}
+				m="50px"
+				noValidate
+				autoComplete="off"
+			>
+				<Typography variant="h3" mb="20px">
+					Remove instructor
+				</Typography>
+
+				<div>
+					<TextField
+						id="filled-select-currency"
+						select
+						label="Select instructor"
+						name="teacher"
+						defaultValue="Jhone Doe"
+						variant="filled"
+						// value={instructor}
+						required
+						sx={{
+							minWidth: "300px",
+						}}
+						onChange={(e) => {
+							setInstructor(e.target.value);
+						}}
+					>
+						{teachers.map((teacher) => (
+							<MenuItem value={teacher._id}>
+								{teacher.name}
+							</MenuItem>
+						))}
+					</TextField>
+				</div>
+				<Button
+					variant="filled"
+					sx={{
+						mt: 1,
+						ml: 2,
+						boxShadow: 3,
+					}}
+					startIcon={<DeleteIcon />}
+					onClick={removeInstructor}
+				>
+					Remove
 				</Button>
 			</Box>
 		</div>

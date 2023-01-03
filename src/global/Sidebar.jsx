@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { tokens } from "../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import TvOutlinedIcon from "@mui/icons-material/TvOutlined";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurnedInOutlined";
@@ -121,11 +121,11 @@ const AppSidebar = () => {
                 icon={<PersonOutlinedIcon />}
               />
               <Item
-                title="Add Instructor"
-                to="/add_intructor"
+                title="Manage Instructors"
+                to="/manage_intructors"
                 setSelected={setSelected}
                 selected={selected}
-                icon={<PersonAddIcon />}
+                icon={<ManageAccountsIcon />}
               />
               {/* <Item
                 title="Stations"

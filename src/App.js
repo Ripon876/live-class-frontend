@@ -45,7 +45,7 @@ function App() {
             <Route path="students" element={<Students />} />
             <Route path="stations" element={<Stations />} />
             <Route path="host_class" element={<HostClass />} />
-            <Route path="add_intructor" element={<AddInstructor />} />
+            <Route path="manage_intructors" element={<AddInstructor />} />
 
             {/*teacher & student */}
 
