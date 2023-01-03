@@ -6,7 +6,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
-import Countdown from "react-countdown";
+
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -14,7 +14,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 import MoodIcon from "@mui/icons-material/Mood";
 import LinearProgress from "@mui/material/LinearProgress";
 
-import Preloader from './Preloader';
+import Preloader from "./Preloader";
+import Timer from "./Timer";
+import VideoContainer from "./VideoContainer";
 
 import "./style.css";
 
@@ -207,52 +209,16 @@ function StartClassAsStudent() {
 							<div className="container">
 								<div className="video-container">
 									{remainingTIme !== 0 && (
-										<Typography
-											variant="h4"
-											align="right"
-											pr="10px"
-											mb="5px"
-										>
-											Remainig Time :{" "}
-											<b pl="5px">
-												<Countdown
-													key={currentTime}
-													date={
-														currentTime +
-														remainingTIme *
-															60 *
-															1000
-													}
-													renderer={TimeRenderer}
-												/>{" "}
-											</b>
-											min
-										</Typography>
-									)}
-									<div className="video myVideo">
-										<div>
-											<video
-												playsInline
-												muted
-												ref={currentUserVideoRef}
-												autoPlay
-											/>
-
-											<h2>You</h2>
-										</div>
-									</div>
-									<div className="video otherVideo">
-										<video
-											playsInline
-											ref={remoteVideoRef}
-											autoPlay
+										<Timer
+											ct={currentTime}
+											rt={remainingTIme}
 										/>
-										{!onGoing && (
-											<h3 className="watingText">
-												Joining
-											</h3>
-										)}
-									</div>
+									)}
+									<VideoContainer
+										cvr={currentUserVideoRef}
+										rvr={remoteVideoRef}
+										og={onGoing}
+									/>
 								</div>
 								<div>
 									<Typography variant="h4">
