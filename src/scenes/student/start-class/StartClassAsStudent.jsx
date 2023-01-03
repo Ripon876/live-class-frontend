@@ -14,6 +14,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import MoodIcon from "@mui/icons-material/Mood";
 import LinearProgress from "@mui/material/LinearProgress";
 
+import Preloader from './Preloader';
+
 import "./style.css";
 
 let socket;
@@ -198,35 +200,7 @@ function StartClassAsStudent() {
 				{!clsEnd ? (
 					<div>
 						{!clsStarted && (
-							<div style={{ marginTop: "100px" }}>
-								<CircularProgress
-									size="100px"
-									mt="50px"
-									color="success"
-								/>
-								<Typography variant="h3" mt="40px">
-									' {cls?.title} '
-								</Typography>
-
-								<Typography variant="h4">
-									Subject : {cls?.subject}
-								</Typography>
-								<Typography variant="h4" mb="20px">
-									Class will be : {cls?.classDuration} min
-								</Typography>
-								<Typography variant="h2" mb="20px">
-									Getting You In
-								</Typography>
-								<Button
-									variant="contained"
-									size="large"
-									style={{ display: "none" }}
-									onClick={() => call(cls._id)}
-									ref={stratClsBtn}
-								>
-									Join
-								</Button>
-							</div>
+							<Preloader cls={cls} call={call} rf={stratClsBtn} />
 						)}
 
 						<div style={{ display: clsStarted ? "block" : "none" }}>
