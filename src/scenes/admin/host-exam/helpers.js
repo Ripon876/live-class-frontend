@@ -10,6 +10,9 @@ const initialFormData = {
 
 // handle form submit
 export const Submit = (fd, token, cls, setClss, setFd, setAlt, setCS) => {
+	
+console.log(fd)
+
 	axios
 		.post(
 			process.env.REACT_APP_SERVER_URL + "/admin/create-new-class",
@@ -162,4 +165,15 @@ export const getRoleplayers = (setR) => {
 		.get(process.env.REACT_APP_SERVER_URL + "/admin/get-roleplayers")
 		.then((data) => setR([...data.data.roles]))
 		.catch((err) => console.log("err :", err));
+};
+
+export const fileToBase64 = (file, cb) => {
+	const reader = new FileReader();
+	reader.readAsDataURL(file);
+	reader.onload = function () {
+		cb(null, reader.result);
+	};
+	reader.onerror = function (error) {
+		cb(error, null);
+	};
 };

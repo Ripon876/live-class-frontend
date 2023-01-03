@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import { subjects } from "./helpers";
 import CheckList from './CheckList';
+import AddPDF from './AddPDF';
 
 function AddExam({ fd, hc, hs, examiners, roleplayers ,sfd}) {
 	return (
@@ -117,6 +118,9 @@ function AddExam({ fd, hc, hs, examiners, roleplayers ,sfd}) {
 			</div>
 			<div>
 				<CheckList  fd={fd} sfd={sfd}/>
+			</div>
+			<div>
+				<AddPDF  fd={fd} sfd={sfd}/>
 			</div>
 			<div>
 				<Button
