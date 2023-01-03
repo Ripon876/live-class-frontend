@@ -17,6 +17,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Preloader from "./Preloader";
 import Timer from "./Timer";
 import VideoContainer from "./VideoContainer";
+import PDFViewer from "./PDFViewer";
 
 import "./style.css";
 
@@ -27,13 +28,13 @@ function StartClassAsStudent() {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [cookies, setCookie] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
+	const [showPdf, setShowPdf] = useState(false);
 	const stdId = useSelector((state) => state.id);
 	const [onGoing, setOngoing] = useState(false);
 	const [clsEnd, setClsEnd] = useState(false);
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 	const stratClsBtn = useRef(null);
-	// for call
 
 	const [peerId, setPeerId] = useState("");
 	const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
@@ -53,7 +54,7 @@ function StartClassAsStudent() {
 			socket.emit("setActive", { id: stdId });
 			socket.emit("getClass", searchParams.get("id"), (cls) => {
 				setCls(cls);
-				console.log(cls)
+				console.log(cls);
 				setRemainingTime(cls.classDuration);
 			});
 		});
@@ -167,6 +168,7 @@ function StartClassAsStudent() {
 				setProgress(0);
 				setCurrentgTime(Date.now());
 				setClsStarted(true);
+				setShowPdf(true);
 				// console.log("call accepted");
 			});
 		});
@@ -253,10 +255,13 @@ function StartClassAsStudent() {
 					</div>
 				)}
 
-{/*				<object>
-   <embed id="pdfID" type="text/html" width="100%"  height="600" src={cls?.pdf.file} />
-</object>*/}
-				 <iframe src={cls?.pdf.file + '#toolbar=0'} width="100%" height="500px" />
+				{showPdf && (
+					<PDFViewer
+						pdf={cls?.pdf?.file}
+						vf={cls?.pdf?.visibleFor}
+						ssp={setShowPdf}
+					/>
+				)}
 			</Box>
 		</div>
 	);

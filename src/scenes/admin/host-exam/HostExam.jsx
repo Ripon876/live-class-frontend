@@ -64,6 +64,7 @@ function HostClass() {
 				type: "success",
 				msg: "All exams has been taken",
 			});
+			getExams(setExams, setCanStart);
 			closeAlert(setAlert);
 			setSpin(false);
 			checkExams(exams, setCanStart);
