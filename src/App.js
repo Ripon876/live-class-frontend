@@ -10,7 +10,8 @@ import Instructors from "./scenes/admin/Instructors";
 import Students from "./scenes/admin/Students";
 import Stations from "./scenes/admin/Stations";
 import HostClass from "./scenes/admin/HostClass";
-import AddInstructor from "./scenes/admin/AddInstructor";
+import MangeExaminers from "./scenes/admin/MangeExaminers";
+import MangeRoleplayers from "./scenes/admin/MangeRoleplayers";
 
 // teacher
 import TodaysClassesOfTeacher from "./scenes/teacher/TodaysClassesOfTeacher";
@@ -45,7 +46,8 @@ function App() {
             <Route path="students" element={<Students />} />
             <Route path="stations" element={<Stations />} />
             <Route path="host_class" element={<HostClass />} />
-            <Route path="manage_intructors" element={<AddInstructor />} />
+            <Route path="manage_examiners" element={<MangeExaminers />} />
+            <Route path="manage_roleplayers" element={<MangeRoleplayers />} />
 
             {/*teacher & student */}
 

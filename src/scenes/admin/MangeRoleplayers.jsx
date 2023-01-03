@@ -12,7 +12,7 @@ import { useCookies } from "react-cookie";
 import io from "socket.io-client";
 import "./style.css";
 
-function AddInstructor() {
+function MangeRoleplayers() {
 	const [alert, setAlert] = useState({
 		show: false,
 		type: "",
@@ -26,15 +26,12 @@ function AddInstructor() {
 		age: "",
 	};
 	const [formData, setFormData] = useState(initialFormData);
-	const [teachers, setTeachers] = useState([]);
+	const [roleplayers, setRolePlayers] = useState([]);
 	const [instructor, setInstructor] = useState("");
 	const [cookies, setCookie] = useCookies([]);
 
 	useEffect(() => {
-		axios
-			.get(process.env.REACT_APP_SERVER_URL + "/admin/get-teachers")
-			.then((data) => setTeachers([...data.data.teachers]))
-			.catch((err) => console.log("err :", err));
+		getRoleplayers();
 	}, []);
 
 	const handleSubmit = () => {
@@ -53,7 +50,7 @@ function AddInstructor() {
 
 		axios
 			.post(
-				process.env.REACT_APP_SERVER_URL + "/admin/add_instructor",
+				process.env.REACT_APP_SERVER_URL + "/admin/add-instructor",
 				formData,
 				{
 					headers: { Authorization: `Bearer ${cookies.token}` },
@@ -61,6 +58,7 @@ function AddInstructor() {
 			)
 			.then((data) => {
 				setFormData(initialFormData);
+				getRoleplayers();
 				setAlert({
 					show: true,
 					type: "success",
@@ -95,7 +93,7 @@ function AddInstructor() {
 		}, 3500);
 	};
 
-	const removeInstructor = () => {
+	const removeRoleplayer = () => {
 		axios
 			.delete(
 				process.env.REACT_APP_SERVER_URL + "/admin/remove-instructor",
@@ -106,12 +104,7 @@ function AddInstructor() {
 				}
 			)
 			.then((data) => {
-				axios
-					.get(
-						process.env.REACT_APP_SERVER_URL + "/admin/get-teachers"
-					)
-					.then((data) => setTeachers([...data.data.teachers]))
-					.catch((err) => console.log("err :", err));
+				getRoleplayers();
 				setAlert({
 					show: true,
 					type: "success",
@@ -128,6 +121,13 @@ function AddInstructor() {
 				});
 				closeAlert();
 			});
+	};
+
+	const getRoleplayers = () => {
+		axios
+			.get(process.env.REACT_APP_SERVER_URL + "/admin/get-roleplayers")
+			.then((data) => setRolePlayers([...data.data.roles]))
+			.catch((err) => console.log("err :", err));
 	};
 
 	return (
@@ -148,7 +148,7 @@ function AddInstructor() {
 				)}
 
 				<Typography variant="h3" mb="20px">
-					Add new instructor
+					Add new roleplayer
 				</Typography>
 
 				<div>
@@ -262,7 +262,7 @@ function AddInstructor() {
 				autoComplete="off"
 			>
 				<Typography variant="h3" mb="20px">
-					Remove instructor
+					Remove roleplayer
 				</Typography>
 
 				<div>
@@ -282,7 +282,7 @@ function AddInstructor() {
 							setInstructor(e.target.value);
 						}}
 					>
-						{teachers.map((teacher) => (
+						{roleplayers.map((teacher) => (
 							<MenuItem value={teacher._id}>
 								{teacher.name}
 							</MenuItem>
@@ -297,7 +297,7 @@ function AddInstructor() {
 						boxShadow: 3,
 					}}
 					startIcon={<DeleteIcon />}
-					onClick={removeInstructor}
+					onClick={removeRoleplayer}
 				>
 					Remove
 				</Button>
@@ -306,4 +306,4 @@ function AddInstructor() {
 	);
 }
 
-export default AddInstructor;
+export default MangeRoleplayers;
