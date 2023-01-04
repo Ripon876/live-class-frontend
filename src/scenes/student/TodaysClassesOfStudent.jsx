@@ -91,6 +91,7 @@ function TodaysClassesOfStudent() {
 					sx={{ display: "flex", justifyContent: "center" }}
 				>
 					<Button
+					disabled={classes.length === 0}
 						size="large"
 						variant="filled"
 						sx={{
@@ -103,7 +104,7 @@ function TodaysClassesOfStudent() {
 						}}
 					>
 						<Typography variant="h3">
-							<PlayArrowIcon /> Start Classes
+							<PlayArrowIcon /> Start Exams
 						</Typography>
 					</Button>
 				</Box>
