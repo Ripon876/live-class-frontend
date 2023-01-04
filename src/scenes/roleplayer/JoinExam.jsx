@@ -273,7 +273,7 @@ function JoinExam() {
 								color="success"
 							/>
 							<Typography variant="h2" mb="20px">
-								No More Classes Left Today
+								All the candidates have given the exam
 							</Typography>
 							<Link to="/" style={{ textDecoration: "none" }}>
 								<Button variant="contained" size="large">

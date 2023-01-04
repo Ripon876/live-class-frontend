@@ -244,7 +244,7 @@ function StartClassAsStudent() {
 								color="success"
 							/>
 							<Typography variant="h2" mb="20px">
-								No More Classes Left Today
+								No More Exams Left Today
 							</Typography>
 							<Link to="/" style={{ textDecoration: "none" }}>
 								<Button variant="contained" size="large">
