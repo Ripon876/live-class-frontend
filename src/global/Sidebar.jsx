@@ -89,6 +89,7 @@ const AppSidebar = () => {
               {userType === "admin" && "Admin"}
               {userType === "teacher" && "Teacher"}
               {userType === "student" && "Student"}
+              {userType === "roleplayer" && "Roleplayer"}
             </Typography>
           </Box>
         )}
