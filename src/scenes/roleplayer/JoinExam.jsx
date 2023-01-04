@@ -14,6 +14,8 @@ import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
 import MoodIcon from "@mui/icons-material/Mood";
 
+import Candidate from "./Candidate";
+
 import "./style.css";
 
 let socket;
@@ -50,6 +52,7 @@ function JoinExam() {
 			socket.emit("setActive", { id: rolplayerId });
 		});
 
+		
 		socket.on("allClassEnd", (text) => {
 			// console.log("classes end : ", text);
 			setClsEnd(true);
@@ -234,19 +237,8 @@ function JoinExam() {
 
 												<h2>You</h2>
 											</div>
-										</div>
-										<div className="video otherVideo">
-											<video
-												playsInline
-												ref={remoteVideoRef}
-												autoPlay
-											/>
-											{!onGoing && (
-												<h3 className="watingText">
-													Wating for student
-												</h3>
-											)}
-										</div>
+										</div> 
+										<Candidate og={onGoing} socket={socket} />
 									</div>
 
 									<div>

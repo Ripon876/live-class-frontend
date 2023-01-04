@@ -106,6 +106,12 @@ function StartClassAsTeacher() {
 					socket.emit("getStudent", call.metadata.std.id, (std) => {
 						setStd(std);
 						// console.log(std);
+						// check for roleplayer exists or not
+						socket.emit(
+							"addWithRoleplayer",
+							std,
+							searchParams.get("id")
+						);
 					});
 					socket.emit(
 						"newClassStarted",
