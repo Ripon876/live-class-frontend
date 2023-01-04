@@ -9,27 +9,27 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import AddIcon from "@mui/icons-material/Add";
 
 function TodaysClassesOfRoleplayer() {
 	const [cookies, setCookie] = useCookies([]);
-	const [classes, setClasses] = useState([]);
+	const [classes, setExams] = useState([]);
 
 	useEffect(() => {
 		axios
-			.get(process.env.REACT_APP_SERVER_URL + "/teacher/get-classes", {
+			.get(process.env.REACT_APP_SERVER_URL + "/roleplayer/get-exams", {
 				headers: { Authorization: `Bearer ${cookies.token}` },
 			})
-			.then((data) => setClasses([...data.data.classes]))
+			.then((data) => setExams([...data.data.exams]))
 			.catch((err) => console.log("err :", err));
 	}, []);
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
 			<Box component="div" m="40px 40px " width="90%" p="0 0 0 20px">
 				<Typography variant="h4" mb="20px">
-					Today's Exams that you have to join 
+					Today's Exams that you have to join
 				</Typography>
 
 				<TableContainer component={Paper}>
@@ -39,9 +39,10 @@ function TodaysClassesOfRoleplayer() {
 								<TableCell>Title</TableCell>
 								<TableCell align="right">Subject</TableCell>
 								<TableCell align="right">
-									Class Duration
+									Exam Duration
 								</TableCell>
 								<TableCell align="right">Start Time</TableCell>
+								<TableCell align="right">Status</TableCell>
 								<TableCell align="right">Actions</TableCell>
 							</TableRow>
 						</TableHead>
@@ -67,14 +68,19 @@ function TodaysClassesOfRoleplayer() {
 										{singleClass.startTime}
 									</TableCell>
 									<TableCell align="right">
+										{singleClass.status}
+									</TableCell>
+
+									<TableCell align="right">
 										<Button
+										disabled={singleClass.status === 'Not Started'}
 											variant="filled"
-											startIcon={<PlayArrowIcon />}
+											startIcon={<AddIcon />}
 											onClick={() => {
 												window.location.href = `/live-class?id=${singleClass._id}`;
 											}}
 										>
-											Start
+											Join
 										</Button>
 									</TableCell>
 								</TableRow>

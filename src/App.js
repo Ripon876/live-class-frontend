@@ -71,6 +71,8 @@ function App() {
               element={
                 userType === "teacher" ? (
                   <StartClassAsTeacher />
+                ) : userType === "roleplayer" ? (
+                  <JoinExam />
                 ) : (
                   <StartClassAsStudent />
                 )
