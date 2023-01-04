@@ -295,11 +295,11 @@ function StartClassAsTeacher() {
 							<Typography variant="h2" mb="20px">
 								All the candidates have given the exam
 							</Typography>
-							<Link to="/" style={{ textDecoration: "none" }}>
+							<a href="/" style={{ textDecoration: "none" }}>
 								<Button variant="contained" size="large">
 									Back to dashboard
 								</Button>
-							</Link>
+							</a>
 						</div>
 					</div>
 				)}
