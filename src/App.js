@@ -17,6 +17,8 @@ import MangeRoleplayers from "./scenes/admin/MangeRoleplayers";
 import TodaysClassesOfTeacher from "./scenes/teacher/TodaysClassesOfTeacher";
 // student
 import TodaysClassesOfStudent from "./scenes/student/TodaysClassesOfStudent";
+// roleplayer
+import TodaysClassesOfRoleplayer from "./scenes/roleplayer/TodaysClassesOfRoleplayer";
 
 // new files v
 import DashboardPage from "./pages/DashboardPage";
@@ -29,6 +31,7 @@ import NotRequireAuth from "./auth/NotRequireAuth";
 // components for live class
 import StartClassAsTeacher from "./scenes/teacher/StartClassAsTeacher";
 import StartClassAsStudent from "./scenes/student/start-class/StartClassAsStudent";
+import JoinExam from "./scenes/roleplayer/JoinExam";
 
 function App() {
   const userType = useSelector((state) => state.type);
@@ -56,6 +59,8 @@ function App() {
               element={
                 userType === "teacher" ? (
                   <TodaysClassesOfTeacher />
+                ) : userType === "roleplayer" ? (
+                  <TodaysClassesOfRoleplayer />
                 ) : (
                   <TodaysClassesOfStudent />
                 )
