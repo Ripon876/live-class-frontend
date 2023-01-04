@@ -10,8 +10,9 @@ function Candidate({ og, socket }) {
 		cdPeerRef.current = peer;
 
 		socket.on("joinCandidate", (stdId) => {
-			console.log(stdId);
 			call(stdId._id + "candidate");
+			console.log(stdId);
+			console.log("new student joining with roleplayer");
 		});
 	}, []);
 

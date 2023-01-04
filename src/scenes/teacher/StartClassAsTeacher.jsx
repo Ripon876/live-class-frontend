@@ -20,6 +20,7 @@ let socket;
 
 function StartClassAsTeacher() {
 	const [cls, setCls] = useState({});
+	const [haveRp, setHaveRp] = useState(false);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [cookies, setCookie] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
@@ -27,6 +28,7 @@ function StartClassAsTeacher() {
 	const [clsEnd, setClsEnd] = useState(false);
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
+
 	// for call
 	const [calling, setCaling] = useState(false);
 	const [myStream, setMyStream] = useState();
@@ -42,6 +44,28 @@ function StartClassAsTeacher() {
 	const [std, setStd] = useState({});
 
 	const [progress, setProgress] = useState(0);
+
+	// fetching class
+	useEffect(() => {
+		axios
+			.get(
+				process.env.REACT_APP_SERVER_URL +
+					"/teacher/get-class/" +
+					searchParams.get("id"),
+				{
+					headers: { Authorization: `Bearer ${cookies.token}` },
+				}
+			)
+			.then((data) => {
+				// console.log(data.data.cls);
+				// console.log()
+				setHaveRp(Boolean(data.data.cls.roleplayer));
+				setCls({ ...data.data.cls });
+				setRemainingTime(data.data.cls.classDuration);
+				// console.log("getting class using axios : ", data.data.cls);
+			})
+			.catch((err) => console.log("err :", err));
+	}, []);
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
@@ -103,17 +127,17 @@ function StartClassAsTeacher() {
 					remoteVideoRef.current.srcObject = remoteStream;
 					remoteVideoRef.current.play();
 					// get joined student info
+
+					socket.emit(
+						"addWithRoleplayer",
+						{ _id: call.metadata.std.id },
+						searchParams.get("id")
+					);
+
 					socket.emit("getStudent", call.metadata.std.id, (std) => {
 						setStd(std);
 						// console.log(std);
 						// check for roleplayer exists or not
-						if (cls.roleplayer) {
-							socket.emit(
-								"addWithRoleplayer",
-								std,
-								searchParams.get("id")
-							);
-						}
 					});
 					socket.emit(
 						"newClassStarted",
@@ -126,25 +150,6 @@ function StartClassAsTeacher() {
 
 		peerInstance.current = peer;
 		rpPeerInstance.current = rp_peer;
-	}, []);
-
-	// fetching class
-	useEffect(() => {
-		axios
-			.get(
-				process.env.REACT_APP_SERVER_URL +
-					"/teacher/get-class/" +
-					searchParams.get("id"),
-				{
-					headers: { Authorization: `Bearer ${cookies.token}` },
-				}
-			)
-			.then((data) => {
-				setCls({ ...data.data.cls });
-				setRemainingTime(data.data.cls.classDuration);
-				// console.log("getting class using axios : ", data.data.cls);
-			})
-			.catch((err) => console.log("err :", err));
 	}, []);
 
 	const startClass = () => {
