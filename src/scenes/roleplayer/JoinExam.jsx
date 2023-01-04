@@ -34,6 +34,7 @@ function JoinExam() {
 	const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
 	const [onGoing, setOngoing] = useState(false);
 	const remoteVideoRef = useRef(null);
+	const exmrVideoRef = useRef(null);
 	const currentUserVideoRef = useRef(null);
 	const peerInstance = useRef(null);
 	const callerRef = useRef(null);
@@ -75,11 +76,12 @@ function JoinExam() {
 		const peer = new Peer(searchParams.get("id") + "roleplayer");
 
 		peer.on("open", (id) => {
+			console.log(id)
 			setPeerId(id);
 		});
-		// console.log(peer);
+
 		peer.on("call", (call) => {
-			// console.log("calling");
+			console.log("calling");
 
 			var getUserMedia =
 				navigator.getUserMedia ||
@@ -89,26 +91,12 @@ function JoinExam() {
 			getUserMedia({ video: true, audio: true }, (mediaStream) => {
 				currentUserVideoRef.current.srcObject = mediaStream;
 				currentUserVideoRef.current.play();
-				callerRef.current = call;
-				setOngoing(true);
-				setProgress(0);
-				setCurrentgTime(Date.now());
+
 				call.answer(mediaStream);
 
-				call.on("stream", function (remoteStream) {
-					// console.log("data : ", call.metadata);
-					remoteVideoRef.current.srcObject = remoteStream;
-					remoteVideoRef.current.play();
-					// get joined student info
-					socket.emit("getStudent", call.metadata.std.id, (std) => {
-						setStd(std);
-						// console.log(std);
-					});
-					socket.emit(
-						"newClassStarted",
-						call.metadata.std.id,
-						searchParams.get("id")
-					);
+				call.on("stream", function (exmrStream) {
+					exmrVideoRef.current.srcObject = exmrStream;
+					exmrVideoRef.current.play();
 				});
 			});
 		});
@@ -137,7 +125,12 @@ function JoinExam() {
 
 	const startClass = () => {
 		setClsStarted(true);
-		socket.emit("joinRolplayer", peerId, cls?.teacher?._id);
+		// console.log(peerId);
+		socket.emit(
+			"joinRolplayer",
+			searchParams.get("id") + "roleplayer",
+			cls?.teacher?._id
+		);
 	};
 
 	const TimeRenderer = ({ minutes, seconds }) => {
@@ -219,6 +212,17 @@ function JoinExam() {
 												min
 											</Typography>
 										)}
+										<div className="video examinerVideo">
+											<div>
+												<video
+													playsInline
+													ref={exmrVideoRef}
+													autoPlay
+												/>
+
+												<h2>Examiner</h2>
+											</div>
+										</div>
 										<div className="video myVideo">
 											<div>
 												<video

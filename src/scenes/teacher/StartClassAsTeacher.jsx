@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
 import MoodIcon from "@mui/icons-material/Mood";
-
+import Roleplayer from "./Roleplayer";
 import "./style.css";
 
 let socket;
@@ -34,8 +34,10 @@ function StartClassAsTeacher() {
 	const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
 	const [onGoing, setOngoing] = useState(false);
 	const remoteVideoRef = useRef(null);
+
 	const currentUserVideoRef = useRef(null);
 	const peerInstance = useRef(null);
+	const rpPeerInstance = useRef(null);
 	const callerRef = useRef(null);
 	const [std, setStd] = useState({});
 
@@ -73,13 +75,14 @@ function StartClassAsTeacher() {
 
 	useEffect(() => {
 		const peer = new Peer(searchParams.get("id"));
+		const rp_peer = new Peer(searchParams.get("id") + "examiner");
 
 		peer.on("open", (id) => {
 			setPeerId(id);
 		});
 		// console.log(peer);
 		peer.on("call", (call) => {
-			// console.log("calling");
+			console.log("calling");
 
 			var getUserMedia =
 				navigator.getUserMedia ||
@@ -104,12 +107,17 @@ function StartClassAsTeacher() {
 						setStd(std);
 						// console.log(std);
 					});
-					socket.emit('newClassStarted',call.metadata.std.id,searchParams.get("id"));
+					socket.emit(
+						"newClassStarted",
+						call.metadata.std.id,
+						searchParams.get("id")
+					);
 				});
 			});
 		});
 
 		peerInstance.current = peer;
+		rpPeerInstance.current = rp_peer;
 	}, []);
 
 	// fetching class
@@ -214,7 +222,7 @@ function StartClassAsTeacher() {
 													opacity: onGoing ? "1" : 0,
 												}}
 											>
-												Remainig Time :{" "}
+												Remainig Time :
 												<b pl="5px">
 													<Countdown
 														key={currentTime}
@@ -225,11 +233,16 @@ function StartClassAsTeacher() {
 																1000
 														}
 														renderer={TimeRenderer}
-													/>{" "}
+													/>
 												</b>
 												min
 											</Typography>
 										)}
+										<Roleplayer
+											socket={socket}
+											cvr={currentUserVideoRef}
+											peer={rpPeerInstance}
+										/>
 										<div className="video myVideo">
 											<div>
 												<video
