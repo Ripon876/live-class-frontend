@@ -23,7 +23,7 @@ function JoinExam() {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [cookies, setCookie] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
-	const teacherId = useSelector((state) => state.id);
+	const rolplayerId = useSelector((state) => state.id);
 	const [clsEnd, setClsEnd] = useState(false);
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
@@ -46,7 +46,7 @@ function JoinExam() {
 
 		socket.on("connect", () => {
 			// console.log("socket connected");
-			socket.emit("setActive", { id: teacherId });
+			socket.emit("setActive", { id: rolplayerId });
 		});
 
 		socket.on("allClassEnd", (text) => {
@@ -72,7 +72,7 @@ function JoinExam() {
 	}, [cls]);
 
 	useEffect(() => {
-		const peer = new Peer(searchParams.get("id"));
+		const peer = new Peer(searchParams.get("id") + "roleplayer");
 
 		peer.on("open", (id) => {
 			setPeerId(id);
@@ -137,22 +137,7 @@ function JoinExam() {
 
 	const startClass = () => {
 		setClsStarted(true);
-
-		axios
-			.get(
-				process.env.REACT_APP_SERVER_URL +
-					"/teacher/starting-class/" +
-					searchParams.get("id"),
-				{
-					headers: {
-						Authorization: `Bearer ${cookies.token}`,
-					},
-				}
-			)
-			.then((data) => {
-				// console.log(data.data.msg)
-			})
-			.catch((err) => console.log("err :", err));
+		socket.emit("joinRolplayer", peerId, cls?.teacher?._id);
 	};
 
 	const TimeRenderer = ({ minutes, seconds }) => {
@@ -198,7 +183,7 @@ function JoinExam() {
 										size="large"
 										onClick={startClass}
 									>
-										Start Class
+										Join Exam
 									</Button>
 								)}
 							</>
