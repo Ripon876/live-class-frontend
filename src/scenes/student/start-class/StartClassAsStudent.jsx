@@ -73,31 +73,13 @@ function StartClassAsStudent() {
 
 	useEffect(() => {
 		const peer = new Peer();
-		
 
 		peer.on("open", (id) => {
 			setPeerId(id);
 		});
 
-		// peer.on("call", (call) => {
-		// 	var getUserMedia =
-		// 		navigator.getUserMedia ||
-		// 		navigator.webkitGetUserMedia ||
-		// 		navigator.mozGetUserMedia;
-
-		// 	getUserMedia({ video: true, audio: true }, (mediaStream) => {
-		// 		currentUserVideoRef.current.srcObject = mediaStream;
-		// 		currentUserVideoRef.current.play();
-		// 		call.answer(mediaStream);
-		// 		call.on("stream", function (remoteStream) {
-		// 			remoteVideoRef.current.srcObject = remoteStream;
-		// 			remoteVideoRef.current.play();
-		// 		});
-		// 	});
-		// });
-
 		peerInstance.current = peer;
-		
+
 		return () => {
 			// console.log("component unmount");
 		};
@@ -223,6 +205,7 @@ function StartClassAsStudent() {
 										og={onGoing}
 										socket={socket}
 										stdId={stdId}
+										rp={cls.roleplayer}
 									/>
 								</div>
 								<div>
@@ -259,7 +242,7 @@ function StartClassAsStudent() {
 					</div>
 				)}
 
-				{showPdf && (
+				{showPdf && cls?.pdf && (
 					<PDFViewer
 						pdf={cls?.pdf?.file}
 						vf={cls?.pdf?.visibleFor}

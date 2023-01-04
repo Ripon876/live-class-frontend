@@ -107,11 +107,13 @@ function StartClassAsTeacher() {
 						setStd(std);
 						// console.log(std);
 						// check for roleplayer exists or not
-						socket.emit(
-							"addWithRoleplayer",
-							std,
-							searchParams.get("id")
-						);
+						if (cls.roleplayer) {
+							socket.emit(
+								"addWithRoleplayer",
+								std,
+								searchParams.get("id")
+							);
+						}
 					});
 					socket.emit(
 						"newClassStarted",
@@ -244,11 +246,13 @@ function StartClassAsTeacher() {
 												min
 											</Typography>
 										)}
-										<Roleplayer
-											socket={socket}
-											cvr={currentUserVideoRef}
-											peer={rpPeerInstance}
-										/>
+										{cls.roleplayer && (
+											<Roleplayer
+												socket={socket}
+												cvr={currentUserVideoRef}
+												peer={rpPeerInstance}
+											/>
+										)}
 										<div className="video myVideo">
 											<div>
 												<video
