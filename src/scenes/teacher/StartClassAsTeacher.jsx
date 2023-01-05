@@ -17,6 +17,7 @@ import CandidateVideo from "./start-exam/CandidateVideo";
 import ProgressBar from "./start-exam/ProgressBar";
 import RemainingTime from "./start-exam/RemainingTime";
 import CandidateInfo from "./start-exam/CandidateInfo";
+import Mark from "./start-exam/Mark";
 
 let socket;
 
@@ -29,7 +30,8 @@ function StartClassAsTeacher() {
 	const [clsEnd, setClsEnd] = useState(false);
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
-
+	const [mark, setMark] = useState(true);
+	const [mSubmited, setMSubmited] = useState(false);
 	// for call
 
 	const [onGoing, setOngoing] = useState(false);
@@ -54,7 +56,7 @@ function StartClassAsTeacher() {
 			)
 			.then((data) => {
 				// console.log(data.data.cls);
-				// console.log()
+				console.log(data.data.cls);
 				setCls({ ...data.data.cls });
 				setRemainingTime(data.data.cls.classDuration);
 				// console.log("getting class using axios : ", data.data.cls);
@@ -103,7 +105,8 @@ function StartClassAsTeacher() {
 					candidateVideoRef.current.srcObject = remoteStream;
 					candidateVideoRef.current.play();
 					// get joined student info
-
+					setMark(true);
+					setMSubmited(false);
 					socket.emit(
 						"addWithRoleplayer",
 						{ _id: call.metadata.std.id },
@@ -197,6 +200,24 @@ function StartClassAsTeacher() {
 									</div>
 
 									<CandidateInfo og={onGoing} c={std} />
+
+									{mSubmited && (
+										<h3 className="text-success">
+											Mark Submited
+										</h3>
+									)}
+
+									{cls?.checklist.length !== 0 &&
+										mark &&
+										onGoing && (
+											<Mark
+												list={cls?.checklist}
+												sm={setMark}
+												ms={setMSubmited}
+												cId={std._id}
+												eId={cls._id}
+											/>
+										)}
 								</div>
 							</div>
 						)}
