@@ -16,6 +16,12 @@ import MoodIcon from "@mui/icons-material/Mood";
 import Roleplayer from "./Roleplayer";
 import "./style.css";
 
+import ExamDetail from "./start-exam/ExamDetail";
+import EndScreen from "./start-exam/EndScreen";
+import MyVideo from "./start-exam/MyVideo";
+import CandidateVideo from "./start-exam/CandidateVideo";
+import ProgressBar from "./start-exam/ProgressBar";
+
 let socket;
 
 function StartClassAsTeacher() {
@@ -80,22 +86,6 @@ function StartClassAsTeacher() {
 			setClsEnd(true);
 		});
 	}, []);
-
-	useEffect(() => {
-		const timer = setInterval(() => {
-			if (progress === 110) {
-				clearInterval(timer);
-			}
-
-			setProgress((oldProgress) => {
-				return oldProgress + 1;
-			});
-		}, ((cls.classDuration * 60) / 100) * 1000);
-
-		return () => {
-			clearInterval(timer);
-		};
-	}, [cls]);
 
 	useEffect(() => {
 		const peer = new Peer(searchParams.get("id"));
@@ -183,13 +173,13 @@ function StartClassAsTeacher() {
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
-			{onGoing && !clsEnd && (
-				<LinearProgress
-					variant="determinate"
-					color="success"
-					value={progress}
-				/>
-			)}
+			<ProgressBar
+				og={onGoing}
+				ee={clsEnd}
+				exam={cls}
+				pr={progress}
+				setPr={setProgress}
+			/>
 
 			<Box
 				component="div"
@@ -202,22 +192,7 @@ function StartClassAsTeacher() {
 					<div>
 						{!clsStarted && (
 							<>
-								<Typography variant="h3" mt="150px">
-									' {cls.title} '
-								</Typography>
-								<Typography variant="h4" mb="20px">
-									Each class will be : {cls.classDuration} min
-								</Typography>
-
-								{cls.hasToJoin !== 0 && (
-									<Button
-										variant="contained"
-										size="large"
-										onClick={startClass}
-									>
-										Start Class
-									</Button>
-								)}
+								<ExamDetail exam={cls} se={startClass} />
 							</>
 						)}
 
@@ -258,30 +233,11 @@ function StartClassAsTeacher() {
 												peer={rpPeerInstance}
 											/>
 										)}
-										<div className="video myVideo">
-											<div>
-												<video
-													playsInline
-													muted
-													ref={currentUserVideoRef}
-													autoPlay
-												/>
-
-												<h2>You</h2>
-											</div>
-										</div>
-										<div className="video otherVideo">
-											<video
-												playsInline
-												ref={remoteVideoRef}
-												autoPlay
-											/>
-											{!onGoing && (
-												<h3 className="watingText">
-													Wating for student
-												</h3>
-											)}
-										</div>
+										<MyVideo mvr={currentUserVideoRef} />
+										<CandidateVideo
+											cvr={remoteVideoRef}
+											og={onGoing}
+										/>
 									</div>
 
 									<div>
@@ -300,23 +256,7 @@ function StartClassAsTeacher() {
 						)}
 					</div>
 				) : (
-					<div>
-						<div>
-							<MoodIcon
-								style={{ fontSize: "200px" }}
-								mt="50px"
-								color="success"
-							/>
-							<Typography variant="h2" mb="20px">
-								All the candidates have given the exam
-							</Typography>
-							<a href="/" style={{ textDecoration: "none" }}>
-								<Button variant="contained" size="large">
-									Back to dashboard
-								</Button>
-							</a>
-						</div>
-					</div>
+					<EndScreen />
 				)}
 			</Box>
 		</div>
