@@ -173,6 +173,15 @@ const AppSidebar = () => {
               icon={<ClassIcon />}
             />
           )}
+          {userType === "student" && (
+            <Item
+              title="Results"
+              to="/result"
+              setSelected={setSelected}
+              selected={selected}
+              icon={<AssignmentTurnedInOutlinedIcon />}
+            />
+          )}
         </Menu>
       </Sidebar>
     </Box>

@@ -73,7 +73,7 @@ function StartClassAsTeacher() {
 		});
 
 		socket.on("allClassEnd", (text) => {
-			// console.log("classes end : ", text);
+			console.log("classes end : ", text);
 			setClsEnd(true);
 		});
 	}, []);
@@ -207,17 +207,15 @@ function StartClassAsTeacher() {
 										</h3>
 									)}
 
-									{cls?.checklist.length !== 0 &&
-										mark &&
-										onGoing && (
-											<Mark
-												list={cls?.checklist}
-												sm={setMark}
-												ms={setMSubmited}
-												cId={std._id}
-												eId={cls._id}
-											/>
-										)}
+									{mark && onGoing && (
+										<Mark
+											list={cls?.checklist}
+											sm={setMark}
+											ms={setMSubmited}
+											cId={std._id}
+											eId={cls._id}
+										/>
+									)}
 								</div>
 							</div>
 						)}

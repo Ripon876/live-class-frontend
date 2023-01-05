@@ -17,6 +17,7 @@ import MangeRoleplayers from "./scenes/admin/MangeRoleplayers";
 import TodaysClassesOfTeacher from "./scenes/teacher/TodaysClassesOfTeacher";
 // student
 import TodaysClassesOfStudent from "./scenes/student/TodaysClassesOfStudent";
+import Result from "./scenes/student/Result";
 // roleplayer
 import TodaysClassesOfRoleplayer from "./scenes/roleplayer/TodaysClassesOfRoleplayer";
 
@@ -77,6 +78,10 @@ function App() {
                   <StartClassAsStudent />
                 )
               }
+            />
+            <Route
+              path="result"
+              element={userType === "student" && <Result />}
             />
 
             <Route path="settings" element={<Settings />} />

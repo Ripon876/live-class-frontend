@@ -4,7 +4,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 function ProgressBar({ og, ee, exam, pr, setPr }) {
 	useEffect(() => {
 		const timer = setInterval(() => {
-			if (pr === 110) {
+			if (pr === 100) {
 				clearInterval(timer);
 			}
 
