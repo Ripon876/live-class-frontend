@@ -21,6 +21,7 @@ import EndScreen from "./start-exam/EndScreen";
 import MyVideo from "./start-exam/MyVideo";
 import CandidateVideo from "./start-exam/CandidateVideo";
 import ProgressBar from "./start-exam/ProgressBar";
+import RemainingTime from "./start-exam/RemainingTime";
 
 let socket;
 
@@ -162,15 +163,6 @@ function StartClassAsTeacher() {
 			.catch((err) => console.log("err :", err));
 	};
 
-	const TimeRenderer = ({ minutes, seconds }) => {
-		return (
-			<span>
-				{minutes < 10 ? "0" + minutes : minutes}:
-				{seconds < 10 ? "0" + seconds : seconds}
-			</span>
-		);
-	};
-
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
 			<ProgressBar
@@ -191,9 +183,7 @@ function StartClassAsTeacher() {
 				{!clsEnd ? (
 					<div>
 						{!clsStarted && (
-							<>
-								<ExamDetail exam={cls} se={startClass} />
-							</>
+							<ExamDetail exam={cls} se={startClass} />
 						)}
 
 						{clsStarted && (
@@ -201,30 +191,11 @@ function StartClassAsTeacher() {
 								<div className="container">
 									<div className="video-container">
 										{remainingTIme !== 0 && (
-											<Typography
-												variant="h4"
-												align="right"
-												pr="10px"
-												mb="5px"
-												style={{
-													opacity: onGoing ? "1" : 0,
-												}}
-											>
-												Remainig Time :
-												<b pl="5px">
-													<Countdown
-														key={currentTime}
-														date={
-															currentTime +
-															remainingTIme *
-																60 *
-																1000
-														}
-														renderer={TimeRenderer}
-													/>
-												</b>
-												min
-											</Typography>
+											<RemainingTime
+												og={onGoing}
+												ct={currentTime}
+												rt={remainingTIme}
+											/>
 										)}
 										{cls.roleplayer && (
 											<Roleplayer
