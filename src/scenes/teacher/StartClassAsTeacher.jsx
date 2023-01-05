@@ -1,18 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Peer } from "peerjs";
 import io from "socket.io-client";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
-import Countdown from "react-countdown";
 
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import LinearProgress from "@mui/material/LinearProgress";
-import MoodIcon from "@mui/icons-material/Mood";
 import Roleplayer from "./Roleplayer";
 import "./style.css";
 
@@ -22,14 +16,14 @@ import MyVideo from "./start-exam/MyVideo";
 import CandidateVideo from "./start-exam/CandidateVideo";
 import ProgressBar from "./start-exam/ProgressBar";
 import RemainingTime from "./start-exam/RemainingTime";
+import CandidateInfo from "./start-exam/CandidateInfo";
 
 let socket;
 
 function StartClassAsTeacher() {
 	const [cls, setCls] = useState({});
-	const [haveRp, setHaveRp] = useState(false);
-	const [searchParams, setSearchParams] = useSearchParams();
-	const [cookies, setCookie] = useCookies([]);
+	const [searchParams] = useSearchParams();
+	const [cookies] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
 	const teacherId = useSelector((state) => state.id);
 	const [clsEnd, setClsEnd] = useState(false);
@@ -37,19 +31,14 @@ function StartClassAsTeacher() {
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 
 	// for call
-	const [calling, setCaling] = useState(false);
-	const [myStream, setMyStream] = useState();
-	const [peerId, setPeerId] = useState(searchParams.get("id"));
-	const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
-	const [onGoing, setOngoing] = useState(false);
-	const remoteVideoRef = useRef(null);
 
-	const currentUserVideoRef = useRef(null);
+	const [onGoing, setOngoing] = useState(false);
+	const candidateVideoRef = useRef(null);
+	const examinerVideoRef = useRef(null);
 	const peerInstance = useRef(null);
 	const rpPeerInstance = useRef(null);
 	const callerRef = useRef(null);
 	const [std, setStd] = useState({});
-
 	const [progress, setProgress] = useState(0);
 
 	// fetching class
@@ -66,7 +55,6 @@ function StartClassAsTeacher() {
 			.then((data) => {
 				// console.log(data.data.cls);
 				// console.log()
-				setHaveRp(Boolean(data.data.cls.roleplayer));
 				setCls({ ...data.data.cls });
 				setRemainingTime(data.data.cls.classDuration);
 				// console.log("getting class using axios : ", data.data.cls);
@@ -92,9 +80,6 @@ function StartClassAsTeacher() {
 		const peer = new Peer(searchParams.get("id"));
 		const rp_peer = new Peer(searchParams.get("id") + "examiner");
 
-		peer.on("open", (id) => {
-			setPeerId(id);
-		});
 		// console.log(peer);
 		peer.on("call", (call) => {
 			console.log("calling");
@@ -105,8 +90,8 @@ function StartClassAsTeacher() {
 				navigator.mozGetUserMedia;
 
 			getUserMedia({ video: true, audio: true }, (mediaStream) => {
-				currentUserVideoRef.current.srcObject = mediaStream;
-				currentUserVideoRef.current.play();
+				examinerVideoRef.current.srcObject = mediaStream;
+				examinerVideoRef.current.play();
 				callerRef.current = call;
 				setOngoing(true);
 				setProgress(0);
@@ -115,8 +100,8 @@ function StartClassAsTeacher() {
 
 				call.on("stream", function (remoteStream) {
 					// console.log("data : ", call.metadata);
-					remoteVideoRef.current.srcObject = remoteStream;
-					remoteVideoRef.current.play();
+					candidateVideoRef.current.srcObject = remoteStream;
+					candidateVideoRef.current.play();
 					// get joined student info
 
 					socket.emit(
@@ -200,28 +185,18 @@ function StartClassAsTeacher() {
 										{cls.roleplayer && (
 											<Roleplayer
 												socket={socket}
-												cvr={currentUserVideoRef}
+												cvr={examinerVideoRef}
 												peer={rpPeerInstance}
 											/>
 										)}
-										<MyVideo mvr={currentUserVideoRef} />
+										<MyVideo mvr={examinerVideoRef} />
 										<CandidateVideo
-											cvr={remoteVideoRef}
+											cvr={candidateVideoRef}
 											og={onGoing}
 										/>
 									</div>
 
-									<div>
-										<Typography
-											variant="h4"
-											style={{
-												opacity: onGoing ? "1" : 0,
-											}}
-										>
-											Currently Joined Student :{" "}
-											<b>{std?.name}</b>
-										</Typography>
-									</div>
+									<CandidateInfo og={onGoing} c={std} />
 								</div>
 							</div>
 						)}

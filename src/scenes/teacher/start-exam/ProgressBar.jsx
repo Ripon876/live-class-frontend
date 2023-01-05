@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 
 function ProgressBar({ og, ee, exam, pr, setPr }) {
