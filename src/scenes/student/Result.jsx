@@ -43,7 +43,7 @@ function Result() {
 				}, 0)
 			) / Number(marks.length);
 
-		setResult(totalMark);
+		setResult(Math.floor(totalMark));
 	}, [marks]);
 
 	return (
