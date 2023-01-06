@@ -34,7 +34,7 @@ function ExamStates({ states }) {
 							<TableCell component="th" scope="row">
 								{i + 1}
 							</TableCell>
-							<TableCell align="right">{state.student}</TableCell>
+							<TableCell align="right">{state.student.name}</TableCell>
 							<TableCell align="right">
 								{state.cls.subject}
 							</TableCell>

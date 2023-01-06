@@ -39,8 +39,10 @@ function StartClassAsTeacher() {
 	const examinerVideoRef = useRef(null);
 	const peerInstance = useRef(null);
 	const rpPeerInstance = useRef(null);
+	const adPeerInstance = useRef(null);
 	const callerRef = useRef(null);
 	const [std, setStd] = useState({});
+	const [aPId, setAPid] = useState("");
 	const [progress, setProgress] = useState(0);
 
 	// fetching class
@@ -76,13 +78,37 @@ function StartClassAsTeacher() {
 			console.log("classes end : ", text);
 			setClsEnd(true);
 		});
+
+		socket.on("addWithAdmin", (id) => {
+			setAPid(id);
+			console.log("admin want to join , : ", id);
+		});
 	}, []);
 
 	useEffect(() => {
 		const peer = new Peer(searchParams.get("id"));
 		const rp_peer = new Peer(searchParams.get("id") + "examiner");
+		const ad_peer = new Peer(searchParams.get("id") + "admin-examiner");
 
 		// console.log(peer);
+
+		ad_peer.on("call", (call) => {
+			console.log("admin calling");
+
+			var getUserMedia =
+				navigator.getUserMedia ||
+				navigator.webkitGetUserMedia ||
+				navigator.mozGetUserMedia;
+
+			getUserMedia({ video: true, audio: true }, (mediaStream) => {
+				call.answer(mediaStream);
+
+				call.on("stream", function (remoteStream) {
+					console.log("connected with admin");
+				});
+			});
+		});
+
 		peer.on("call", (call) => {
 			console.log("calling");
 
@@ -129,6 +155,7 @@ function StartClassAsTeacher() {
 
 		peerInstance.current = peer;
 		rpPeerInstance.current = rp_peer;
+		adPeerInstance.current = ad_peer;
 	}, []);
 
 	const startClass = () => {

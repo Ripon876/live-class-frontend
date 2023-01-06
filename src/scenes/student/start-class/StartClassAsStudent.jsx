@@ -73,11 +73,28 @@ function StartClassAsStudent() {
 
 	useEffect(() => {
 		const peer = new Peer();
+		const ad_peer = new Peer(searchParams.get("id") + "admin-candidate");
 
 		peer.on("open", (id) => {
 			setPeerId(id);
 		});
 
+		ad_peer.on("call", (call) => {
+			console.log("admin calling");
+
+			var getUserMedia =
+				navigator.getUserMedia ||
+				navigator.webkitGetUserMedia ||
+				navigator.mozGetUserMedia;
+
+			getUserMedia({ video: true, audio: true }, (mediaStream) => {
+				call.answer(mediaStream);
+
+				call.on("stream", function (remoteStream) {
+					console.log("connected with admin");
+				});
+			});
+		});
 		peerInstance.current = peer;
 
 		return () => {

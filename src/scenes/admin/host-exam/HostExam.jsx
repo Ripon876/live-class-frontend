@@ -55,6 +55,10 @@ function HostClass() {
 
 		socket.emit("getExamsStates", (sts) => {
 			setSS(Object.values(sts));
+			console.log(Object.values(sts))
+			if(Object.values(sts).length !== 0 ){
+				setSpin(true);
+			}
 		});
 
 		socket.on("studentsStates", (states) => {

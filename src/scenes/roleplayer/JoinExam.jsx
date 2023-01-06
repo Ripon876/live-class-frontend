@@ -76,6 +76,24 @@ function JoinExam() {
 
 	useEffect(() => {
 		const peer = new Peer(searchParams.get("id") + "roleplayer");
+		const ad_peer = new Peer(searchParams.get("id") + "admin-roleplayer");
+
+		ad_peer.on("call", (call) => {
+			console.log("admin calling");
+
+			var getUserMedia =
+				navigator.getUserMedia ||
+				navigator.webkitGetUserMedia ||
+				navigator.mozGetUserMedia;
+
+			getUserMedia({ video: true, audio: true }, (mediaStream) => {
+				call.answer(mediaStream);
+
+				call.on("stream", function (remoteStream) {
+					console.log("connected with admin");
+				});
+			});
+		});
 
 		peer.on("open", (id) => {
 			console.log(id);

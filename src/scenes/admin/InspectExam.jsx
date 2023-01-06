@@ -8,15 +8,17 @@ let socket;
 
 function InspectExam() {
 	const [searchParams] = useSearchParams();
-	const [streams, setStreams] = useState([]);
 	const adminId = useSelector((state) => state.id);
-	const [myStream, setMyStream] = useState(null);
-	// searchParams.get("id"),
+	const exVideoRef = useRef(null);
+	const rpVideoRef = useRef(null);
+	const cdVideoRef = useRef(null);
+
 
 	useEffect(() => {
-		socket = io.connect(process.env.REACT_APP_SERVER_URL);
-
-		socket.emit("joinWithAdmin", searchParams.get("id"));
+		// socket = io.connect(process.env.REACT_APP_SERVER_URL);
+		const ex_peer = new Peer();
+		const rp_peer = new Peer();
+		const cd_peer = new Peer();
 
 		const getUserMedia =
 			navigator.getUserMedia ||
@@ -24,45 +26,48 @@ function InspectExam() {
 			navigator.mozGetUserMedia;
 
 		getUserMedia({ video: true, audio: true }, (mediaStream) => {
-			setMyStream(mediaStream);
-		});
-
-		const ex_peer = new Peer(adminId + "examiner");
-		const rp_peer = new Peer(adminId + "roleplayer");
-		const cd_peer = new Peer(adminId + "candidate");
-
-		ex_peer.on("call", (call) => {
-			console.log("calling");
-			call.answer(myStream);
-			call.on("stream", function (remoteStream) {
-				setStreams([
-					...streams,
-					{ type: "Examiner", stream: remoteStream },
-				]);
+			ex_peer.on("open", (id) => {
+				console.log(id);
+				call(
+					ex_peer,
+					searchParams.get("id") + "admin-examiner",
+					exVideoRef
+				);
 			});
-		});
-
-		rp_peer.on("call", (call) => {
-			console.log("calling");
-			call.answer(myStream);
-			call.on("stream", function (remoteStream) {
-				setStreams([
-					...streams,
-					{ type: "Roleplayer", stream: remoteStream },
-				]);
+			rp_peer.on("open", (id) => {
+				console.log(id);
+				call(
+					cd_peer,
+					searchParams.get("id") + "admin-roleplayer",
+					rpVideoRef
+				);
 			});
-		});
-		cd_peer.on("call", (call) => {
-			console.log("calling");
-			call.answer(myStream);
-			call.on("stream", function (remoteStream) {
-				setStreams([
-					...streams,
-					{ type: "Candidate", stream: remoteStream },
-				]);
+			cd_peer.on("open", (id) => {
+				console.log(id);
+				call(
+					cd_peer,
+					searchParams.get("id") + "admin-candidate",
+					cdVideoRef
+				);
 			});
 		});
 	}, []);
+
+	const call = (peer, idToCall, vRef) => {
+		console.log("calling", idToCall);
+		var getUserMedia =
+			navigator.getUserMedia ||
+			navigator.webkitGetUserMedia ||
+			navigator.mozGetUserMedia;
+
+		getUserMedia({ video: true, audio: false }, (mediaStream) => {
+			const call = peer.call(idToCall, mediaStream);
+			call?.on("stream", (remoteStream) => {
+				vRef.current.srcObject = mediaStream;
+				vRef.current.play();
+			});
+		});
+	};
 
 	return (
 		<div>
@@ -77,9 +82,9 @@ function InspectExam() {
 					<div>
 						<div className="container">
 							<div className="align-items-center justify-content-center row video-container">
-								{streams?.map((stream) => (
-									<NewPeerVideo stream={stream} />
-								))}
+								<NewPeerVideo vRef={exVideoRef} />
+								<NewPeerVideo vRef={rpVideoRef} />
+								<NewPeerVideo vRef={cdVideoRef} />
 							</div>
 						</div>
 					</div>
@@ -91,15 +96,7 @@ function InspectExam() {
 
 export default InspectExam;
 
-const NewPeerVideo = ({ stream }) => {
-	const vRef = useRef(null);
-
-	useEffect(() => {
-		console.log(stream?.type);
-		vRef.current.srcObject = stream.stream;
-		vRef.current.play();
-	}, []);
-
+const NewPeerVideo = ({ vRef }) => {
 	return (
 		<div className="video peerVideo col-6 p-0">
 			<video playsInline autoPlay ref={vRef} className="h-100 w-100" />
