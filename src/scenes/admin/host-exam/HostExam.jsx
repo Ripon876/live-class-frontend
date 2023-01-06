@@ -53,6 +53,10 @@ function HostClass() {
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
+		socket.emit("getExamsStates", (sts) => {
+			setSS(Object.values(sts));
+		});
+
 		socket.on("studentsStates", (states) => {
 			setSS(Object.values(states));
 		});

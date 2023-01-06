@@ -5,6 +5,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
 function ExamStates({ states }) {
 	return (
@@ -16,6 +19,7 @@ function ExamStates({ states }) {
 						<TableCell align="right">Student</TableCell>
 						<TableCell align="right">Subject</TableCell>
 						<TableCell align="right">Teacher</TableCell>
+						<TableCell align="right">*</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
@@ -36,6 +40,24 @@ function ExamStates({ states }) {
 							</TableCell>
 							<TableCell align="right">
 								{state.cls.teacher}
+							</TableCell>
+							<TableCell align="right">
+								<Button
+									size="normal"
+									variant="filled"
+									sx={{
+										boxShadow: 3,
+										pt: "10px",
+										pb: "10px",
+									}}
+									onClick={() => {
+										window.location.href = `/inspect-exam?id=${state.cls._id}`;
+									}}
+								>
+									<Typography variant="h3">
+										<RemoveRedEyeIcon /> Inspect Exams
+									</Typography>
+								</Button>
 							</TableCell>
 						</TableRow>
 					))}

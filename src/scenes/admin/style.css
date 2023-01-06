@@ -8,3 +8,11 @@
 		transform: rotate(-360deg);
 	}
 }
+
+.peerVideo {
+    height: 50%;
+    object-fit: cover;
+    background: #0e131ea3;
+    border: 5px solid #0e131e;
+    border-radius: 10px;
+}
