@@ -34,7 +34,9 @@ function ExamStates({ states }) {
 							<TableCell component="th" scope="row">
 								{i + 1}
 							</TableCell>
-							<TableCell align="right">{state.student.name}</TableCell>
+							<TableCell align="right">
+								{state.student.name}
+							</TableCell>
 							<TableCell align="right">
 								{state.cls.subject}
 							</TableCell>
@@ -43,7 +45,7 @@ function ExamStates({ states }) {
 							</TableCell>
 							<TableCell align="right">
 								<Button
-									size="normal"
+									size="small"
 									variant="filled"
 									sx={{
 										boxShadow: 3,
