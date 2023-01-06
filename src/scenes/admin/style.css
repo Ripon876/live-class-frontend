@@ -10,9 +10,16 @@
 }
 
 .peerVideo {
-    height: 50%;
-    object-fit: cover;
-    background: #0e131ea3;
-    border: 5px solid #0e131e;
-    border-radius: 10px;
+	height: 50%;
+	object-fit: cover;
+	background: #0e131ea3;
+	border: 5px solid #0e131e;
+	border-radius: 10px;
+	position: relative;
+}
+.peerVideo h2 {
+	position: absolute;
+	bottom: 0;
+	font-size: 20px;
+	left: 15px;
 }

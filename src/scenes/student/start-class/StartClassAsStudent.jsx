@@ -103,7 +103,7 @@ function StartClassAsStudent() {
 	}, []);
 	useEffect(() => {
 		const timer = setInterval(() => {
-			if (progress === 110) {
+			if (progress === 100) {
 				clearInterval(timer);
 			}
 

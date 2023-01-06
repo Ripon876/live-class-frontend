@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import { Peer } from "peerjs";
 import io from "socket.io-client";
 import { useSelector } from "react-redux";
@@ -23,7 +24,16 @@ function InspectExam() {
 		socket.on("allClsTaken", () => {
 			setExamsEnd(true);
 		});
-
+		socket.on("cdChanging", () => {
+			console.log("candidate changed");
+			setTimeout(() => {
+				call(
+					cd_peer,
+					searchParams.get("id") + "admin-candidate",
+					cdVideoRef
+				);
+			}, 200);
+		});
 		const getUserMedia =
 			navigator.getUserMedia ||
 			navigator.webkitGetUserMedia ||
@@ -53,16 +63,6 @@ function InspectExam() {
 					searchParams.get("id") + "admin-candidate",
 					cdVideoRef
 				);
-
-				socket.on("cdChanging", () => {
-					setTimeout(() => {
-						call(
-							cd_peer,
-							searchParams.get("id") + "admin-candidate",
-							cdVideoRef
-						);
-					}, 500);
-				});
 			});
 		});
 	}, []);
@@ -97,9 +97,18 @@ function InspectExam() {
 						<div className="container">
 							{!examsEnd && (
 								<div className="align-items-center justify-content-center row video-container">
-									<NewPeerVideo vRef={exVideoRef} />
-									<NewPeerVideo vRef={rpVideoRef} />
-									<NewPeerVideo vRef={cdVideoRef} />
+									<NewPeerVideo
+										vRef={exVideoRef}
+										title={"Examiner"}
+									/>
+									<NewPeerVideo
+										vRef={rpVideoRef}
+										title={"Roleplayer"}
+									/>
+									<NewPeerVideo
+										vRef={cdVideoRef}
+										title={"Candidate"}
+									/>
 								</div>
 							)}
 							{examsEnd && <h4>Exam Ended</h4>}
@@ -112,7 +121,6 @@ function InspectExam() {
 									ml: 2,
 									boxShadow: 3,
 								}}
-								startIcon={<DeleteIcon />}
 								onClick={() => {
 									window.location.href = `/host_exam`;
 								}}
@@ -129,10 +137,11 @@ function InspectExam() {
 
 export default InspectExam;
 
-const NewPeerVideo = ({ vRef }) => {
+const NewPeerVideo = ({ vRef, title }) => {
 	return (
 		<div className="video peerVideo col-6 p-0">
 			<video playsInline autoPlay ref={vRef} className="h-100 w-100" />
+			<h2>{title}</h2>
 		</div>
 	);
 };

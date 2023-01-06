@@ -108,14 +108,14 @@ const AppSidebar = () => {
           {userType === "admin" ? (
             <>
               <Item
-                title="Students"
+                title="Candidates"
                 to="/students"
                 setSelected={setSelected}
                 selected={selected}
                 icon={<SchoolOutlinedIcon />}
               />
               <Item
-                title="Instructors"
+                title="Examiners"
                 to="/instructors"
                 setSelected={setSelected}
                 selected={selected}
@@ -135,27 +135,6 @@ const AppSidebar = () => {
                 selected={selected}
                 icon={<ManageAccountsIcon />}
               />
-              {/* <Item
-                title="Stations"
-                to="/stations"
-                setSelected={setSelected}
-                selected={selected}
-                icon={<TvOutlinedIcon />}
-              />
-              <Item
-                title="Results"
-                to="/results"
-                setSelected={setSelected}
-                selected={selected}
-                icon={<AssignmentTurnedInOutlinedIcon />}
-              />
-              <Item
-                title="Analytics"
-                to="/analytics"
-                setSelected={setSelected}
-                selected={selected}
-                icon={<MapOutlinedIcon />}
-              />*/}
               <Item
                 title="Host Exam"
                 to="/host_exam"
@@ -166,7 +145,7 @@ const AppSidebar = () => {
             </>
           ) : (
             <Item
-              title="Today's Classes"
+              title="Today's Exams"
               to="/classes"
               setSelected={setSelected}
               selected={selected}
