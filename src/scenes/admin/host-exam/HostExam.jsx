@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import DeleteIcon from "@mui/icons-material/Delete";
 import Alert from "@mui/material/Alert";
 import CachedIcon from "@mui/icons-material/Cached";
 import { useCookies } from "react-cookie";
@@ -111,6 +112,15 @@ function HostClass() {
 		Start(socket, setExams, setAlert, setSpin);
 	};
 
+
+const clearStates = () => {
+	setSpin(false);
+	socket.emit("clearStates",(sts) => {
+		setSS(Object.values(sts));
+	});
+}
+
+
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
 			<Box
@@ -171,12 +181,33 @@ function HostClass() {
 
 			<Box component="div" m="40px 40px " width="90%" p="0 0 0 20px">
 				<Box component="div" mb="20px">
+					
+					
+				</Box>
+				<Box
+					component="div"
+					mb="20px"
+					sx={{ display: "flex", justifyContent: "space-between" }}
+				>
 					<Typography variant="h4" className="mb-3 mt-4">
 						Joined Students
 						{spin && <CachedIcon className="ms-2 spin" />}
 					</Typography>
-					<ExamStates states={studentsStates} />
+					<div style={{ cursor: spin ? "not-allowed" : "pointer" }}>
+						<Button
+							variant="filled"
+							sx={{
+								boxShadow: 3,
+							}}
+							disabled={!spin}
+							startIcon={<DeleteIcon />}
+							onClick={clearStates}
+						>
+							Clear States
+						</Button>
+					</div>
 				</Box>
+				<ExamStates states={studentsStates} />
 			</Box>
 		</div>
 	);

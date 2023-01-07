@@ -10,29 +10,31 @@ let socket;
 function InspectExam() {
 	const [searchParams] = useSearchParams();
 	const adminId = useSelector((state) => state.id);
+	const [names, setNames] = useState({
+		examiner: "",
+		roleplayer: "",
+		candidate: "",
+		subject: "",
+	});
 	const [examsEnd, setExamsEnd] = useState(false);
+	const [reload, setReload] = useState(false);
 	const exVideoRef = useRef(null);
 	const rpVideoRef = useRef(null);
 	const cdVideoRef = useRef(null);
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
+
 		const ex_peer = new Peer();
 		const rp_peer = new Peer();
 		const cd_peer = new Peer();
-
+		exmInfo();
 		socket.on("allClsTaken", () => {
 			setExamsEnd(true);
+			setReload(false);
 		});
 		socket.on("cdChanging", () => {
-			console.log("candidate changed");
-			setTimeout(() => {
-				call(
-					cd_peer,
-					searchParams.get("id") + "admin-candidate",
-					cdVideoRef
-				);
-			}, 200);
+			setReload(true);
 		});
 		const getUserMedia =
 			navigator.getUserMedia ||
@@ -82,6 +84,17 @@ function InspectExam() {
 			});
 		});
 	};
+	const exmInfo = () => {
+		socket.emit("getExamInfo", searchParams.get("id"), (exam) => {
+			console.log(exam);
+			setNames({
+				examiner: exam?.cls?.teacher,
+				roleplayer: exam?.cls?.roleplayer,
+				candidate: exam?.student?.name,
+				subject: exam?.cls?.subject,
+			});
+		});
+	};
 
 	return (
 		<div>
@@ -95,24 +108,48 @@ function InspectExam() {
 				>
 					<div>
 						<div className="container">
-							{!examsEnd && (
+							{!examsEnd && !reload && (
 								<div className="align-items-center justify-content-center row video-container">
 									<NewPeerVideo
 										vRef={exVideoRef}
 										title={"Examiner"}
+										name={names.examiner}
 									/>
 									<NewPeerVideo
 										vRef={rpVideoRef}
 										title={"Roleplayer"}
+										name={names.roleplayer}
 									/>
 									<NewPeerVideo
 										vRef={cdVideoRef}
 										title={"Candidate"}
+										name={names.candidate}
 									/>
 								</div>
 							)}
+							{(!examsEnd && names.subject) && <>
+								subject: <h3>{names.subject}</h3>
+							</>}
 							{examsEnd && <h4>Exam Ended</h4>}
 						</div>
+						{reload && (
+							<div>
+								<Button
+									variant="filled"
+									sx={{
+										mt: 1,
+										ml: 2,
+										boxShadow: 3,
+									}}
+									onClick={() => {
+										window.location.reload();
+									}}
+									title="Session ended. please reload"
+								>
+									Reload
+								</Button>
+							</div>
+						)}
 						<div>
 							<Button
 								variant="filled"
@@ -137,11 +174,16 @@ function InspectExam() {
 
 export default InspectExam;
 
-const NewPeerVideo = ({ vRef, title }) => {
+const NewPeerVideo = ({ vRef, title, name }) => {
 	return (
 		<div className="video peerVideo col-6 p-0">
 			<video playsInline autoPlay ref={vRef} className="h-100 w-100" />
-			<h2>{title}</h2>
+			<h2>
+				{name}
+				<span style={{ fontSize: "15px", marginLeft: "10px" }}>
+					({title})
+				</span>
+			</h2>
 		</div>
 	);
 };

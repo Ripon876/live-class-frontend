@@ -103,6 +103,9 @@ function StartClassAsTeacher() {
 			getUserMedia({ video: true, audio: true }, (mediaStream) => {
 				call.answer(mediaStream);
 
+
+
+
 				call.on("stream", function (remoteStream) {
 					console.log("connected with admin");
 				});
