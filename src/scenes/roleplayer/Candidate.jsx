@@ -38,7 +38,7 @@ function Candidate({ og, socket }) {
 	return (
 		<div className="video otherVideo">
 			<video playsInline ref={candidateVideoRef} autoPlay />
-			{!og && <h3 className="watingText">Wating for student</h3>}
+			{/*{!og && <h3 className="watingText">Wating for student</h3>}*/}
 		</div>
 	);
 }
