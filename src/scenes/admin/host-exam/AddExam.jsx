@@ -2,8 +2,7 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import { useState } from "react";
-import AddIcon from "@mui/icons-material/Add";
-// import { subjects } from "./helpers";
+import AddIcon from "@mui/icons-material/Add"; 
 import CheckList from "./CheckList";
 import AddPDF from "./AddPDF";
 
@@ -34,26 +33,7 @@ function AddExam({ fd, hc, hs, examiners, roleplayers, sfd }) {
 					}}
 					onChange={hc}
 				/>
-
-				{/*<TextField
-					id="filled-select-currency"
-					select
-					label="Subject"
-					name="subject"
-					variant="filled"
-					value={fd.subject}
-					required
-					sx={{
-						minWidth: "300px",
-					}}
-					onChange={hc}
-				>
-					{subjects.map((option) => (
-						<MenuItem key={option.value} value={option.value}>
-							{option.label}
-						</MenuItem>
-					))}
-				</TextField>*/}
+ 
 				<TextField
 					id="filled-select-currency"
 					select

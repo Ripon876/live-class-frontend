@@ -113,38 +113,39 @@ function Settings() {
 							}}
 							onChange={handleChange}
 						/>
-						<TextField
-							label="Age"
-							type="number"
-							name="age"
-							variant="filled"
-							defaultValue={user?.age}
-							required
-							sx={{
-								minWidth: "300px",
-							}}
-							InputLabelProps={{
-								shrink: true,
-							}}
-							onChange={handleChange}
-						/>
-						<TextField
-							label="Phone Number"
-							type="tel"
-							name="phone"
-							variant="filled"
-							defaultValue={user?.phone}
-							required
-							sx={{
-								minWidth: "300px",
-							}}
-							InputLabelProps={{
-								shrink: true,
-							}}
-							onChange={handleChange}
-						/>
 						{userType === "student" && (
 							<>
+								<TextField
+									label="Age"
+									type="number"
+									name="age"
+									variant="filled"
+									defaultValue={user?.age}
+									required
+									sx={{
+										minWidth: "300px",
+									}}
+									InputLabelProps={{
+										shrink: true,
+									}}
+									onChange={handleChange}
+								/>
+								<TextField
+									label="Phone Number"
+									type="tel"
+									name="phone"
+									variant="filled"
+									defaultValue={user?.phone}
+									required
+									sx={{
+										minWidth: "300px",
+									}}
+									InputLabelProps={{
+										shrink: true,
+									}}
+									onChange={handleChange}
+								/>
+
 								<TextField
 									label="Address"
 									type="text"

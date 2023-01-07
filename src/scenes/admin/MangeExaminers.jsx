@@ -34,8 +34,7 @@ function MangeExaminers() {
 		getExaminers();
 	}, []);
 
-	const handleSubmit = () => {
-		// console.log(formData);
+	const handleSubmit = () => { 
 
 		let emptyfield = Object.values(formData).some((item) => item == "");
 		if (emptyfield) {
@@ -199,45 +198,7 @@ function MangeExaminers() {
 						}}
 						sx={{ width: 150 }}
 						onChange={handleChange}
-					/>
-					<TextField
-						label="Phone Number"
-						type="number"
-						name="phone"
-						variant="filled"
-						value={formData.phone}
-						required
-						sx={{
-							minWidth: "300px",
-						}}
-						InputLabelProps={{
-							shrink: true,
-						}}
-						inputProps={{
-							step: 300, // 5 min
-						}}
-						sx={{ width: 150 }}
-						onChange={handleChange}
-					/>
-					<TextField
-						label="Age"
-						type="number"
-						name="age"
-						variant="filled"
-						value={formData.age}
-						required
-						sx={{
-							minWidth: "300px",
-						}}
-						InputLabelProps={{
-							shrink: true,
-						}}
-						inputProps={{
-							step: 300, // 5 min
-						}}
-						sx={{ width: 150 }}
-						onChange={handleChange}
-					/>
+					/> 
 				</div>
 				<Button
 					variant="filled"
