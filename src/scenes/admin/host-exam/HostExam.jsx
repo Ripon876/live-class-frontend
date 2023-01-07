@@ -81,8 +81,7 @@ function HostClass() {
 		});
 
 		getExams(setExams, setCanStart);
-		getExaminers(setExaminers);
-		getRoleplayers(setRoleplayers);
+		getRoles();
 	}, []);
 
 	const handleChange = (e) => {
@@ -104,30 +103,18 @@ function HostClass() {
 			setFormData,
 			setAlert,
 			setCanStart,
-			rI
+			getRoles
 		);
 	};
 
-	const rI = () => {
-		if (formData.roleplayer) {
-			removeItem(formData.roleplayer._id, roleplayers, setRoleplayers);
-		}
-		if (formData.teacher) {
-			removeItem(formData.teacher._id, examiners, setExaminers);
-		}
-	};
-
-	const removeItem = (id, values, setValues) => {
-		let index = values.findIndex((item) => item._id === id);
-		let newValues = [...values];
-		newValues.splice(index, 1);
-		setValues([...newValues]);
-	};
-
 	const deleteClass = (id) => {
-		Delete(id, exams, setExams, setAlert, setCanStart);
+		Delete(id, exams, setExams, setAlert, setCanStart, getRoles);
 	};
 
+	const getRoles = () => {
+		getExaminers(setExaminers);
+		getRoleplayers(setRoleplayers);
+	};
 	const startexams = () => {
 		Start(socket, setExams, setAlert, setSpin);
 	};

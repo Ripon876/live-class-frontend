@@ -45,7 +45,7 @@ export const Submit = (fd, token, cls, setClss, setFd, setAlt, setCS, rI) => {
 };
 
 // handle exam delete
-export const Delete = (id, cls, setClss, setAlt, setCS) => {
+export const Delete = (id, cls, setClss, setAlt, setCS, gr) => {
 	axios
 		.delete(process.env.REACT_APP_SERVER_URL + "/admin/delete-class", {
 			data: {
@@ -56,6 +56,7 @@ export const Delete = (id, cls, setClss, setAlt, setCS) => {
 			let newCLasses = cls.filter((cl) => cl._id !== id);
 			setClss(newCLasses);
 			checkExams(newCLasses, setCS);
+			gr();
 			setAlt({
 				show: true,
 				type: "success",
@@ -164,7 +165,10 @@ export const getExaminers = (setE) => {
 export const getRoleplayers = (setR) => {
 	axios
 		.get(process.env.REACT_APP_SERVER_URL + "/admin/get-roleplayers")
-		.then((data) => setR([...data.data.roles]))
+		.then((data) => {
+			setR([...data.data.roles]);
+			console.log(data.data.roles);
+		})
 		.catch((err) => console.log("err :", err));
 };
 
