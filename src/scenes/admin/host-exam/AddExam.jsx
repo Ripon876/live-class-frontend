@@ -3,7 +3,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
-import { subjects } from "./helpers";
+// import { subjects } from "./helpers";
 import CheckList from "./CheckList";
 import AddPDF from "./AddPDF";
 
@@ -35,7 +35,7 @@ function AddExam({ fd, hc, hs, examiners, roleplayers, sfd }) {
 					onChange={hc}
 				/>
 
-				<TextField
+				{/*<TextField
 					id="filled-select-currency"
 					select
 					label="Subject"
@@ -53,7 +53,7 @@ function AddExam({ fd, hc, hs, examiners, roleplayers, sfd }) {
 							{option.label}
 						</MenuItem>
 					))}
-				</TextField>
+				</TextField>*/}
 				<TextField
 					id="filled-select-currency"
 					select
