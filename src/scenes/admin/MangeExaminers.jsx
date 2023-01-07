@@ -22,8 +22,6 @@ function MangeExaminers() {
 		name: "",
 		email: "",
 		password: "",
-		phone: "",
-		age: "",
 	};
 	const [formData, setFormData] = useState(initialFormData);
 	const [teachers, setTeachers] = useState([]);
@@ -230,7 +228,7 @@ function MangeExaminers() {
 					<TextField
 						id="filled-select-currency"
 						select
-						label="Select instructor"
+						label="Select examiner"
 						name="teacher"
 						defaultValue="Jhone Doe"
 						variant="filled"
