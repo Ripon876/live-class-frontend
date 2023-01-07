@@ -101,7 +101,6 @@ function InspectExam() {
 			<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
 				<Box
 					component="div"
-					m="40px 40px "
 					width="90%"
 					p="0 0 0 20px"
 					align="center"
