@@ -9,7 +9,7 @@ const initialFormData = {
 };
 
 // handle form submit
-export const Submit = (fd, token, cls, setClss, setFd, setAlt, setCS) => {
+export const Submit = (fd, token, cls, setClss, setFd, setAlt, setCS, rI) => {
 	axios
 		.post(
 			process.env.REACT_APP_SERVER_URL + "/admin/create-new-class",
@@ -30,6 +30,7 @@ export const Submit = (fd, token, cls, setClss, setFd, setAlt, setCS) => {
 				type: "success",
 				msg: data.data.message,
 			});
+			rI();
 			closeAlert(setAlt);
 		})
 		.catch((err) => {
@@ -153,7 +154,10 @@ export const getExams = (setExms, setCS) => {
 export const getExaminers = (setE) => {
 	axios
 		.get(process.env.REACT_APP_SERVER_URL + "/admin/get-examiners")
-		.then((data) => setE([...data.data.roles]))
+		.then((data) => {
+			setE([...data.data.roles]);
+			console.log(data.data.roles);
+		})
 		.catch((err) => console.log("err :", err));
 };
 

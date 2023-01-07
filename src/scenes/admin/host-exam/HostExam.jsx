@@ -42,6 +42,7 @@ function HostClass() {
 	const [exams, setExams] = useState([]);
 	const [examiners, setExaminers] = useState([]);
 	const [roleplayers, setRoleplayers] = useState([]);
+	const [value, setValue] = useState(null);
 	const [studentsStates, setSS] = useState([]);
 	const [canStart, setCanStart] = useState(false);
 	const [spin, setSpin] = useState(false);
@@ -56,8 +57,8 @@ function HostClass() {
 
 		socket.emit("getExamsStates", (sts) => {
 			setSS(Object.values(sts));
-			console.log(Object.values(sts))
-			if(Object.values(sts).length !== 0 ){
+			console.log(Object.values(sts));
+			if (Object.values(sts).length !== 0) {
 				setSpin(true);
 			}
 		});
@@ -85,6 +86,8 @@ function HostClass() {
 	}, []);
 
 	const handleChange = (e) => {
+		let evalue = e.target.value;
+		setValue(evalue);
 		setAlert({ ...alert, show: false });
 		setFormData({
 			...formData,
@@ -100,8 +103,25 @@ function HostClass() {
 			setExams,
 			setFormData,
 			setAlert,
-			setCanStart
+			setCanStart,
+			rI
 		);
+	};
+
+	const rI = () => {
+		if (formData.roleplayer) {
+			removeItem(formData.roleplayer._id, roleplayers, setRoleplayers);
+		}
+		if (formData.teacher) {
+			removeItem(formData.teacher._id, examiners, setExaminers);
+		}
+	};
+
+	const removeItem = (id, values, setValues) => {
+		let index = values.findIndex((item) => item._id === id);
+		let newValues = [...values];
+		newValues.splice(index, 1);
+		setValues([...newValues]);
 	};
 
 	const deleteClass = (id) => {
@@ -112,14 +132,12 @@ function HostClass() {
 		Start(socket, setExams, setAlert, setSpin);
 	};
 
-
-const clearStates = () => {
-	setSpin(false);
-	socket.emit("clearStates",(sts) => {
-		setSS(Object.values(sts));
-	});
-}
-
+	const clearStates = () => {
+		setSpin(false);
+		socket.emit("clearStates", (sts) => {
+			setSS(Object.values(sts));
+		});
+	};
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
@@ -180,10 +198,7 @@ const clearStates = () => {
 			</Box>
 
 			<Box component="div" m="40px 40px " width="90%" p="0 0 0 20px">
-				<Box component="div" mb="20px">
-					
-					
-				</Box>
+				<Box component="div" mb="20px"></Box>
 				<Box
 					component="div"
 					mb="20px"
