@@ -44,7 +44,7 @@ function TodaysClassesOfStudent() {
 						<TableHead>
 							<TableRow>
 								<TableCell>Title</TableCell>
-								<TableCell align="right">Subject</TableCell>
+								{/*<TableCell align="right">Subject</TableCell>*/}
 								<TableCell align="right">Teacher</TableCell>
 								<TableCell align="right">
 									Class Duration
@@ -65,9 +65,7 @@ function TodaysClassesOfStudent() {
 									<TableCell component="th" scope="row">
 										{singleClass.title}
 									</TableCell>
-									<TableCell align="right">
-										{singleClass.subject}
-									</TableCell>
+									
 									<TableCell align="right">
 										{singleClass.teacher.name}
 									</TableCell>
@@ -91,7 +89,7 @@ function TodaysClassesOfStudent() {
 					sx={{ display: "flex", justifyContent: "center" }}
 				>
 					<Button
-					disabled={classes.length === 0}
+						disabled={classes.length === 0}
 						size="large"
 						variant="filled"
 						sx={{

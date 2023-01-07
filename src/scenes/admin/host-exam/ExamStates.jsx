@@ -17,7 +17,6 @@ function ExamStates({ states }) {
 					<TableRow>
 						<TableCell>#</TableCell>
 						<TableCell align="right">Student</TableCell>
-						<TableCell align="right">Subject</TableCell>
 						<TableCell align="right">Teacher</TableCell>
 						<TableCell align="right">*</TableCell>
 					</TableRow>
@@ -38,15 +37,11 @@ function ExamStates({ states }) {
 								{state.student.name}
 							</TableCell>
 							<TableCell align="right">
-								{state.cls.subject}
-							</TableCell>
-							<TableCell align="right">
 								{state.cls.teacher}
 							</TableCell>
 							<TableCell align="right">
 								<Button
 									size="small"
-									variant="filled"
 									sx={{
 										boxShadow: 3,
 										pt: "10px",
@@ -55,10 +50,10 @@ function ExamStates({ states }) {
 									onClick={() => {
 										window.location.href = `/inspect-exam?id=${state.cls._id}`;
 									}}
+									variant="filled"
+									startIcon={<RemoveRedEyeIcon />}
 								>
-									<Typography variant="h3">
-										<RemoveRedEyeIcon /> Inspect Exams
-									</Typography>
+									Inspect Exam
 								</Button>
 							</TableCell>
 						</TableRow>

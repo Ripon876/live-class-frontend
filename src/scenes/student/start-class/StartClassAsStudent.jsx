@@ -230,9 +230,6 @@ function StartClassAsStudent() {
 										Ongoing : <b>{cls?.title}</b>
 									</Typography>
 									<Typography variant="h4">
-										Subject : <b>{cls?.subject}</b>
-									</Typography>
-									<Typography variant="h4">
 										Teacher : <b>{cls?.teacher?.name}</b>
 									</Typography>
 								</div>
