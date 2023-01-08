@@ -20,7 +20,15 @@ function JoinExam() {
 
 		socket.on("startClass", async () => {
 			console.log("starting cls");
-			window.location.href = `/live-class?id=${examId}`;
+
+			socket.emit("getExamId", user, (err, id) => {
+				if (!err) {
+					examId = id;
+					window.location.href = `/live-class?id=${id}`;
+				} else {
+					console.log(err);
+				}
+			});
 		});
 
 		console.log("component loaded");

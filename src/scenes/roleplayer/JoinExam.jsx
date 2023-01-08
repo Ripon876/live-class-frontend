@@ -65,6 +65,7 @@ function JoinExam() {
 		socket.on("allClassEnd", (text) => {
 			// console.log("classes end : ", text);
 			setClsEnd(true);
+			peerInstance.current.destroy();
 		});
 	}, []);
 

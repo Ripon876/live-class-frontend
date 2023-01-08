@@ -5,7 +5,7 @@ import Countdown from "react-countdown";
 
 function RemainingTime() {
 	const [startingTime, setStartingTime] = useState(0);
-
+	const [msg, setMsg] = useState("");
 	useEffect(() => {
 		axios
 			.get(process.env.REACT_APP_SERVER_URL + "/get-start-time")
@@ -16,6 +16,10 @@ function RemainingTime() {
 						data.data.st +
 						":00"
 				);
+
+				if (data.data.msg) {
+					setMsg(data.data.msg);
+				}
 			})
 			.catch((err) => console.log("err :", err));
 	}, []);
@@ -25,7 +29,11 @@ function RemainingTime() {
 			<Typography variant="h4" mb="10px">
 				Remainig Time
 			</Typography>
-			<Typography variant="h1" mb="20px" sx={{color: '#66bb6a',fontSize: '50px',fontWeight: 'bold'}}>
+			<Typography
+				variant="h1"
+				mb="20px"
+				sx={{ color: "#66bb6a", fontSize: "50px", fontWeight: "bold" }}
+			>
 				{startingTime && (
 					<Countdown
 						key={Date.now()}
@@ -34,7 +42,7 @@ function RemainingTime() {
 						}
 						renderer={renderer}
 					>
-						<Completionist />
+						<Completionist msg={msg} />
 					</Countdown>
 				)}
 			</Typography>
@@ -44,7 +52,9 @@ function RemainingTime() {
 
 export default RemainingTime;
 
-const Completionist = () => <span>Exam will start shortly</span>;
+const Completionist = ({ msg }) => (
+	<span> {msg ? msg : "Exam will start shortly"} </span>
+);
 
 const renderer = ({ hours, minutes, seconds, completed }) => {
 	if (completed) {

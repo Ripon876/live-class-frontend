@@ -93,7 +93,7 @@ function StartClassAsStudent() {
 		peerInstance.current = peer;
 
 		return () => {
-			 console.log("component unmount");
+			console.log("component unmount");
 		};
 	}, []);
 	useEffect(() => {
@@ -129,6 +129,7 @@ function StartClassAsStudent() {
 				if (res.type === "allClassEnd") {
 					// console.log("no more cls , msg: ", res.text);
 					setClsEnd(true);
+					peerInstance.current.destroy();
 				}
 			});
 		}
@@ -182,8 +183,9 @@ function StartClassAsStudent() {
 	useEffect(() => {
 		setTimeout(() => {
 			// stratClsBtn.current.click();
+			console.log("calling examiner");
 			call(searchParams.get("id"));
-		}, 3500);
+		}, 2500);
 	}, []);
 
 	return (

@@ -66,6 +66,7 @@ function StartClassAsTeacher() {
 		socket.on("allClassEnd", (text) => {
 			console.log("classes end : ", text);
 			setClsEnd(true);
+			peerInstance.current.destroy();
 		});
 
 		socket.on("addWithAdmin", (id) => {
@@ -107,13 +108,14 @@ function StartClassAsTeacher() {
 				navigator.mozGetUserMedia;
 
 			getUserMedia({ video: true, audio: true }, (mediaStream) => {
+				call.answer(mediaStream);
 				examinerVideoRef.current.srcObject = mediaStream;
 				examinerVideoRef.current.play();
+
 				callerRef.current = call;
 				setOngoing(true);
 				setProgress(0);
 				setCurrentgTime(Date.now());
-				call.answer(mediaStream);
 
 				call.on("stream", function (remoteStream) {
 					// console.log("data : ", call.metadata);
@@ -150,7 +152,7 @@ function StartClassAsTeacher() {
 	const startClass = () => {
 		setClsStarted(true);
 
-		/*	axios
+		axios
 			.get(
 				process.env.REACT_APP_SERVER_URL +
 					"/teacher/starting-class/" +
@@ -164,13 +166,13 @@ function StartClassAsTeacher() {
 			.then((data) => {
 				// console.log(data.data.msg)
 			})
-			.catch((err) => console.log("err :", err));*/
+			.catch((err) => console.log("err :", err));
 	};
 
 	useEffect(() => {
 		setTimeout(() => {
 			startClass();
-		}, 2000);
+		}, 1000);
 	}, []);
 
 	return (
