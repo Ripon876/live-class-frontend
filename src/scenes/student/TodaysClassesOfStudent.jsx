@@ -27,7 +27,6 @@ function TodaysClassesOfStudent() {
 			.then((data) => {
 				setClasses([...data.data.classes]);
 				setFCI(data.data.classes[data.data.firstClassIndex]._id);
-				// console.log(data.data.classes[data.data.firstClassIndex]._id);
 			})
 			.catch((err) => console.log("err :", err));
 	}, []);
@@ -43,8 +42,7 @@ function TodaysClassesOfStudent() {
 					<Table sx={{ minWidth: "90%" }} aria-label="simple table">
 						<TableHead>
 							<TableRow>
-								<TableCell>Title</TableCell>
-								{/*<TableCell align="right">Subject</TableCell>*/}
+								<TableCell>Title</TableCell> 
 								<TableCell align="right">Teacher</TableCell>
 								<TableCell align="right">
 									Class Duration
@@ -63,20 +61,20 @@ function TodaysClassesOfStudent() {
 									}}
 								>
 									<TableCell component="th" scope="row">
-										{singleClass.title}
+										{singleClass?.title}
 									</TableCell>
-									
+
 									<TableCell align="right">
-										{singleClass.teacher.name}
-									</TableCell>
-									<TableCell align="right">
-										{singleClass.classDuration}
+										{singleClass?.teacher?.name}
 									</TableCell>
 									<TableCell align="right">
-										{singleClass.startTime}
+										{singleClass?.classDuration}
+									</TableCell>
+									<TableCell align="right">
+										{singleClass?.startTime}
 									</TableCell>
 									<TableCell align="center">
-										{singleClass.status}
+										{singleClass?.status}
 									</TableCell>
 								</TableRow>
 							))}
