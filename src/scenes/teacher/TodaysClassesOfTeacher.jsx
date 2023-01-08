@@ -37,7 +37,6 @@ function TodaysClassesOfTeacher() {
 						<TableHead>
 							<TableRow>
 								<TableCell>Title</TableCell>
-								<TableCell align="right">Subject</TableCell>
 								<TableCell align="right">
 									Class Duration
 								</TableCell>
@@ -56,10 +55,7 @@ function TodaysClassesOfTeacher() {
 								>
 									<TableCell component="th" scope="row">
 										{singleClass.title}
-									</TableCell>
-									<TableCell align="right">
-										{singleClass.subject}
-									</TableCell>
+									</TableCell> 
 									<TableCell align="right">
 										{singleClass.classDuration}
 									</TableCell>
