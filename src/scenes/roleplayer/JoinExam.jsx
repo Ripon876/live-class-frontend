@@ -31,7 +31,6 @@ function JoinExam() {
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 	// for call
 	const [calling, setCaling] = useState(false);
-	const [myStream, setMyStream] = useState();
 	const [peerId, setPeerId] = useState(searchParams.get("id"));
 	const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
 	const [onGoing, setOngoing] = useState(false);
@@ -41,7 +40,7 @@ function JoinExam() {
 	const peerInstance = useRef(null);
 	const callerRef = useRef(null);
 	const [std, setStd] = useState({});
-
+	const myStream = useRef(null);
 	const [progress, setProgress] = useState(0);
 
 	useEffect(() => {
@@ -60,6 +59,17 @@ function JoinExam() {
 					window.location.href = "/";
 				}
 			});
+		});
+
+		var getUserMedia =
+			navigator.getUserMedia ||
+			navigator.webkitGetUserMedia ||
+			navigator.mozGetUserMedia;
+
+		getUserMedia({ video: true, audio: true }, (mediaStream) => {
+			myStream.current = mediaStream;
+			currentUserVideoRef.current.srcObject = mediaStream;
+			currentUserVideoRef.current.play();
 		});
 
 		socket.on("allClassEnd", (text) => {
@@ -92,17 +102,10 @@ function JoinExam() {
 		ad_peer.on("call", (call) => {
 			console.log("admin calling");
 
-			var getUserMedia =
-				navigator.getUserMedia ||
-				navigator.webkitGetUserMedia ||
-				navigator.mozGetUserMedia;
+			call.answer(myStream.current);
 
-			getUserMedia({ video: true, audio: true }, (mediaStream) => {
-				call.answer(mediaStream);
-
-				call.on("stream", function (remoteStream) {
-					console.log("connected with admin");
-				});
+			call.on("stream", function (remoteStream) {
+				console.log("connected with admin");
 			});
 		});
 
@@ -114,37 +117,16 @@ function JoinExam() {
 		peer.on("call", (call) => {
 			console.log("examiner calling");
 			setClsStarted(true);
-			var getUserMedia =
-				navigator.getUserMedia ||
-				navigator.webkitGetUserMedia ||
-				navigator.mozGetUserMedia;
+			call.answer(myStream.current);
 
-			getUserMedia({ video: true, audio: true }, (mediaStream) => {
-				currentUserVideoRef.current.srcObject = mediaStream;
-				currentUserVideoRef.current.play();
-
-				call.answer(mediaStream);
-
-				call.on("stream", function (exmrStream) {
-					exmrVideoRef.current.srcObject = exmrStream;
-					exmrVideoRef.current.play();
-				});
+			call.on("stream", function (exmrStream) {
+				exmrVideoRef.current.srcObject = exmrStream;
+				exmrVideoRef.current.play();
 			});
 		});
 
 		peerInstance.current = peer;
 	}, []);
-
-	// const startClass = () => {
-	// 	// setClsStarted(true);
-	// 	console.log("calling");
-	// 	// console.log(peerId);
-	// 	socket.emit(
-	// 		"joinRolplayer",
-	// 		searchParams.get("id") + "roleplayer",
-	// 		cls?.teacher?._id
-	// 	);
-	// };
 
 	const TimeRenderer = ({ minutes, seconds }) => {
 		return (
@@ -154,12 +136,6 @@ function JoinExam() {
 			</span>
 		);
 	};
-
-	// useEffect(() => {
-	// 	setTimeout(() => {
-	// 		startClass();
-	// 	}, 3000);
-	// }, []);
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
@@ -253,6 +229,7 @@ function JoinExam() {
 											og={onGoing}
 											socket={socket}
 											clsId={searchParams.get("id")}
+											msr={myStream}
 										/>
 									</div>
 
