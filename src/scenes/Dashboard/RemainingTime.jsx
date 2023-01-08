@@ -25,11 +25,13 @@ function RemainingTime() {
 			<Typography variant="h4" mb="10px">
 				Remainig Time
 			</Typography>
-			<Typography variant="h2" mb="20px">
+			<Typography variant="h1" mb="20px" sx={{color: '#66bb6a',fontSize: '50px',fontWeight: 'bold'}}>
 				{startingTime && (
 					<Countdown
 						key={Date.now()}
-						date={Date.now() + (Date.parse(startingTime) - Date.now())}
+						date={
+							Date.now() + (Date.parse(startingTime) - Date.now())
+						}
 						renderer={renderer}
 					>
 						<Completionist />
