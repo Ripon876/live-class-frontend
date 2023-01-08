@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Peer } from "peerjs";
 
-function Roleplayer({ socket, cvr, peer, rpId }) {
+function Roleplayer({ cvr, peer, rpId }) {
 	const rpVideoRef = useRef(null);
 	const peerInstance = useRef(null);
 

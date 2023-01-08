@@ -209,7 +209,6 @@ function StartClassAsTeacher() {
 										)}
 										{cls.roleplayer && (
 											<Roleplayer
-												socket={socket}
 												cvr={examinerVideoRef}
 												peer={rpPeerInstance}
 												rpId={
