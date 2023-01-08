@@ -24,6 +24,17 @@ function JoinExam() {
 			socket.emit("getExamId", user, (err, id) => {
 				if (!err) {
 					examId = id;
+
+					if (user.type === "student") {
+						setTimeout(() => {
+							window.location.href = `/live-class?id=${id}`;
+						}, 1000);
+					}
+					if (user.type === "roleplayer") {
+						setTimeout(() => {
+							window.location.href = `/live-class?id=${id}`;
+						}, 1500);
+					}
 					window.location.href = `/live-class?id=${id}`;
 				} else {
 					console.log(err);

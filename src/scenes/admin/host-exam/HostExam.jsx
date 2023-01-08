@@ -117,6 +117,10 @@ function HostClass() {
 	};
 	const startexams = () => {
 		Start(socket, setExams, setAlert, setSpin);
+		
+		setTimeout(()=> {
+			getExams(setExams, setCanStart);
+		},2500)
 	};
 
 	const clearStates = () => {

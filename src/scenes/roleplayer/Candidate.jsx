@@ -6,6 +6,11 @@ function Candidate({ og, socket, clsId, msr }) {
 	const cdPeerRef = useRef(null);
 
 	useEffect(() => {
+		console.log('component loaded')
+		setTimeout(() => {
+			call(clsId + "candidate-roleplayer");
+			console.log('calling candidte')
+		}, 3500);
 		const peer = new Peer();
 		cdPeerRef.current = peer;
 
@@ -14,9 +19,6 @@ function Candidate({ og, socket, clsId, msr }) {
 			console.log(stdId);
 			console.log("new student joining with roleplayer");
 		});
-		setTimeout(() => {
-			call(clsId + "candidate-roleplayer");
-		}, 3500);
 	}, []);
 
 	const call = (cdPI) => {
@@ -26,7 +28,7 @@ function Candidate({ og, socket, clsId, msr }) {
 		const call = cdPeerRef.current.call(cdPI, msr.current);
 
 		call?.on("stream", (rpStream) => {
-			console.log("call accepted");
+			console.log("connected with candidte");
 			candidateVideoRef.current.srcObject = rpStream;
 			candidateVideoRef.current.play();
 		});

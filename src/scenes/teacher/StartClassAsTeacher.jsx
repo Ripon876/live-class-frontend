@@ -41,10 +41,24 @@ function StartClassAsTeacher() {
 	const peerInstance = useRef(null);
 	const rpPeerInstance = useRef(null);
 	const adPeerInstance = useRef(null);
-	const callerRef = useRef(null);
 	const [std, setStd] = useState({});
 	const [aPId, setAPid] = useState("");
 	const [progress, setProgress] = useState(0);
+
+	useEffect(() => {
+		setClsStarted(true);
+		var getUserMedia =
+			navigator.getUserMedia ||
+			navigator.webkitGetUserMedia ||
+			navigator.mozGetUserMedia;
+
+		getUserMedia({ video: true, audio: true }, (mediaStream) => {
+			console.log("media loaded");
+			myStream.current = mediaStream;
+			examinerVideoRef.current.srcObject = mediaStream;
+			examinerVideoRef.current.play();
+		});
+	}, []);
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
@@ -62,17 +76,6 @@ function StartClassAsTeacher() {
 					window.location.href = "/";
 				}
 			});
-		});
-
-		var getUserMedia =
-			navigator.getUserMedia ||
-			navigator.webkitGetUserMedia ||
-			navigator.mozGetUserMedia;
-
-		getUserMedia({ video: true, audio: true }, (mediaStream) => {
-			myStream.current = mediaStream;
-			examinerVideoRef.current.srcObject = mediaStream;
-			examinerVideoRef.current.play();
 		});
 
 		socket.on("allClassEnd", (text) => {
@@ -99,15 +102,21 @@ function StartClassAsTeacher() {
 				console.log("connected with admin");
 			});
 		});
+		peer.on("open", (id) => {
+			console.log(id);
+		});
 
-		peer.on("call", (call) => {
-			console.log("calling");
+		peerInstance.current = peer;
+		rpPeerInstance.current = rp_peer;
+		adPeerInstance.current = ad_peer;
+	}, []);
+
+	useEffect(() => {
+		peerInstance.current.on("call", (call) => {
+			console.log("candidate calling");
 
 			call.answer(myStream.current);
-			examinerVideoRef.current.srcObject = myStream.current;
-			examinerVideoRef.current.play();
 
-			callerRef.current = call;
 			setOngoing(true);
 			setProgress(0);
 			setCurrentgTime(Date.now());
@@ -137,15 +146,9 @@ function StartClassAsTeacher() {
 				);
 			});
 		});
-
-		peerInstance.current = peer;
-		rpPeerInstance.current = rp_peer;
-		adPeerInstance.current = ad_peer;
 	}, []);
 
 	const startClass = () => {
-		setClsStarted(true);
-
 		axios
 			.get(
 				process.env.REACT_APP_SERVER_URL +

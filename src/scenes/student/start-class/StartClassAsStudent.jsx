@@ -32,6 +32,7 @@ function StartClassAsStudent() {
 	const stdId = useSelector((state) => state.id);
 	const [onGoing, setOngoing] = useState(false);
 	const [clsEnd, setClsEnd] = useState(false);
+	const [loader, setLoader] = useState(true);
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 	const stratClsBtn = useRef(null);
@@ -45,6 +46,22 @@ function StartClassAsStudent() {
 	const myStream = useRef(null);
 	const [clsId, setClsId] = useState(searchParams.get("id"));
 	const [progress, setProgress] = useState(0);
+
+
+
+
+useEffect(() => {
+		setTimeout(() => {
+
+			stratClsBtn.current.click();
+			
+			setLoader(false);
+			// call();
+		}, 5000);
+	}, []);
+
+
+
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
@@ -68,9 +85,11 @@ function StartClassAsStudent() {
 			navigator.mozGetUserMedia;
 
 		getUserMedia({ video: true, audio: true }, (mediaStream) => {
+			console.log('media loaded');
 			myStream.current = mediaStream;
 			currentUserVideoRef.current.srcObject = myStream.current;
 			currentUserVideoRef.current.play();
+
 		});
 
 		return () => {
@@ -149,16 +168,16 @@ function StartClassAsStudent() {
 			myStream.current,
 			options
 		);
-
+console.log("calling examiner");
 		call.on("stream", (remoteStream) => {
 			remoteVideoRef.current.srcObject = remoteStream;
 			remoteVideoRef.current.play();
+			setClsStarted(true);
 			setOngoing(true);
 			setProgress(0);
 			setCurrentgTime(Date.now());
-			setClsStarted(true);
 			setShowPdf(true);
-			// console.log("call accepted");
+			console.log("connected with examiner");
 		});
 	};
 
@@ -171,13 +190,7 @@ function StartClassAsStudent() {
 		);
 	};
 
-	useEffect(() => {
-		setTimeout(() => {
-			// stratClsBtn.current.click();
-			console.log("calling examiner");
-			call(searchParams.get("id"));
-		}, 2500);
-	}, []);
+	
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
@@ -199,7 +212,7 @@ function StartClassAsStudent() {
 				{!clsEnd ? (
 					<div>
 						{!clsStarted && (
-							<Preloader cls={cls} call={call} rf={stratClsBtn} />
+							<Preloader cls={cls} call={call} exId={searchParams.get("id")} rf={stratClsBtn} />
 						)}
 
 						<div style={{ display: clsStarted ? "block" : "none" }}>

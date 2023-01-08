@@ -13,9 +13,10 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
 import MoodIcon from "@mui/icons-material/Mood";
+import MicIcon from "@mui/icons-material/Mic";
+import MicOffIcon from "@mui/icons-material/MicOff";
 
 import Candidate from "./Candidate";
-
 import "./style.css";
 
 let socket;
@@ -29,6 +30,7 @@ function JoinExam() {
 	const [clsEnd, setClsEnd] = useState(false);
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
+	const [mic, setMic] = useState(true);
 	// for call
 	const [calling, setCaling] = useState(false);
 	const [peerId, setPeerId] = useState(searchParams.get("id"));
@@ -61,6 +63,7 @@ function JoinExam() {
 			});
 		});
 
+		setClsStarted(true);
 		var getUserMedia =
 			navigator.getUserMedia ||
 			navigator.webkitGetUserMedia ||
@@ -116,12 +119,13 @@ function JoinExam() {
 
 		peer.on("call", (call) => {
 			console.log("examiner calling");
-			setClsStarted(true);
+
 			call.answer(myStream.current);
 
 			call.on("stream", function (exmrStream) {
 				exmrVideoRef.current.srcObject = exmrStream;
 				exmrVideoRef.current.play();
+				console.log("connected with examiner");
 			});
 		});
 
@@ -135,6 +139,16 @@ function JoinExam() {
 				{seconds < 10 ? "0" + seconds : seconds}
 			</span>
 		);
+	};
+
+	const handleMic = () => {
+		if (mic) {
+			myStream.current.getAudioTracks()[0].enabled = false;
+			setMic(false);
+		} else {
+			myStream.current.getAudioTracks()[0].enabled = true;
+			setMic(true);
+		}
 	};
 
 	return (
@@ -213,8 +227,11 @@ function JoinExam() {
 												<h2>Examiner</h2>
 											</div>
 										</div>
-										<div className="video myVideo">
-											<div>
+										<div
+											className="video myVideo"
+											style={{ zIndex: 9999 }}
+										>
+											<div className="h-100">
 												<video
 													playsInline
 													muted
@@ -223,6 +240,29 @@ function JoinExam() {
 												/>
 
 												<h2>You</h2>
+												<div
+													style={{
+														position: "absolute",
+														right: 0,
+														bottom: "10px",
+													}}
+												>
+													{mic ? (
+														<MicIcon
+															sx={{
+																cursor: "pointer",
+															}}
+															onClick={handleMic}
+														/>
+													) : (
+														<MicOffIcon
+															sx={{
+																cursor: "pointer",
+															}}
+															onClick={handleMic}
+														/>
+													)}
+												</div>
 											</div>
 										</div>
 										<Candidate

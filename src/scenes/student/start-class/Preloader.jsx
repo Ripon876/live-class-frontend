@@ -2,9 +2,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
-
-
-function Preloader({cls,call,rf}) {
+function Preloader({ cls, call, rf, exId }) {
 	return (
 		<div style={{ marginTop: "100px" }}>
 			<CircularProgress size="100px" mt="50px" color="success" />
@@ -12,7 +10,6 @@ function Preloader({cls,call,rf}) {
 				' {cls?.title} '
 			</Typography>
 
-			 
 			<Typography variant="h4" mb="20px">
 				Exam will be : {cls?.classDuration} min
 			</Typography>
@@ -23,7 +20,7 @@ function Preloader({cls,call,rf}) {
 				variant="contained"
 				size="large"
 				style={{ display: "none" }}
-				onClick={() => call(cls._id)}
+				onClick={() => call(exId)}
 				ref={rf}
 			>
 				Join
