@@ -52,10 +52,14 @@ function StartClassAsTeacher() {
 			// console.log("socket connected");
 			socket.emit("setActive", { id: teacherId });
 
-			socket.emit("getClass", searchParams.get("id"), (cls) => {
-				setCls(cls);
-				console.log(cls);
-				setRemainingTime(cls.classDuration);
+			socket.emit("getClass", searchParams.get("id"), (cls, notfound) => {
+				if (!notfound) {
+					setCls(cls);
+					console.log(cls);
+					setRemainingTime(cls.classDuration);
+				} else {
+					window.location.href = "/";
+				}
 			});
 		});
 

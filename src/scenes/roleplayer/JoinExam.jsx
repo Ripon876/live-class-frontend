@@ -50,6 +50,16 @@ function JoinExam() {
 		socket.on("connect", () => {
 			// console.log("socket connected");
 			socket.emit("setActive", { id: rolplayerId });
+
+			socket.emit("getClass", searchParams.get("id"), (cls, notfound) => {
+				if (!notfound) {
+					setCls(cls);
+					console.log(cls);
+					setRemainingTime(cls.classDuration);
+				} else {
+					window.location.href = "/";
+				}
+			});
 		});
 
 		socket.on("allClassEnd", (text) => {
@@ -122,25 +132,6 @@ function JoinExam() {
 		});
 
 		peerInstance.current = peer;
-	}, []);
-
-	// fetching class
-	useEffect(() => {
-		axios
-			.get(
-				process.env.REACT_APP_SERVER_URL +
-					"/teacher/get-class/" +
-					searchParams.get("id"),
-				{
-					headers: { Authorization: `Bearer ${cookies.token}` },
-				}
-			)
-			.then((data) => {
-				setCls({ ...data.data.cls });
-				setRemainingTime(data.data.cls.classDuration);
-				// console.log("getting class using axios : ", data.data.cls);
-			})
-			.catch((err) => console.log("err :", err));
 	}, []);
 
 	const startClass = () => {

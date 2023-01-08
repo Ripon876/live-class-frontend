@@ -47,16 +47,18 @@ function StartClassAsStudent() {
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
-
-		// console.log("stdId : ", stdId);
-
+  
 		socket.on("connect", () => {
-			// console.log("socket connected");
+		 
 			socket.emit("setActive", { id: stdId });
-			socket.emit("getClass", searchParams.get("id"), (cls) => {
-				setCls(cls);
-				console.log(cls);
-				setRemainingTime(cls.classDuration);
+			socket.emit("getClass", searchParams.get("id"), (cls, notfound) => {
+				if (!notfound) {
+					setCls(cls);
+					console.log(cls);
+					setRemainingTime(cls.classDuration);
+				} else {
+					window.location.href = "/";
+				}
 			});
 		});
 
