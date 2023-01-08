@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Peer } from "peerjs";
 
-function Roleplayer({ cvr, peer, rpId }) {
+function Roleplayer({ peer, rpId, msr }) {
 	const rpVideoRef = useRef(null);
 	const peerInstance = useRef(null);
 
@@ -13,22 +13,12 @@ function Roleplayer({ cvr, peer, rpId }) {
 
 	const call = (rpPeerId) => {
 		console.log("calling");
-		var getUserMedia =
-			navigator.getUserMedia ||
-			navigator.webkitGetUserMedia ||
-			navigator.mozGetUserMedia;
+		const call = peer.current.call(rpPeerId, msr.current);
 
-		getUserMedia({ video: true, audio: true }, (mediaStream) => {
-			cvr.current.srcObject = mediaStream;
-			cvr.current.play();
-
-			const call = peer.current.call(rpPeerId, mediaStream);
-
-			call?.on("stream", (rpStream) => {
-				console.log("call accepted");
-				rpVideoRef.current.srcObject = rpStream;
-				rpVideoRef.current.play();
-			});
+		call?.on("stream", (rpStream) => {
+			console.log("call accepted");
+			rpVideoRef.current.srcObject = rpStream;
+			rpVideoRef.current.play();
 		});
 	};
 

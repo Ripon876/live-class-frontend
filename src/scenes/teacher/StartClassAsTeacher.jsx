@@ -37,6 +37,7 @@ function StartClassAsTeacher() {
 	const [onGoing, setOngoing] = useState(false);
 	const candidateVideoRef = useRef(null);
 	const examinerVideoRef = useRef(null);
+	const myStream = useRef(null);
 	const peerInstance = useRef(null);
 	const rpPeerInstance = useRef(null);
 	const adPeerInstance = useRef(null);
@@ -80,67 +81,60 @@ function StartClassAsTeacher() {
 		const rp_peer = new Peer(searchParams.get("id") + "examiner");
 		const ad_peer = new Peer(searchParams.get("id") + "admin-examiner");
 
-		// console.log(peer);
+		var getUserMedia =
+			navigator.getUserMedia ||
+			navigator.webkitGetUserMedia ||
+			navigator.mozGetUserMedia;
+
+		getUserMedia({ video: true, audio: true }, (mediaStream) => {
+			myStream.current = mediaStream;
+			examinerVideoRef.current.srcObject = mediaStream;
+			examinerVideoRef.current.play();
+		});
 
 		ad_peer.on("call", (call) => {
 			console.log("admin calling");
-
-			var getUserMedia =
-				navigator.getUserMedia ||
-				navigator.webkitGetUserMedia ||
-				navigator.mozGetUserMedia;
-
-			getUserMedia({ video: true, audio: true }, (mediaStream) => {
-				call.answer(mediaStream);
-
-				call.on("stream", function (remoteStream) {
-					console.log("connected with admin");
-				});
+			call.answer(myStream.current);
+			call.on("stream", function (remoteStream) {
+				console.log("connected with admin");
 			});
 		});
 
 		peer.on("call", (call) => {
 			console.log("calling");
 
-			var getUserMedia =
-				navigator.getUserMedia ||
-				navigator.webkitGetUserMedia ||
-				navigator.mozGetUserMedia;
+			call.answer(myStream.current);
+			examinerVideoRef.current.srcObject = myStream.current;
+			examinerVideoRef.current.play();
 
-			getUserMedia({ video: true, audio: true }, (mediaStream) => {
-				call.answer(mediaStream);
-				examinerVideoRef.current.srcObject = mediaStream;
-				examinerVideoRef.current.play();
+			callerRef.current = call;
+			setOngoing(true);
+			setProgress(0);
+			setCurrentgTime(Date.now());
 
-				callerRef.current = call;
-				setOngoing(true);
-				setProgress(0);
-				setCurrentgTime(Date.now());
+			call.on("stream", function (remoteStream) {
+				// console.log("data : ", call.metadata);
+				candidateVideoRef.current.srcObject = remoteStream;
+				candidateVideoRef.current.play();
+				// get joined student info
+				setMark(true);
+				setMSubmited(false);
+				socket.emit(
+					"addWithRoleplayer",
+					{ _id: call.metadata.std.id },
+					searchParams.get("id")
+				);
 
-				call.on("stream", function (remoteStream) {
-					// console.log("data : ", call.metadata);
-					candidateVideoRef.current.srcObject = remoteStream;
-					candidateVideoRef.current.play();
-					// get joined student info
-					setMark(true);
-					setMSubmited(false);
-					socket.emit(
-						"addWithRoleplayer",
-						{ _id: call.metadata.std.id },
-						searchParams.get("id")
-					);
-
-					socket.emit("getStudent", call.metadata.std.id, (std) => {
-						setStd(std);
-						// console.log(std);
-						// check for roleplayer exists or not
-					});
-					socket.emit(
-						"newClassStarted",
-						call.metadata.std.id,
-						searchParams.get("id")
-					);
+				socket.emit("getStudent", call.metadata.std.id, (std) => {
+					setStd(std);
+					// console.log(std);
+					// check for roleplayer exists or not
 				});
+				socket.emit(
+					"newClassStarted",
+					call.metadata.std.id,
+					searchParams.get("id")
+				);
 			});
 		});
 
@@ -211,15 +205,18 @@ function StartClassAsTeacher() {
 										)}
 										{cls.roleplayer && (
 											<Roleplayer
-												cvr={examinerVideoRef}
 												peer={rpPeerInstance}
 												rpId={
 													searchParams.get("id") +
 													"roleplayer"
 												}
+												msr={myStream}
 											/>
 										)}
-										<MyVideo mvr={examinerVideoRef} />
+										<MyVideo
+											mvr={examinerVideoRef}
+											msr={myStream}
+										/>
 										<CandidateVideo
 											cvr={candidateVideoRef}
 											og={onGoing}

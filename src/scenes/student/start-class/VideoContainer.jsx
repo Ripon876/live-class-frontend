@@ -1,4 +1,6 @@
 import Roleplayer from "../Roleplayer";
+import MicIcon from '@mui/icons-material/Mic';
+
 
 function VideoContainer({ cvr, rvr, og, socket, clsId, rp }) {
 	return (
@@ -8,6 +10,9 @@ function VideoContainer({ cvr, rvr, og, socket, clsId, rp }) {
 				<div>
 					<video playsInline muted ref={cvr} autoPlay />
 					<h2>You</h2>
+					<div style={{position:'absolute',right: 0,bottom: '10px'}}>
+						<MicIcon  />
+					</div>
 				</div>
 			</div>
 			<div className="video otherVideo">
