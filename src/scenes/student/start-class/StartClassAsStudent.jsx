@@ -42,6 +42,7 @@ function StartClassAsStudent() {
 	const currentUserVideoRef = useRef(null);
 	const peerInstance = useRef(null);
 	const rpPeerInstance = useRef(null);
+	const myStream = useRef(null);
 	const [clsId, setClsId] = useState(searchParams.get("id"));
 	const [progress, setProgress] = useState(0);
 
@@ -61,6 +62,17 @@ function StartClassAsStudent() {
 			});
 		});
 
+		var getUserMedia =
+			navigator.getUserMedia ||
+			navigator.webkitGetUserMedia ||
+			navigator.mozGetUserMedia;
+
+		getUserMedia({ video: true, audio: true }, (mediaStream) => {
+			myStream.current = mediaStream;
+			currentUserVideoRef.current.srcObject = myStream.current;
+			currentUserVideoRef.current.play();
+		});
+
 		return () => {
 			socket.disconnect();
 		};
@@ -76,18 +88,9 @@ function StartClassAsStudent() {
 
 		ad_peer.on("call", (call) => {
 			console.log("admin calling");
-
-			var getUserMedia =
-				navigator.getUserMedia ||
-				navigator.webkitGetUserMedia ||
-				navigator.mozGetUserMedia;
-
-			getUserMedia({ video: true, audio: true }, (mediaStream) => {
-				call.answer(mediaStream);
-
-				call.on("stream", function (remoteStream) {
-					console.log("connected with admin");
-				});
+			call.answer(myStream.current);
+			call.on("stream", function (remoteStream) {
+				console.log("connected with admin");
 			});
 		});
 		peerInstance.current = peer;
@@ -136,38 +139,26 @@ function StartClassAsStudent() {
 	}, [progress]);
 
 	const call = (remotePeerId) => {
-		var getUserMedia =
-			navigator.getUserMedia ||
-			navigator.webkitGetUserMedia ||
-			navigator.mozGetUserMedia;
+		let options = {
+			metadata: {
+				std: { id: stdId },
+			},
+		};
+		const call = peerInstance.current.call(
+			remotePeerId,
+			myStream.current,
+			options
+		);
 
-		getUserMedia({ video: true, audio: true }, (mediaStream) => {
-			currentUserVideoRef.current.srcObject = mediaStream;
-			currentUserVideoRef.current.play();
-
-			let options = {
-				metadata: {
-					std: { id: stdId },
-				},
-			};
-			const call = peerInstance.current.call(
-				remotePeerId,
-				mediaStream,
-				options
-			);
-
-			// console.log("calling teacher");
-
-			call.on("stream", (remoteStream) => {
-				remoteVideoRef.current.srcObject = remoteStream;
-				remoteVideoRef.current.play();
-				setOngoing(true);
-				setProgress(0);
-				setCurrentgTime(Date.now());
-				setClsStarted(true);
-				setShowPdf(true);
-				// console.log("call accepted");
-			});
+		call.on("stream", (remoteStream) => {
+			remoteVideoRef.current.srcObject = remoteStream;
+			remoteVideoRef.current.play();
+			setOngoing(true);
+			setProgress(0);
+			setCurrentgTime(Date.now());
+			setClsStarted(true);
+			setShowPdf(true);
+			// console.log("call accepted");
 		});
 	};
 
@@ -224,9 +215,9 @@ function StartClassAsStudent() {
 										cvr={currentUserVideoRef}
 										rvr={remoteVideoRef}
 										og={onGoing}
-										socket={socket}
 										clsId={searchParams.get("id")}
 										rp={cls.roleplayer}
+										msr={myStream}
 									/>
 								</div>
 								<div>

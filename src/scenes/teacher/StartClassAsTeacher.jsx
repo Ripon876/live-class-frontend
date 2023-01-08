@@ -64,6 +64,17 @@ function StartClassAsTeacher() {
 			});
 		});
 
+		var getUserMedia =
+			navigator.getUserMedia ||
+			navigator.webkitGetUserMedia ||
+			navigator.mozGetUserMedia;
+
+		getUserMedia({ video: true, audio: true }, (mediaStream) => {
+			myStream.current = mediaStream;
+			examinerVideoRef.current.srcObject = mediaStream;
+			examinerVideoRef.current.play();
+		});
+
 		socket.on("allClassEnd", (text) => {
 			console.log("classes end : ", text);
 			setClsEnd(true);
@@ -80,17 +91,6 @@ function StartClassAsTeacher() {
 		const peer = new Peer(searchParams.get("id"));
 		const rp_peer = new Peer(searchParams.get("id") + "examiner");
 		const ad_peer = new Peer(searchParams.get("id") + "admin-examiner");
-
-		var getUserMedia =
-			navigator.getUserMedia ||
-			navigator.webkitGetUserMedia ||
-			navigator.mozGetUserMedia;
-
-		getUserMedia({ video: true, audio: true }, (mediaStream) => {
-			myStream.current = mediaStream;
-			examinerVideoRef.current.srcObject = mediaStream;
-			examinerVideoRef.current.play();
-		});
 
 		ad_peer.on("call", (call) => {
 			console.log("admin calling");
