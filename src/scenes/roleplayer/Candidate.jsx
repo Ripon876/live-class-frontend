@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Peer } from "peerjs";
 
-function Candidate({ og, socket }) {
+function Candidate({ og, socket, clsId }) {
 	const candidateVideoRef = useRef(null);
 	const cdPeerRef = useRef(null);
 
@@ -10,10 +10,13 @@ function Candidate({ og, socket }) {
 		cdPeerRef.current = peer;
 
 		socket.on("joinCandidate", (stdId) => {
-			call(stdId._id + "candidate");
+			call(clsId + "candidate-roleplayer");
 			console.log(stdId);
 			console.log("new student joining with roleplayer");
 		});
+		setTimeout(() => {
+			call(clsId + "candidate-roleplayer");
+		}, 3500);
 	}, []);
 
 	const call = (cdPI) => {

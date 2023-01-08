@@ -134,16 +134,16 @@ function JoinExam() {
 		peerInstance.current = peer;
 	}, []);
 
-	const startClass = () => {
-		// setClsStarted(true);
-		console.log("calling");
-		// console.log(peerId);
-		socket.emit(
-			"joinRolplayer",
-			searchParams.get("id") + "roleplayer",
-			cls?.teacher?._id
-		);
-	};
+	// const startClass = () => {
+	// 	// setClsStarted(true);
+	// 	console.log("calling");
+	// 	// console.log(peerId);
+	// 	socket.emit(
+	// 		"joinRolplayer",
+	// 		searchParams.get("id") + "roleplayer",
+	// 		cls?.teacher?._id
+	// 	);
+	// };
 
 	const TimeRenderer = ({ minutes, seconds }) => {
 		return (
@@ -154,11 +154,11 @@ function JoinExam() {
 		);
 	};
 
-	useEffect(() => {
-		setTimeout(() => {
-			startClass();
-		}, 3000);
-	}, []);
+	// useEffect(() => {
+	// 	setTimeout(() => {
+	// 		startClass();
+	// 	}, 3000);
+	// }, []);
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
@@ -192,17 +192,6 @@ function JoinExam() {
 								<Typography variant="h4" mb="20px">
 									Each class will be : {cls.classDuration} min
 								</Typography>
-
-								{cls.hasToJoin !== 0 && (
-									<Button
-										variant="contained"
-										size="large"
-										onClick={startClass}
-										className="d-none"
-									>
-										Join Exam
-									</Button>
-								)}
 							</>
 						)}
 
@@ -262,6 +251,7 @@ function JoinExam() {
 										<Candidate
 											og={onGoing}
 											socket={socket}
+											clsId={searchParams.get("id")}
 										/>
 									</div>
 

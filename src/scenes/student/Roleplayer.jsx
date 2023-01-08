@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Peer } from "peerjs";
 
-function Roleplayer({ socket, cvr, stdId }) {
+function Roleplayer({ socket, cvr, clsId }) {
 	const rpVideoRef = useRef(null);
 	const peerInstance = useRef(null);
 
 	useEffect(() => {
-		const peer = new Peer(stdId + "candidate");
+		const peer = new Peer(clsId + "candidate-roleplayer");
 
 		// socket.on("joinRolplayer", async (rpPId) => {
 		// 	call(rpPId);

@@ -47,9 +47,8 @@ function StartClassAsStudent() {
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
-  
+
 		socket.on("connect", () => {
-		 
 			socket.emit("setActive", { id: stdId });
 			socket.emit("getClass", searchParams.get("id"), (cls, notfound) => {
 				if (!notfound) {
@@ -60,12 +59,6 @@ function StartClassAsStudent() {
 					window.location.href = "/";
 				}
 			});
-		});
-
-		socket.on("startClass", async () => {
-			// console.log("starting cls");
-
-			stratClsBtn.current.click();
 		});
 
 		return () => {
@@ -100,7 +93,7 @@ function StartClassAsStudent() {
 		peerInstance.current = peer;
 
 		return () => {
-			// console.log("component unmount");
+			 console.log("component unmount");
 		};
 	}, []);
 	useEffect(() => {
@@ -186,6 +179,13 @@ function StartClassAsStudent() {
 		);
 	};
 
+	useEffect(() => {
+		setTimeout(() => {
+			// stratClsBtn.current.click();
+			call(searchParams.get("id"));
+		}, 3500);
+	}, []);
+
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
 			{onGoing && !clsEnd && (
@@ -223,7 +223,7 @@ function StartClassAsStudent() {
 										rvr={remoteVideoRef}
 										og={onGoing}
 										socket={socket}
-										stdId={stdId}
+										clsId={searchParams.get("id")}
 										rp={cls.roleplayer}
 									/>
 								</div>

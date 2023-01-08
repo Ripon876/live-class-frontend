@@ -1,9 +1,9 @@
 import Roleplayer from "../Roleplayer";
 
-function VideoContainer({ cvr, rvr, og, socket, stdId, rp }) {
+function VideoContainer({ cvr, rvr, og, socket, clsId, rp }) {
 	return (
 		<>
-			{rp && <Roleplayer socket={socket} cvr={cvr} stdId={stdId} />}
+			{rp && <Roleplayer socket={socket} cvr={cvr} clsId={clsId} />}
 			<div className="video myVideo">
 				<div>
 					<video playsInline muted ref={cvr} autoPlay />
