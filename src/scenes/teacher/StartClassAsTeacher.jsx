@@ -150,7 +150,7 @@ function StartClassAsTeacher() {
 	const startClass = () => {
 		setClsStarted(true);
 
-		axios
+		/*	axios
 			.get(
 				process.env.REACT_APP_SERVER_URL +
 					"/teacher/starting-class/" +
@@ -164,8 +164,14 @@ function StartClassAsTeacher() {
 			.then((data) => {
 				// console.log(data.data.msg)
 			})
-			.catch((err) => console.log("err :", err));
+			.catch((err) => console.log("err :", err));*/
 	};
+
+	useEffect(() => {
+		setTimeout(() => {
+			startClass();
+		}, 2000);
+	}, []);
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
@@ -206,6 +212,10 @@ function StartClassAsTeacher() {
 												socket={socket}
 												cvr={examinerVideoRef}
 												peer={rpPeerInstance}
+												rpId={
+													searchParams.get("id") +
+													"roleplayer"
+												}
 											/>
 										)}
 										<MyVideo mvr={examinerVideoRef} />

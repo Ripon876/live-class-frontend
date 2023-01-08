@@ -7,7 +7,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
 import Countdown from "react-countdown";
-
+import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -111,8 +111,8 @@ function JoinExam() {
 		});
 
 		peer.on("call", (call) => {
-			console.log("calling");
-
+			console.log("examiner calling");
+			setClsStarted(true);
 			var getUserMedia =
 				navigator.getUserMedia ||
 				navigator.webkitGetUserMedia ||
@@ -135,7 +135,8 @@ function JoinExam() {
 	}, []);
 
 	const startClass = () => {
-		setClsStarted(true);
+		// setClsStarted(true);
+		console.log("calling");
 		// console.log(peerId);
 		socket.emit(
 			"joinRolplayer",
@@ -152,6 +153,12 @@ function JoinExam() {
 			</span>
 		);
 	};
+
+	useEffect(() => {
+		setTimeout(() => {
+			startClass();
+		}, 3000);
+	}, []);
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
@@ -174,6 +181,11 @@ function JoinExam() {
 					<div>
 						{!clsStarted && (
 							<>
+								<CircularProgress
+									size="100px"
+									mt="50px"
+									color="success"
+								/>
 								<Typography variant="h3" mt="150px">
 									' {cls.title} '
 								</Typography>
@@ -186,6 +198,7 @@ function JoinExam() {
 										variant="contained"
 										size="large"
 										onClick={startClass}
+										className="d-none"
 									>
 										Join Exam
 									</Button>
