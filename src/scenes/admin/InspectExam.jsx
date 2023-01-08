@@ -21,9 +21,19 @@ function InspectExam() {
 	const exVideoRef = useRef(null);
 	const rpVideoRef = useRef(null);
 	const cdVideoRef = useRef(null);
+	const myStream = useRef(null);
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
+
+		const getUserMedia =
+			navigator.getUserMedia ||
+			navigator.webkitGetUserMedia ||
+			navigator.mozGetUserMedia;
+
+		getUserMedia({ video: true, audio: true }, (mediaStream) => {
+			myStream.current = mediaStream;
+		});
 
 		const ex_peer = new Peer();
 		const rp_peer = new Peer();
@@ -36,52 +46,40 @@ function InspectExam() {
 		socket.on("cdChanging", () => {
 			setReload(true);
 		});
-		const getUserMedia =
-			navigator.getUserMedia ||
-			navigator.webkitGetUserMedia ||
-			navigator.mozGetUserMedia;
 
-		getUserMedia({ video: true, audio: true }, (mediaStream) => {
-			ex_peer.on("open", (id) => {
-				console.log(id);
-				call(
-					ex_peer,
-					searchParams.get("id") + "admin-examiner",
-					exVideoRef
-				);
-			});
-			rp_peer.on("open", (id) => {
-				console.log(id);
-				call(
-					cd_peer,
-					searchParams.get("id") + "admin-roleplayer",
-					rpVideoRef
-				);
-			});
-			cd_peer.on("open", (id) => {
-				console.log(id);
-				call(
-					cd_peer,
-					searchParams.get("id") + "admin-candidate",
-					cdVideoRef
-				);
-			});
+		ex_peer.on("open", (id) => {
+			console.log(id);
+			call(
+				ex_peer,
+				searchParams.get("id") + "admin-examiner",
+				exVideoRef
+			);
+		});
+		rp_peer.on("open", (id) => {
+			console.log(id);
+			call(
+				cd_peer,
+				searchParams.get("id") + "admin-roleplayer",
+				rpVideoRef
+			);
+		});
+		cd_peer.on("open", (id) => {
+			console.log(id);
+			call(
+				cd_peer,
+				searchParams.get("id") + "admin-candidate",
+				cdVideoRef
+			);
 		});
 	}, []);
 
 	const call = (peer, idToCall, vRef) => {
 		console.log("calling", idToCall);
-		var getUserMedia =
-			navigator.getUserMedia ||
-			navigator.webkitGetUserMedia ||
-			navigator.mozGetUserMedia;
 
-		getUserMedia({ video: true, audio: false }, (mediaStream) => {
-			const call = peer.call(idToCall, mediaStream);
-			call?.on("stream", (remoteStream) => {
-				vRef.current.srcObject = mediaStream;
-				vRef.current.play();
-			});
+		const call = peer.call(idToCall, myStream.current);
+		call?.on("stream", (remoteStream) => {
+			vRef.current.srcObject = remoteStream;
+			vRef.current.play();
 		});
 	};
 	const exmInfo = () => {
@@ -99,12 +97,7 @@ function InspectExam() {
 	return (
 		<div>
 			<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
-				<Box
-					component="div"
-					width="90%"
-					p="0 0 0 20px"
-					align="center"
-				>
+				<Box component="div" width="90%" p="0 0 0 20px" align="center">
 					<div>
 						<div className="container">
 							{!examsEnd && !reload && (
@@ -126,9 +119,11 @@ function InspectExam() {
 									/>
 								</div>
 							)}
-							{(!examsEnd && names.subject) && <>
-								subject: <h3>{names.subject}</h3>
-							</>}
+							{!examsEnd && names.subject && (
+								<>
+									subject: <h3>{names.subject}</h3>
+								</>
+							)}
 							{examsEnd && <h4>Exam Ended</h4>}
 						</div>
 						{reload && (
