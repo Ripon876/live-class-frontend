@@ -42,7 +42,7 @@ function TodaysClassesOfStudent() {
 					<Table sx={{ minWidth: "90%" }} aria-label="simple table">
 						<TableHead>
 							<TableRow>
-								<TableCell>Title</TableCell> 
+								<TableCell>Title</TableCell>
 								<TableCell align="right">Teacher</TableCell>
 								<TableCell align="right">
 									Class Duration
@@ -81,7 +81,7 @@ function TodaysClassesOfStudent() {
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<Box
+				{/*	<Box
 					component="div"
 					mt="50px"
 					sx={{ display: "flex", justifyContent: "center" }}
@@ -103,7 +103,7 @@ function TodaysClassesOfStudent() {
 							<PlayArrowIcon /> Start Exams
 						</Typography>
 					</Button>
-				</Box>
+				</Box>*/}
 			</Box>
 		</div>
 	);
