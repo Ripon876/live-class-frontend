@@ -45,33 +45,18 @@ function StartClassAsTeacher() {
 	const [aPId, setAPid] = useState("");
 	const [progress, setProgress] = useState(0);
 
-	// fetching class
-	useEffect(() => {
-		axios
-			.get(
-				process.env.REACT_APP_SERVER_URL +
-					"/teacher/get-class/" +
-					searchParams.get("id"),
-				{
-					headers: { Authorization: `Bearer ${cookies.token}` },
-				}
-			)
-			.then((data) => {
-				// console.log(data.data.cls);
-				console.log(data.data.cls);
-				setCls({ ...data.data.cls });
-				setRemainingTime(data.data.cls.classDuration);
-				// console.log("getting class using axios : ", data.data.cls);
-			})
-			.catch((err) => console.log("err :", err));
-	}, []);
-
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 		socket.on("connect", () => {
 			// console.log("socket connected");
 			socket.emit("setActive", { id: teacherId });
+
+			socket.emit("getClass", searchParams.get("id"), (cls) => {
+				setCls(cls);
+				console.log(cls);
+				setRemainingTime(cls.classDuration);
+			});
 		});
 
 		socket.on("allClassEnd", (text) => {
@@ -102,9 +87,6 @@ function StartClassAsTeacher() {
 
 			getUserMedia({ video: true, audio: true }, (mediaStream) => {
 				call.answer(mediaStream);
-
-
-
 
 				call.on("stream", function (remoteStream) {
 					console.log("connected with admin");

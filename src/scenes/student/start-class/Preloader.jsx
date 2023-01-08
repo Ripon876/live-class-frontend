@@ -12,9 +12,9 @@ function Preloader({cls,call,rf}) {
 				' {cls?.title} '
 			</Typography>
 
-			<Typography variant="h4">Subject : {cls?.subject}</Typography>
+			 
 			<Typography variant="h4" mb="20px">
-				Class will be : {cls?.classDuration} min
+				Exam will be : {cls?.classDuration} min
 			</Typography>
 			<Typography variant="h2" mb="20px">
 				Getting You In
