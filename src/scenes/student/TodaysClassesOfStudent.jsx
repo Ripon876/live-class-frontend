@@ -27,6 +27,7 @@ function TodaysClassesOfStudent() {
 			.then((data) => {
 				setClasses([...data.data.classes]);
 				setFCI(data.data.classes[data.data.firstClassIndex]._id);
+				console.log(data.data.classes[data.data.firstClassIndex]._id);
 			})
 			.catch((err) => console.log("err :", err));
 	}, []);
