@@ -245,6 +245,8 @@ function JoinExam() {
 														position: "absolute",
 														right: 0,
 														bottom: "10px",
+														display: "flex",
+														alignItems: "end",
 													}}
 												>
 													{mic ? (

@@ -6,7 +6,6 @@ function MyVideo({ mvr, msr }) {
 	const [mic, setMic] = useState(true);
 
 	const handleMic = () => {
-		
 		if (mic) {
 			msr.current.getAudioTracks()[0].enabled = false;
 			setMic(false);
@@ -22,7 +21,15 @@ function MyVideo({ mvr, msr }) {
 				<video playsInline muted ref={mvr} autoPlay />
 
 				<h2>You</h2>
-				<div style={{ position: "absolute", right: 0, bottom: "10px" }}>
+				<div
+					style={{
+						position: "absolute",
+						right: 0,
+						bottom: "10px",
+						display: "flex",
+						alignItems: "end",
+					}}
+				>
 					{mic ? (
 						<MicIcon
 							sx={{ cursor: "pointer" }}

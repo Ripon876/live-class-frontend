@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Peer } from "peerjs";
 
-function Roleplayer({cvr, clsId, msr }) {
+function Roleplayer({ cvr, clsId, msr, t, st }) {
 	const rpVideoRef = useRef(null);
 	const peerInstance = useRef(null);
+	const rRef = useRef(null);
 
 	useEffect(() => {
 		const peer = new Peer(clsId + "candidate-roleplayer");
@@ -19,11 +20,21 @@ function Roleplayer({cvr, clsId, msr }) {
 		});
 	}, []);
 
+	const toggle = () => {
+		if (rRef.current.classList.contains("rpVideo")) {
+			st(!t);
+		}
+	};
+
 	return (
-		<div className="video rpVideo">
+		<div
+			className={`video ${!t ? "rpVideo" : "otherVideo"}`}
+			ref={rRef}
+			onClick={toggle}
+		>
 			<div className="h-100">
 				<video playsInline ref={rpVideoRef} autoPlay />
-				<h2>Rp</h2>
+				{!t && <h2>Rp</h2>}
 			</div>
 		</div>
 	);

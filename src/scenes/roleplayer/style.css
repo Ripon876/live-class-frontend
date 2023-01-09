@@ -32,6 +32,7 @@
 }
 .examinerVideo {
 	position: absolute;
+	z-index: 10;
 	bottom: 110px;
 	right: 19px;
 	width: 20%;
