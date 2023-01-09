@@ -26,9 +26,9 @@ function RemainingTime() {
 
 	return (
 		<div style={{ marginTop: "100px", textAlign: "center" }}>
-			<Typography variant="h4" mb="10px">
+{!msg && 			<Typography variant="h4" mb="10px">
 				Remainig Time
-			</Typography>
+			</Typography>}
 			<Typography
 				variant="h1"
 				mb="20px"
