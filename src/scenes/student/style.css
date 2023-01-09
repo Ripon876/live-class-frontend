@@ -35,6 +35,7 @@
 	position: absolute;
 	bottom: 110px;
 	right: 19px;
+	z-index: 10;
 	width: 20%;
 	height: 20%;
 	background: #10162321;
@@ -47,6 +48,7 @@
 }
 .rpVideo div {
 	position: relative;
+	z-index: 9999;
 }
 .rpVideo h2 {
 	position: absolute;

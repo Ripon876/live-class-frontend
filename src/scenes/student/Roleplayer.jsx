@@ -21,7 +21,7 @@ function Roleplayer({cvr, clsId, msr }) {
 
 	return (
 		<div className="video rpVideo">
-			<div>
+			<div className="h-100">
 				<video playsInline ref={rpVideoRef} autoPlay />
 				<h2>Rp</h2>
 			</div>

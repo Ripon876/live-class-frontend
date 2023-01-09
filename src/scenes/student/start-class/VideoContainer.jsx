@@ -5,7 +5,7 @@ import MicOffIcon from "@mui/icons-material/MicOff";
 
 function VideoContainer({ cvr, rvr, og, clsId, rp, msr }) {
 	const [mic, setMic] = useState(true);
-
+	const [toggled, setToggled] = useState(false);
 	const handleMic = () => {
 		if (mic) {
 			msr.current.getAudioTracks()[0].enabled = false;
@@ -16,9 +16,13 @@ function VideoContainer({ cvr, rvr, og, clsId, rp, msr }) {
 		}
 	};
 
+	const toggelVideo = () => {
+		setToggled(!toggled);
+	};
+
 	return (
 		<>
-			{rp && <Roleplayer cvr={cvr} msr={msr} clsId={clsId} />}
+			{rp && <Roleplayer cvr={cvr} st={setToggled} t={toggled} msr={msr} clsId={clsId} />}
 			<div className="video myVideo" style={{ zIndex: 9999 }}>
 				<div className="h-100">
 					<video playsInline muted ref={cvr} autoPlay />
