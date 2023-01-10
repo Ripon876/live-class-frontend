@@ -17,17 +17,19 @@ function JoinExam() {
 				.then((data) => {
 					console.log(data.data.id);
 
-					if (user.type === "student") {
-						setTimeout(() => {
-							window.location.href = `/live-class?id=${data.data.id}`;
-						}, 1000);
+					if (data.data.id) {
+						if (user.type === "student") {
+							setTimeout(() => {
+								window.location.href = `/live-class?id=${data.data.id}`;
+							}, 1000);
+						}
+						if (user.type === "roleplayer") {
+							setTimeout(() => {
+								window.location.href = `/live-class?id=${data.data.id}`;
+							}, 1500);
+						}
+						window.location.href = `/live-class?id=${data.data.id}`;
 					}
-					if (user.type === "roleplayer") {
-						setTimeout(() => {
-							window.location.href = `/live-class?id=${data.data.id}`;
-						}, 1500);
-					}
-					window.location.href = `/live-class?id=${data.data.id}`;
 				})
 				.catch((err) => console.log("err :", err));
 		});
