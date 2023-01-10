@@ -1,17 +1,32 @@
+import { useRef, useEffect } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 
-function Video({ cd, ex, rp ,title}) {
+function Video({ cd, ex, rp, title, stream }) {
+	const vRef = useRef(null);
+
+	useEffect(() => {
+		if (stream) {
+			vRef.current.srcObject = stream.current;
+			vRef.current.play();
+		}
+	}, []);
+
 	return (
-		<Card className="mb-2">
-			<div className={`video cd-video ${rp ? "small-video" : ""}  ${ex ? "large-video" : ""}`}>
+		<Card className="mb-2" style={{ cursor: rp ? "pointer" : "normal" }}>
+			<div
+				className={`video cd-video ${rp ? "small-video" : ""}  ${
+					ex ? "large-video" : ""
+				}`}
+			>
 				<div className="h-100 w-100">
 					<video
 						playsInline
 						muted
 						autoPlay
 						className="w-100 h-100 bg-black"
+						ref={vRef}
 					/>
 				</div>
 			</div>

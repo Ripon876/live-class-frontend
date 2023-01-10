@@ -17,11 +17,12 @@ import InboxIcon from "@mui/icons-material/Inbox";
 import DraftsIcon from "@mui/icons-material/Drafts";
 import Typography from "@mui/material/Typography";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-
+import Countdown from "react-countdown";
 // custom component
 import Video from "./video-streams/Video";
+import TimeRenderer from "./TimeRenderer";
 
-function VideoContainer2() {
+function VideoContainer2({ cvr, rvr, og, clsId, rp, msr }) {
 	const [mic, setMic] = useState(true);
 	const [note, setNote] = useState(false);
 
@@ -38,7 +39,7 @@ function VideoContainer2() {
 				<Grid container spacing={3}>
 					<Grid item sm={4} md={2.5}>
 						<div>
-							<Video cd title={"Candidate"} />
+							<Video cd title={"Candidate"} stream={msr} />
 							<Card className="mb-2">
 								<ButtonGroup
 									className="justify-content-around w-100"
@@ -91,7 +92,15 @@ function VideoContainer2() {
 									<ListItem>
 										<ListItemText primary="Remaining Time" />
 										<ListItemText
-											primary="00:50"
+											primary={
+												<Countdown
+													key={"dsfsd3243423423"}
+													date={
+														1673358660655 + 5110000
+													}
+													renderer={TimeRenderer}
+												/>
+											}
 											style={{ textAlign: "right" }}
 										/>
 									</ListItem>
@@ -117,7 +126,10 @@ function VideoContainer2() {
 						<div>
 							<Video rp title={"Roleplayer"} />
 
-							<div className="mt-5" style={{display: note ? 'block' : 'none'}}>
+							<div
+								className="mt-5"
+								style={{ display: note ? "block" : "none" }}
+							>
 								<div className="form-group">
 									<label htmlFor="note">Note</label>
 									<textarea

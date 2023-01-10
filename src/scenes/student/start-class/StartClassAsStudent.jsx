@@ -48,22 +48,17 @@ function StartClassAsStudent() {
 	const [clsId, setClsId] = useState(searchParams.get("id"));
 	const [progress, setProgress] = useState(0);
 
-
-
-
-useEffect(() => {
-	document.querySelector('.css-1ljns5e-MuiButtonBase-root-MuiIconButton-root').click();
+	useEffect(() => {
+		document
+			.querySelector(".css-1ljns5e-MuiButtonBase-root-MuiIconButton-root")
+			.click();
 		setTimeout(() => {
-
 			// stratClsBtn.current.click();
-			
+
 			setLoader(false);
 			// call();
 		}, 5000);
 	}, []);
-
-
-
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
@@ -87,11 +82,10 @@ useEffect(() => {
 			navigator.mozGetUserMedia;
 
 		getUserMedia({ video: true, audio: true }, (mediaStream) => {
-			console.log('media loaded');
+			console.log("media loaded");
 			myStream.current = mediaStream;
 			currentUserVideoRef.current.srcObject = myStream.current;
 			currentUserVideoRef.current.play();
-
 		});
 
 		return () => {
@@ -170,12 +164,16 @@ useEffect(() => {
 			myStream.current,
 			options
 		);
-console.log("calling examiner");
+		console.log("calling examiner");
 		call.on("stream", (remoteStream) => {
 			remoteVideoRef.current.srcObject = remoteStream;
 			remoteVideoRef.current.play();
 			setClsStarted(true);
-			document.querySelector('.css-1ljns5e-MuiButtonBase-root-MuiIconButton-root').click();
+			document
+				.querySelector(
+					".css-1ljns5e-MuiButtonBase-root-MuiIconButton-root"
+				)
+				.click();
 			setOngoing(true);
 			setProgress(0);
 			setCurrentgTime(Date.now());
@@ -192,8 +190,6 @@ console.log("calling examiner");
 			</span>
 		);
 	};
-
-	
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
@@ -215,7 +211,12 @@ console.log("calling examiner");
 				{!clsEnd ? (
 					<div>
 						{!clsStarted && (
-							<Preloader cls={cls} call={call} exId={searchParams.get("id")} rf={stratClsBtn} />
+							<Preloader
+								cls={cls}
+								call={call}
+								exId={searchParams.get("id")}
+								rf={stratClsBtn}
+							/>
 						)}
 
 						<div style={{ display: clsStarted ? "block" : "none" }}>
@@ -237,8 +238,6 @@ console.log("calling examiner");
 									/>
 								</div>
 
-
-
 								<div>
 									<Typography variant="h4">
 										Ongoing : <b>{cls?.title}</b>
@@ -247,7 +246,6 @@ console.log("calling examiner");
 										Teacher : <b>{cls?.teacher?.name}</b>
 									</Typography>
 								</div>
-
 							</div>
 						</div>
 					</div>
@@ -270,17 +268,45 @@ console.log("calling examiner");
 						</div>
 					</div>
 				)}
-
-				{showPdf && cls?.pdf && (
-					<PDFViewer
-						pdf={cls?.pdf?.file}
-						vf={cls?.pdf?.visibleFor}
-						ssp={setShowPdf}
-					/>
-				)}
 			</Box>
-			
-		<VideoContainer2 />
+			{!clsEnd ? (
+				<div>
+					{myStream.current && (
+						<VideoContainer2
+							msr={myStream}
+							evr={remoteVideoRef}
+							og={onGoing}
+							clsId={searchParams.get("id")}
+							rp={cls.roleplayer}
+						/>
+					)}
+					{showPdf && cls?.pdf && (
+						<PDFViewer
+							pdf={cls?.pdf?.file}
+							vf={cls?.pdf?.visibleFor}
+							ssp={setShowPdf}
+						/>
+					)}
+				</div>
+			) : (
+				<div>
+					<div>
+						<MoodIcon
+							style={{ fontSize: "200px" }}
+							mt="50px"
+							color="success"
+						/>
+						<Typography variant="h2" mb="20px">
+							No More Exams Left Today
+						</Typography>
+						<a href="/" style={{ textDecoration: "none" }}>
+							<Button variant="contained" size="large">
+								Back to dashboard
+							</Button>
+						</a>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
