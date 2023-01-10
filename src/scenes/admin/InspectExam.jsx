@@ -35,9 +35,6 @@ function InspectExam() {
 			myStream.current = mediaStream;
 		});
 
-		const ex_peer = new Peer();
-		const rp_peer = new Peer();
-		const cd_peer = new Peer();
 		exmInfo();
 		socket.on("allClsTaken", () => {
 			setExamsEnd(true);
@@ -47,6 +44,8 @@ function InspectExam() {
 			setReload(true);
 		});
 
+
+        const ex_peer = new Peer();
 		ex_peer.on("open", (id) => {
 			console.log(id);
 			call(
@@ -55,6 +54,7 @@ function InspectExam() {
 				exVideoRef
 			);
 		});
+		const rp_peer = new Peer();
 		rp_peer.on("open", (id) => {
 			console.log(id);
 			call(
@@ -63,6 +63,7 @@ function InspectExam() {
 				rpVideoRef
 			);
 		});
+		const cd_peer = new Peer();
 		cd_peer.on("open", (id) => {
 			console.log(id);
 			call(

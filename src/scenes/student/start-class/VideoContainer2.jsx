@@ -53,15 +53,19 @@ function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls }) {
 	}, [cls]);
 
 	const handleMic = () => {
-		setMic(!mic);
+		if (mic) {
+			msr.current.getAudioTracks()[0].enabled = false;
+			setMic(false);
+		} else {
+			msr.current.getAudioTracks()[0].enabled = true;
+			setMic(true);
+		}
 	};
+
 	const handleNote = () => {
 		setNote(!note);
 	};
 
-	useEffect(() => {
-		console.log("ct :", ct, "rt : ", rt);
-	}, []);
 	return (
 		<div>
 			<Box sx={{ flexGrow: 1 }} className="px-3 mt-5 pt-5">
@@ -100,7 +104,7 @@ function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls }) {
 												component="div"
 												className="m-0"
 											>
-												Station 1
+												{cls?.title}
 											</Typography>
 										</ListItemText>
 									</ListItem>
@@ -161,15 +165,17 @@ function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls }) {
 					</Grid>
 					<Grid item sm={4} md={2.5}>
 						<div>
-							<Video
-								rp
-								title={"Roleplayer"}
-								itemRef={rpVideoRef}
-							/>
-
-							<div
-								className="mt-5"
-								style={{ display: note ? "block" : "none" }}
+							{cls?.roleplayer && (
+								<div className="mb-5">
+								<Video
+									rp
+									title={"Roleplayer"}
+									itemRef={rpVideoRef}
+								/>	
+								</div>
+								
+							)}
+							<div style={{ display: note ? "block" : "none" }}
 							>
 								<div className="form-group">
 									<label htmlFor="note">Note</label>

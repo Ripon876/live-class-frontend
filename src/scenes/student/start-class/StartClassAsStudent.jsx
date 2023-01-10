@@ -12,7 +12,6 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import MoodIcon from "@mui/icons-material/Mood";
-import LinearProgress from "@mui/material/LinearProgress";
 
 import Preloader from "./Preloader";
 import Timer from "./Timer";
@@ -54,7 +53,7 @@ function StartClassAsStudent() {
 			.click();
 		setTimeout(() => {
 			stratClsBtn.current.click();
-setClsStarted(true);
+			setClsStarted(true);
 			setLoader(false);
 			// call();
 		}, 5000);
@@ -114,44 +113,40 @@ setClsStarted(true);
 			console.log("component unmount");
 		};
 	}, []);
-	useEffect(() => {
-		const timer = setInterval(() => {
-			if (progress === 110) {
-				clearInterval(timer);
-			}
-
-			setProgress((oldProgress) => {
-				return oldProgress + 1;
-			});
-		}, ((cls.classDuration * 60) / 100) * 1000);
-
-		return () => {
-			clearInterval(timer);
-		};
-	}, [cls]);
 
 	useEffect(() => {
-		if (progress === 100 && onGoing) {
-			socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
-				if (res.type === "joinNextClass") {
-					// console.log("next class is their ,id : ", res.id);
-					call(res.id);
-					setClsId(res.id);
-					setSearchParams({ id: res.id });
-					socket.emit("getClass", res.id, (cls) => {
-						setCls(cls);
-						setRemainingTime(cls.classDuration);
-					});
-				}
+		if (cls?.classDuration) {
+			setTimeout(() => {
+				setClsStarted(false);
+				setLoader(true);
 
-				if (res.type === "allClassEnd") {
-					// console.log("no more cls , msg: ", res.text);
-					setClsEnd(true);
-					peerInstance.current.destroy();
-				}
-			});
+				socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
+					if (res.type === "joinNextClass") {
+						// console.log("next class is their ,id : ", res.id);
+
+						setTimeout(() => {
+							setClsStarted(true);
+							setLoader(false);
+							call(res.id);
+						}, 5000);
+
+						setClsId(res.id);
+						setSearchParams({ id: res.id });
+						socket.emit("getClass", res.id, (cls) => {
+							setCls(cls);
+							setRemainingTime(cls.classDuration);
+						});
+					}
+
+					if (res.type === "allClassEnd") {
+						// console.log("no more cls , msg: ", res.text);
+						setClsEnd(true);
+						peerInstance.current.destroy();
+					}
+				});
+			}, cls?.classDuration * 60 * 1000 + 5000);
 		}
-	}, [progress]);
+	}, [cls]);
 
 	const call = (remotePeerId) => {
 		let options = {
@@ -193,83 +188,6 @@ setClsStarted(true);
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
-			{onGoing && !clsEnd && (
-				<LinearProgress
-					variant="determinate"
-					color="success"
-					value={progress}
-				/>
-			)}
-
-		{/*	<Box
-				component="div"
-				m="40px 40px "
-				width="90%"
-				p="0 0 0 20px"
-				align="center"
-			>
-				{!clsEnd ? (
-					<div>
-						{!clsStarted && (
-							<Preloader
-								cls={cls}
-								call={call}
-								exId={searchParams.get("id")}
-								rf={stratClsBtn}
-							/>
-						)}
-
-						<div style={{ display: clsStarted ? "block" : "none" }}>
-							<div className="container">
-								<div className="video-container">
-									{remainingTIme !== 0 && (
-										<Timer
-											ct={currentTime}
-											rt={remainingTIme}
-										/>
-									)}
-									<VideoContainer
-										cvr={currentUserVideoRef}
-										rvr={remoteVideoRef}
-										og={onGoing}
-										clsId={searchParams.get("id")}
-										rp={cls.roleplayer}
-										msr={myStream}
-									/>
-								</div>
-
-								<div>
-									<Typography variant="h4">
-										Ongoing : <b>{cls?.title}</b>
-									</Typography>
-									<Typography variant="h4">
-										Teacher : <b>{cls?.teacher?.name}</b>
-									</Typography>
-								</div>
-							</div>
-						</div>
-					</div>
-				) : (
-					<div>
-						<div>
-							<MoodIcon
-								style={{ fontSize: "200px" }}
-								mt="50px"
-								color="success"
-							/>
-							<Typography variant="h2" mb="20px">
-								No More Exams Left Today
-							</Typography>
-							<a href="/" style={{ textDecoration: "none" }}>
-								<Button variant="contained" size="large">
-									Back to dashboard
-								</Button>
-							</a>
-						</div>
-					</div>
-				)}
-			</Box>*/}
-
 			{!clsEnd ? (
 				<div>
 					{!clsStarted && (
@@ -281,7 +199,7 @@ setClsStarted(true);
 						/>
 					)}
 					<div style={{ display: clsStarted ? "block" : "none" }}>
-						{myStream.current  && (
+						{myStream.current && (
 							<VideoContainer2
 								msr={myStream}
 								evr={remoteVideoRef}
@@ -293,16 +211,15 @@ setClsStarted(true);
 								cls={cls}
 							/>
 						)}
-						<div className='px-5'>
-						{showPdf && cls?.pdf && (
-							<PDFViewer
-								pdf={cls?.pdf?.file}
-								vf={cls?.pdf?.visibleFor}
-								ssp={setShowPdf}
-							/>
-						)}	
+						<div className="px-5">
+							{showPdf && cls?.pdf && (
+								<PDFViewer
+									pdf={cls?.pdf?.file}
+									vf={cls?.pdf?.visibleFor}
+									ssp={setShowPdf}
+								/>
+							)}
 						</div>
-						
 					</div>
 				</div>
 			) : (
