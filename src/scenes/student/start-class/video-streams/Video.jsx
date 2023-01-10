@@ -3,7 +3,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 
-function Video({ cd, ex, rp, title, stream }) {
+function Video({ cd, ex, rp, title, stream ,itemRef}) {
 	const vRef = useRef(null);
 
 	useEffect(() => {
@@ -26,7 +26,7 @@ function Video({ cd, ex, rp, title, stream }) {
 						muted
 						autoPlay
 						className="w-100 h-100 bg-black"
-						ref={vRef}
+						ref={itemRef ? itemRef : vRef}
 					/>
 				</div>
 			</div>

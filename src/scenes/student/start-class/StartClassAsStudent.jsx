@@ -53,8 +53,8 @@ function StartClassAsStudent() {
 			.querySelector(".css-1ljns5e-MuiButtonBase-root-MuiIconButton-root")
 			.click();
 		setTimeout(() => {
-			// stratClsBtn.current.click();
-
+			stratClsBtn.current.click();
+setClsStarted(true);
 			setLoader(false);
 			// call();
 		}, 5000);
@@ -165,7 +165,7 @@ function StartClassAsStudent() {
 			options
 		);
 		console.log("calling examiner");
-		call.on("stream", (remoteStream) => {
+		call?.on("stream", (remoteStream) => {
 			remoteVideoRef.current.srcObject = remoteStream;
 			remoteVideoRef.current.play();
 			setClsStarted(true);
@@ -201,7 +201,7 @@ function StartClassAsStudent() {
 				/>
 			)}
 
-			<Box
+		{/*	<Box
 				component="div"
 				m="40px 40px "
 				width="90%"
@@ -268,29 +268,43 @@ function StartClassAsStudent() {
 						</div>
 					</div>
 				)}
-			</Box>
+			</Box>*/}
+
 			{!clsEnd ? (
 				<div>
-					{myStream.current && (
-						<VideoContainer2
-							msr={myStream}
-							evr={remoteVideoRef}
-							og={onGoing}
-							clsId={searchParams.get("id")}
-							rp={cls.roleplayer}
+					{!clsStarted && (
+						<Preloader
+							cls={cls}
+							call={call}
+							exId={searchParams.get("id")}
+							rf={stratClsBtn}
 						/>
 					)}
-					{showPdf && cls?.pdf && (
-						<PDFViewer
-							pdf={cls?.pdf?.file}
-							vf={cls?.pdf?.visibleFor}
-							ssp={setShowPdf}
-						/>
-					)}
+					<div style={{ display: clsStarted ? "block" : "none" }}>
+						{myStream.current  && (
+							<VideoContainer2
+								msr={myStream}
+								evr={remoteVideoRef}
+								og={onGoing}
+								clsId={searchParams.get("id")}
+								rp={cls.roleplayer}
+							/>
+						)}
+						<div className='px-5'>
+						{showPdf && cls?.pdf && (
+							<PDFViewer
+								pdf={cls?.pdf?.file}
+								vf={cls?.pdf?.visibleFor}
+								ssp={setShowPdf}
+							/>
+						)}	
+						</div>
+						
+					</div>
 				</div>
 			) : (
 				<div>
-					<div>
+					<div className="text-center">
 						<MoodIcon
 							style={{ fontSize: "200px" }}
 							mt="50px"

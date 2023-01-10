@@ -22,10 +22,10 @@ import Countdown from "react-countdown";
 import Video from "./video-streams/Video";
 import TimeRenderer from "./TimeRenderer";
 
-function VideoContainer2({ cvr, rvr, og, clsId, rp, msr }) {
+function VideoContainer2({ cvr, evr, og, clsId, rp, msr }) {
 	const [mic, setMic] = useState(true);
 	const [note, setNote] = useState(false);
-
+ 
 	const handleMic = () => {
 		setMic(!mic);
 	};
@@ -96,7 +96,7 @@ function VideoContainer2({ cvr, rvr, og, clsId, rp, msr }) {
 												<Countdown
 													key={"dsfsd3243423423"}
 													date={
-														1673358660655 + 5110000
+														1673364198078 + 5110000
 													}
 													renderer={TimeRenderer}
 												/>
@@ -119,7 +119,7 @@ function VideoContainer2({ cvr, rvr, og, clsId, rp, msr }) {
 					</Grid>
 					<Grid item sm={8} md={7}>
 						<div>
-							<Video ex title={"Examiner"} />
+							<Video ex title={"Examiner"} itemRef={evr} />
 						</div>
 					</Grid>
 					<Grid item sm={4} md={2.5}>

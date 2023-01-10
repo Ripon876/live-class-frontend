@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 
 function Preloader({ cls, call, rf, exId }) {
 	return (
-		<div style={{ marginTop: "100px" }}>
+		<div style={{ marginTop: "100px",textAlign: 'center' }}>
 			<CircularProgress size="100px" mt="50px" color="success" />
 			<Typography variant="h3" mt="40px">
 				' {cls?.title} '
