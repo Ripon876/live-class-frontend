@@ -288,6 +288,9 @@ setClsStarted(true);
 								og={onGoing}
 								clsId={searchParams.get("id")}
 								rp={cls.roleplayer}
+								ct={currentTime}
+								rt={remainingTIme}
+								cls={cls}
 							/>
 						)}
 						<div className='px-5'>

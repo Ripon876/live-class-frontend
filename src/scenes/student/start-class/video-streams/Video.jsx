@@ -7,7 +7,7 @@ function Video({ cd, ex, rp, title, stream ,itemRef}) {
 	const vRef = useRef(null);
 
 	useEffect(() => {
-		if (stream) {
+		if (stream && !itemRef) {
 			vRef.current.srcObject = stream.current;
 			vRef.current.play();
 		}
