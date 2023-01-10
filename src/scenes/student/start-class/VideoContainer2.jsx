@@ -23,7 +23,7 @@ import { Peer } from "peerjs";
 import Video from "./video-streams/Video";
 import TimeRenderer from "./TimeRenderer";
 
-function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls }) {
+function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls ,usr}) {
 	const [mic, setMic] = useState(true);
 	const [note, setNote] = useState(false);
 	const [readed, setReaded] = useState(false);
@@ -72,10 +72,10 @@ function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls }) {
 				<Grid container spacing={3}>
 					<Grid item sm={4} md={2.5}>
 						<div>
-							<Video cd title={"Candidate"} stream={msr} />
+							<Video cd title={"Candidate"} stream={msr} usr={usr}/>
 							<Card className="mb-2">
 								<ButtonGroup
-									className="justify-content-around w-100"
+									className="justify-content-around w-100 py-1"
 									variant="contained"
 									aria-label="Disabled elevation buttons"
 								>

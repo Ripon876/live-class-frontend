@@ -52,7 +52,7 @@ const Instructors = () => {
   ];
   return (
     <Box m="20px">
-      <Header title="Instructors" subtitle="Manage The Instructors" />
+      <Header title="Examiners" subtitle="Manage The Examiners" />
 
       <Box m="40px 0 0 0" height="70vh">
         {/*<DataGrid rows={mockData} columns={columns} />*/}

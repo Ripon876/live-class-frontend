@@ -38,10 +38,9 @@ function TodaysClassesOfTeacher() {
 							<TableRow>
 								<TableCell>Title</TableCell>
 								<TableCell align="right">
-									Class Duration
+									Exam Duration
 								</TableCell>
 								<TableCell align="right">Start Time</TableCell>
-								<TableCell align="right">Actions</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -55,23 +54,12 @@ function TodaysClassesOfTeacher() {
 								>
 									<TableCell component="th" scope="row">
 										{singleClass.title}
-									</TableCell> 
+									</TableCell>
 									<TableCell align="right">
 										{singleClass.classDuration}
 									</TableCell>
 									<TableCell align="right">
 										{singleClass.startTime}
-									</TableCell>
-									<TableCell align="right">
-										<Button
-											variant="filled"
-											startIcon={<PlayArrowIcon />}
-											onClick={() => {
-												window.location.href = `/live-class?id=${singleClass._id}`;
-											}}
-										>
-											Start
-										</Button>
 									</TableCell>
 								</TableRow>
 							))}

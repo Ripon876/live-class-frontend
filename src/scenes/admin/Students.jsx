@@ -54,7 +54,7 @@ const Students = () => {
   ];
   return (
     <Box m="20px">
-      <Header title="Students" subtitle="Manage The Students" />
+      <Header title="Candidates" subtitle="Manage The Candidates" />
 
       <Box m="40px 0 0 0" height="70vh">
         <DataGrid rows={students} columns={columns} />

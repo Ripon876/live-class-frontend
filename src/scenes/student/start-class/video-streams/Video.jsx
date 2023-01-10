@@ -3,7 +3,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 
-function Video({ cd, ex, rp, title, stream ,itemRef}) {
+function Video({ cd, ex, rp, title, stream ,itemRef,usr}) {
 	const vRef = useRef(null);
 
 	useEffect(() => {
@@ -38,7 +38,7 @@ function Video({ cd, ex, rp, title, stream ,itemRef}) {
 						component="div"
 						className="m-0"
 					>
-						Lizard
+						{usr?.name}
 					</Typography>
 				)}
 				<Typography variant="body2" color="text.secondary">

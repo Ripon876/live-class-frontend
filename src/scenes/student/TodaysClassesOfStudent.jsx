@@ -46,7 +46,7 @@ function TodaysClassesOfStudent() {
 								<TableCell>Title</TableCell>
 								<TableCell align="right">Teacher</TableCell>
 								<TableCell align="right">
-									Class Duration
+									Exam Duration
 								</TableCell>
 								<TableCell align="right">Start Time</TableCell>
 								<TableCell align="center">Status</TableCell>

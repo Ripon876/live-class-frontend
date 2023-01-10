@@ -36,7 +36,7 @@ function StartClassAsStudent() {
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 	const stratClsBtn = useRef(null);
-
+	const [user, setUser] = useState({});
 	const [peerId, setPeerId] = useState("");
 	const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
 	const remoteVideoRef = useRef(null);
@@ -57,6 +57,21 @@ function StartClassAsStudent() {
 			setLoader(false);
 			// call();
 		}, 5000);
+	}, []);
+
+	useEffect(() => {
+		axios
+			.get(process.env.REACT_APP_SERVER_URL + "/get-user-details", {
+				headers: {
+					Authorization: `Bearer ${document.cookie.split("=")[1]}`,
+				},
+			})
+			.then((data) => {
+				setUser(data.data.user);
+			})
+			.catch((err) => {
+				console.log("err : ", err);
+			});
 	}, []);
 
 	useEffect(() => {
@@ -209,6 +224,7 @@ function StartClassAsStudent() {
 								ct={currentTime}
 								rt={remainingTIme}
 								cls={cls}
+								usr={user}
 							/>
 						)}
 						<div className="px-5">
