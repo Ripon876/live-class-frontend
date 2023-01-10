@@ -17,6 +17,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Preloader from "./Preloader";
 import Timer from "./Timer";
 import VideoContainer from "./VideoContainer";
+import VideoContainer2 from "./VideoContainer2";
 import PDFViewer from "./PDFViewer";
 
 import "./style.css";
@@ -51,9 +52,10 @@ function StartClassAsStudent() {
 
 
 useEffect(() => {
+	document.querySelector('.css-1ljns5e-MuiButtonBase-root-MuiIconButton-root').click();
 		setTimeout(() => {
 
-			stratClsBtn.current.click();
+			// stratClsBtn.current.click();
 			
 			setLoader(false);
 			// call();
@@ -173,6 +175,7 @@ console.log("calling examiner");
 			remoteVideoRef.current.srcObject = remoteStream;
 			remoteVideoRef.current.play();
 			setClsStarted(true);
+			document.querySelector('.css-1ljns5e-MuiButtonBase-root-MuiIconButton-root').click();
 			setOngoing(true);
 			setProgress(0);
 			setCurrentgTime(Date.now());
@@ -233,6 +236,9 @@ console.log("calling examiner");
 										msr={myStream}
 									/>
 								</div>
+
+
+
 								<div>
 									<Typography variant="h4">
 										Ongoing : <b>{cls?.title}</b>
@@ -241,6 +247,7 @@ console.log("calling examiner");
 										Teacher : <b>{cls?.teacher?.name}</b>
 									</Typography>
 								</div>
+
 							</div>
 						</div>
 					</div>
@@ -272,6 +279,8 @@ console.log("calling examiner");
 					/>
 				)}
 			</Box>
+			
+		<VideoContainer2 />
 		</div>
 	);
 }
