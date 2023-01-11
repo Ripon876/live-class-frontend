@@ -5,65 +5,92 @@ import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
 
 function CheckList({ fd, sfd }) {
+	// Communication with patient
+
+	// Communication with colleagues
+
+	// Information Gathering
+
+	// Patient's Safety
+
+	// Applied Clinical Knowledge
+
 	let initialList = [
 		{
-			title: "Speaking Quality",
+			title: "Communication with patient",
 			required: false,
+			questions: [],
 		},
 		{
-			title: "Explanations",
+			title: "Communication with colleagues",
 			required: false,
+			questions: [],
 		},
 		{
-			title: "Appearance",
+			title: "Information Gathering",
 			required: false,
+			questions: [],
 		},
 		{
-			title: "Answers Quality",
+			title: "Patient's Safety",
 			required: false,
+			questions: [],
+		},
+		{
+			title: "Applied Clinical Knowledge",
+			required: false,
+			questions: [],
 		},
 	];
 
 	const [checkList, setCheckList] = useState(initialList);
-	const [checkboxValue, setCheckboxValue] = useState("");
-	// const checkboxValue = useRef(null);
 
 	const handleChange = (e) => {
-		if (e.target.checked) {
+		if (e) {
 			let list = [...checkList];
 			let itemIndex = list.findIndex(
 				(item) => item.title === e.target.name
 			);
-			list[itemIndex].required = true;
-			setCheckList(list);
-		}
-		let requiredItems = checkList.filter((item) => item.required);
 
-		sfd({
-			...fd,
-			checklist: requiredItems,
-		});
+			if (list[itemIndex].required) {
+				list[itemIndex].required = false;
+				list[itemIndex].questions = [];
+			} else {
+				list[itemIndex].required = true;
+			}
+
+			setCheckList([...list]);
+		}
 	};
 
 	const clear = () => {
 		setCheckList(initialList);
 	};
 
-	const addCheckbox = () => {
-		console.log("calling");
-		if (checkboxValue) {
-			setCheckList([
-				...checkList,
-				{
-					title: checkboxValue,
-					required: true,
-				},
-			]);
-			setCheckboxValue("");
+	const addQuestion = (i) => {
+		// parentElement.previousElementSibling
+		let value = document.querySelector("#checkbox" + i).value;
+		if (value) {
+			let newList = [...checkList];
+			newList[i].questions.push({
+				title: value,
+				required: true,
+			});
+			document.querySelector("#checkbox" + i).value = "";
+			setCheckList([...newList]);
+			let requiredItems = newList.filter((item) => item.required);
+			sfd({
+				...fd,
+				checklist: requiredItems,
+			});
+			return;
 		}
+		return;
 	};
+
 	return (
 		<>
 			<div className="ms-2 d-flex text-start">
@@ -72,53 +99,85 @@ function CheckList({ fd, sfd }) {
 						maxWidth: "350px",
 					}}
 				>
-					{checkList?.map((item) => (
-						<FormControlLabel
-							control={
-								<Checkbox
-									color="success"
-									name={item.title}
-									onChange={handleChange}
-									checked={item.required}
-								/>
-							}
-							label={item.title}
-						/>
+					{checkList?.map((item, i) => (
+						<div>
+							<FormControlLabel
+								control={
+									<Checkbox
+										color="success"
+										name={item.title}
+										onChange={handleChange}
+									/>
+								}
+								label={item.title}
+							/>
+							{item.required && (
+								<div>
+									<Box
+										sx={{
+											display: "flex",
+											flexDirection: "column",
+											ml: 3,
+										}}
+									>
+										<FormGroup
+											sx={{
+												maxWidth: "350px",
+											}}
+										>
+											{item?.questions?.map(
+												(question) => (
+													<FormControlLabel
+														label={question.title}
+														control={
+															<Checkbox
+																color="success"
+																checked={
+																	question.required
+																}
+															/>
+														}
+													/>
+												)
+											)}
+										</FormGroup>
+									</Box>
+
+									<div className="align-items-center d-flex">
+										<TextField
+											required
+											id={"checkbox" + i}
+											placeholder="question"
+											variant="filled"
+											required
+											size="small"
+											sx={{
+												minWidth: "300px",
+											}}
+										/>
+										<div>
+											<Button
+												size="small"
+												variant="filled"
+												sx={{
+													width: "170px",
+													boxShadow: 3,
+													fontSize: "15px",
+												}}
+												onClick={() => {
+													addQuestion(i);
+												}}
+												startIcon={<AddIcon />}
+											>
+												Add Questions
+											</Button>
+										</div>
+									</div>
+								</div>
+							)}
+						</div>
 					))}
-				</FormGroup> 
-			</div>
-			<div className="align-items-center d-flex">
-				<TextField
-					required
-					id="title"
-					label="Title"
-					name="title"
-					placeholder="checkbox title"
-					variant="filled"
-					value={checkboxValue}
-					required
-					sx={{
-						minWidth: "300px",
-					}}
-					onChange={(e) => {
-						setCheckboxValue(e.target.value);
-					}}
-				/>
-				<div>
-					<Button
-						variant="filled"
-						sx={{
-							mt: 1,
-							ml: 2,
-							boxShadow: 3,
-							fontSize: "15px",
-						}}
-						onClick={addCheckbox}
-						startIcon={<AddIcon />}
-					>
-						Add checkbox
-					</Button>
-				</div>
+				</FormGroup>
 			</div>
 		</>
 	);
