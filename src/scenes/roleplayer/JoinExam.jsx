@@ -84,7 +84,7 @@ function JoinExam() {
 
 	useEffect(() => {
 		const timer = setInterval(() => {
-			if (progress === 110) {
+			if (progress === 100) {
 				clearInterval(timer);
 			}
 
@@ -123,6 +123,7 @@ function JoinExam() {
 			call.answer(myStream.current);
 
 			call.on("stream", function (exmrStream) {
+				
 				exmrVideoRef.current.srcObject = exmrStream;
 				exmrVideoRef.current.play();
 				console.log("connected with examiner");
@@ -272,6 +273,10 @@ function JoinExam() {
 											socket={socket}
 											clsId={searchParams.get("id")}
 											msr={myStream}
+											setStd={setStd}
+											sP={setProgress}
+											sCT={setCurrentgTime}
+											sOg={setOngoing}
 										/>
 									</div>
 

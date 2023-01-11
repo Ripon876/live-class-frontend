@@ -8,7 +8,7 @@ function Roleplayer({ peer, rpId, msr }) {
 	useEffect(() => {
 		setTimeout(() => {
 			call(rpId);
-		}, 2500);
+		}, 2000);
 	}, []);
 
 	const call = (rpPeerId) => {
