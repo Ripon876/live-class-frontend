@@ -8,16 +8,6 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 
 function CheckList({ fd, sfd }) {
-	// Communication with patient
-
-	// Communication with colleagues
-
-	// Information Gathering
-
-	// Patient's Safety
-
-	// Applied Clinical Knowledge
-
 	let initialList = [
 		{
 			title: "Communication with patient",
@@ -78,6 +68,7 @@ function CheckList({ fd, sfd }) {
 			newList[i].questions.push({
 				title: value,
 				required: true,
+				passed: false,
 			});
 			document.querySelector("#checkbox" + i).value = "";
 			setCheckList([...newList]);

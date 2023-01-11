@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import CircleIcon from "@mui/icons-material/Circle";
 import { makeTotal, SubmitMark } from "./helpers";
 
 function Mark({ list, cId, eId, sm, ms }) {
@@ -16,31 +19,32 @@ function Mark({ list, cId, eId, sm, ms }) {
 	useEffect(() => {
 		list.map((item) => {
 			delete item.required;
-			item.passed = false;
 		});
 		setCheckList(list);
 	}, []);
 
-	const handleChange = (e) => {
-		let cList = [...checkList];
-		let itemIndex = cList.findIndex((item) => item.title === e.target.name);
-		if (cList[itemIndex].mark != 5) {
-			cList[itemIndex].mark = 5;
-			cList[itemIndex].passed = true;
+	const markPassed = (sn, qn) => {
+		if (checkList[sn].questions[qn].passed) {
+			checkList[sn].questions[qn].passed = false;
 		} else {
-			cList[itemIndex].mark = 0;
-			cList[itemIndex].passed = false;
+			checkList[sn].questions[qn].passed = true;
 		}
-		console.log(cList);
-		setCheckList(cList);
 	};
 
 	const submitMark = () => {
-		let totalMark = makeTotal(checkList, mark.mark);
+		let clist = [...checkList];
+
+		clist?.map((item) => {
+			item.passedCount = item.questions.filter(
+				(question) => question.passed
+			).length;
+			item.questions = item.questions.length;
+			delete item.questions;
+		});
+
 		let result = {
-			mark: totalMark,
-			comment: mark.comment,
-			list: [...checkList],
+			...mark,
+			list: clist,
 		};
 		SubmitMark(result, cId, eId, (err, msg) => {
 			if (err) {
@@ -51,26 +55,61 @@ function Mark({ list, cId, eId, sm, ms }) {
 			}
 		});
 	};
+
 	return (
-		<div>
+		<div className="mt-5">
 			<div className="text-start">
-				<FormGroup
-					sx={{
-						maxWidth: "350px",
-					}}
-				>
-					{checkList?.map((item) => (
-						<FormControlLabel
-							control={
-								<Checkbox
-									color="success"
-									name={item.title}
-									onChange={handleChange}
-								/>
-							}
-							label={item.title}
-						/>
-					))}
+				<FormGroup>
+					<div className="row mb-3">
+						{checkList?.map((item, sn) => (
+							<div className="col-4">
+								<Typography variant="h3">
+									<CircleIcon
+										sx={{
+											fontSize: "15px",
+											paddingRight: "5px",
+										}}
+									/>
+									{item?.title}
+								</Typography>
+								{item?.questions && (
+									<Box
+										sx={{
+											display: "flex",
+											flexDirection: "column",
+											ml: 3,
+										}}
+									>
+										<FormGroup
+											sx={{
+												maxWidth: "350px",
+											}}
+										>
+											{item?.questions?.map(
+												(question, qn) => (
+													<FormControlLabel
+														label={question?.title}
+														className="d-block"
+														control={
+															<Checkbox
+																color="success"
+																onChange={() => {
+																	markPassed(
+																		sn,
+																		qn
+																	);
+																}}
+															/>
+														}
+													/>
+												)
+											)}
+										</FormGroup>
+									</Box>
+								)}
+							</div>
+						))}
+					</div>
 					<TextField
 						label="Mark"
 						name="mark"
