@@ -30,7 +30,7 @@ function Result() {
 			})
 			.then((data) => {
 				setMarks(data.data.marks);
-				console.log(data.data.marks);
+				 
 			})
 			.catch((err) => console.log("err :", err));
 	}, []);
@@ -102,7 +102,7 @@ function Result() {
 									<TableRow>
 										<TableCell>#</TableCell>
 										<TableCell align="right">
-											Subject
+											Title
 										</TableCell>
 										<TableCell align="right">
 											Mark
@@ -127,7 +127,7 @@ function Result() {
 										>
 											<TableCell>{i + 1}</TableCell>
 											<TableCell align="right">
-												{exam?.exam.subject}
+												{exam?.exam.title}
 											</TableCell>
 											<TableCell align="right">
 												{exam?.mark}
@@ -138,7 +138,8 @@ function Result() {
 											<TableCell align="right">
 												{exam?.list?.map((item) => (
 													<p className="mb-0">
-														{item.passed ? (
+														{item.questionsCount ===
+														item.passedCount ? (
 															<CheckCircleIcon
 																color="success"
 																sx={{
@@ -158,7 +159,8 @@ function Result() {
 															/>
 														)}
 
-														{item?.title}
+														{item?.title}{' '}
+														{`(${item.passedCount}/${item.questionsCount})`}
 													</p>
 												))}
 											</TableCell>

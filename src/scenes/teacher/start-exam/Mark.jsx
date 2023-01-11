@@ -34,13 +34,13 @@ function Mark({ list, cId, eId, sm, ms }) {
 	const submitMark = () => {
 		let clist = [...checkList];
 
-		clist?.map((item) => {
+		for (let item of clist) {
 			item.passedCount = item.questions.filter(
 				(question) => question.passed
 			).length;
-			item.questions = item.questions.length;
-			delete item.questions;
-		});
+			item.questionsCount = item.questions.length;
+			delete item.required;
+		}
 
 		let result = {
 			...mark,
@@ -115,7 +115,6 @@ function Mark({ list, cId, eId, sm, ms }) {
 						name="mark"
 						type="number"
 						variant="filled"
-						// value={fd.title}
 						sx={{
 							marginTop: "10px",
 							minWidth: "300px",
@@ -133,7 +132,6 @@ function Mark({ list, cId, eId, sm, ms }) {
 						name="comment"
 						type="text"
 						variant="filled"
-						// value={fd.title}
 						sx={{
 							marginTop: "15px",
 							minWidth: "300px",
