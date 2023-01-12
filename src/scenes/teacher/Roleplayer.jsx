@@ -7,11 +7,11 @@ function Roleplayer({ peer, rpId, msr }) {
 	useEffect(() => {
 		setTimeout(() => {
 			call(rpId);
-		}, 2000);
+		}, 3500);
 	}, []);
 
 	const call = (rpPeerId) => {
-		console.log("calling");
+		console.log("calling Roleplayer");
 		const call = peer.current.call(rpPeerId, msr.current);
 
 		call?.on("stream", (rpStream) => {

@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Peer } from "peerjs";
 import { useSelector } from "react-redux";
 
-function Candidate({ og, socket, clsId, msr, setStd, sP, sCT, sOg }) {
-	const candidateVideoRef = useRef(null);
+function Candidate({ og, socket, clsId, msr, setStd, sP, sCT, sOg, cvr }) {
 	const cdPeerRef = useRef(null);
 	const iceConfig = useSelector((state) => state.iceConfig);
 
@@ -36,14 +35,25 @@ function Candidate({ og, socket, clsId, msr, setStd, sP, sCT, sOg }) {
 			sCT(Date.now());
 			sOg(true);
 			console.log("connected with candidte");
-			candidateVideoRef.current.srcObject = rpStream;
-			candidateVideoRef.current.play();
+			cvr.current.srcObject = rpStream;
+			cvr.current.play();
 		});
 	};
 
 	return (
-		<div className="video otherVideo">
-			<video playsInline ref={candidateVideoRef} autoPlay />
+		<div
+			className="video otherVideo"
+			style={{
+				border: !og ? "5px solid #0e131e" : "none",
+				borderRadius: !og ? "10px" : 0,
+			}}
+		>
+			<video
+				playsInline
+				ref={cvr}
+				autoPlay
+				className={og ? "d-block" : "d-none"}
+			/>
 		</div>
 	);
 }

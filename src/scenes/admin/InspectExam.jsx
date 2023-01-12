@@ -41,9 +41,11 @@ function InspectExam() {
 		socket.on("allClsTaken", () => {
 			setExamsEnd(true);
 			setReload(false);
+			myStream.current.getTracks()?.forEach((x) => x.stop());
 		});
 		socket.on("cdChanging", () => {
 			setReload(true);
+			myStream.current.getTracks()?.forEach((x) => x.stop());
 		});
 
 		const ex_peer = new Peer({

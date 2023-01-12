@@ -36,7 +36,7 @@ import StartClassAsStudent from "./scenes/student/start-class/StartClassAsStuden
 import JoinExam from "./scenes/roleplayer/JoinExam";
 
 function App() {
-  const userType = useSelector((state) => state.type);
+  const userType = useSelector((state) => state.user.type);
   // console.log(userType);
 
   return (

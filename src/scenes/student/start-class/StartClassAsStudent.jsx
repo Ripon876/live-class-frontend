@@ -15,7 +15,7 @@ import MoodIcon from "@mui/icons-material/Mood";
 
 import Preloader from "./Preloader";
 import Timer from "./Timer";
-import VideoContainer2 from "./VideoContainer2";
+import VideoContainer from "./VideoContainer";
 import PDFViewer from "./PDFViewer";
 
 import "./style.css";
@@ -24,6 +24,7 @@ let socket;
 
 function StartClassAsStudent() {
 	const [cls, setCls] = useState({});
+	const [clsTitle, setClsTitle] = useState("");
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [cookies, setCookie] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
@@ -55,6 +56,8 @@ function StartClassAsStudent() {
 			stratClsBtn.current.click();
 			setClsStarted(true);
 			setLoader(false);
+			currentUserVideoRef.current.srcObject = myStream.current;
+			currentUserVideoRef.current.play();
 			// call();
 		}, 5000);
 	}, []);
@@ -98,8 +101,6 @@ function StartClassAsStudent() {
 		getUserMedia({ video: true, audio: true }, (mediaStream) => {
 			console.log("media loaded");
 			myStream.current = mediaStream;
-			currentUserVideoRef.current.srcObject = myStream.current;
-			currentUserVideoRef.current.play();
 		});
 
 		return () => {
@@ -138,7 +139,6 @@ function StartClassAsStudent() {
 			setTimeout(() => {
 				setClsStarted(false);
 				setLoader(true);
-
 				socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
 					if (res.type === "joinNextClass") {
 						// console.log("next class is their ,id : ", res.id);
@@ -147,13 +147,16 @@ function StartClassAsStudent() {
 							setClsStarted(true);
 							setLoader(false);
 							call(res.id);
-						}, 5000);
+						}, 30000);
 
 						setClsId(res.id);
 						setSearchParams({ id: res.id });
 						socket.emit("getClass", res.id, (cls) => {
-							setCls(cls);
-							setRemainingTime(cls.classDuration);
+							setClsTitle(cls?.title);
+							setTimeout(() => {
+								setCls(cls);
+								setRemainingTime(cls.classDuration);
+							}, 30000);
 						});
 					}
 
@@ -161,6 +164,7 @@ function StartClassAsStudent() {
 						// console.log("no more cls , msg: ", res.text);
 						setClsEnd(true);
 						peerInstance.current.destroy();
+						myStream.current.getTracks()?.forEach((x) => x.stop());
 					}
 				});
 			}, cls?.classDuration * 60 * 1000 + 5000);
@@ -211,6 +215,7 @@ function StartClassAsStudent() {
 				<div>
 					{!clsStarted && (
 						<Preloader
+							clsTitle={clsTitle}
 							cls={cls}
 							call={call}
 							exId={searchParams.get("id")}
@@ -219,7 +224,7 @@ function StartClassAsStudent() {
 					)}
 					<div style={{ display: clsStarted ? "block" : "none" }}>
 						{myStream.current && (
-							<VideoContainer2
+							<VideoContainer
 								msr={myStream}
 								evr={remoteVideoRef}
 								og={onGoing}

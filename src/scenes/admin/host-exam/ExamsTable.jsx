@@ -14,7 +14,7 @@ function ExamsTable({ exams, dltExm }) {
 			<Table sx={{ minWidth: "90%" }} aria-label="simple table">
 				<TableHead>
 					<TableRow>
-						<TableCell>Title</TableCell> 
+						<TableCell>Title</TableCell>
 						<TableCell align="right">Teacher</TableCell>
 						<TableCell align="right">Exam Duration</TableCell>
 						<TableCell align="right">Start Time</TableCell>
@@ -33,7 +33,7 @@ function ExamsTable({ exams, dltExm }) {
 						>
 							<TableCell component="th" scope="row">
 								{singleClass?.title}
-							</TableCell> 
+							</TableCell>
 							<TableCell align="right">
 								{singleClass?.teacher?.name}
 							</TableCell>
@@ -41,7 +41,13 @@ function ExamsTable({ exams, dltExm }) {
 								{singleClass?.classDuration}
 							</TableCell>
 							<TableCell align="right">
-								{singleClass?.startTime}
+								{new Date(singleClass?.startTime)
+									.toLocaleTimeString()
+									.slice(0, 4) +
+									" " +
+									new Date(singleClass?.startTime)
+										.toLocaleTimeString()
+										.slice(8)}
 							</TableCell>
 							<TableCell align="right">
 								{singleClass?.status}

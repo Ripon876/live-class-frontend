@@ -35,10 +35,9 @@ function JoinExam() {
 	// for call
 	const [calling, setCaling] = useState(false);
 	const [peerId, setPeerId] = useState(searchParams.get("id"));
-	const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
 	const [onGoing, setOngoing] = useState(false);
-	const remoteVideoRef = useRef(null);
 	const exmrVideoRef = useRef(null);
+	const candidateVideoRef = useRef(null);
 	const currentUserVideoRef = useRef(null);
 	const peerInstance = useRef(null);
 	const callerRef = useRef(null);
@@ -80,6 +79,7 @@ function JoinExam() {
 			// console.log("classes end : ", text);
 			setClsEnd(true);
 			peerInstance.current.destroy();
+			myStream.current.getTracks()?.forEach((x) => x.stop());
 		});
 	}, []);
 
@@ -94,6 +94,11 @@ function JoinExam() {
 			});
 		}, ((cls.classDuration * 60) / 100) * 1000);
 
+		setTimeout(() => {
+			setOngoing(false);
+			console.log("hiding tiemr");
+		}, cls?.classDuration * 60 * 1000 + 5000);
+
 		return () => {
 			clearInterval(timer);
 		};
@@ -103,6 +108,21 @@ function JoinExam() {
 		const peer = new Peer(searchParams.get("id") + "roleplayer", {
 			config: iceConfig,
 		});
+
+		peer.on("open", () => {
+			peer.on("call", (call) => {
+				console.log("examiner calling");
+
+				call.answer(myStream.current);
+
+				call.on("stream", function (exmrStream) {
+					exmrVideoRef.current.srcObject = exmrStream;
+					exmrVideoRef.current.play();
+					console.log("connected with examiner");
+				});
+			});
+		});
+
 		const ad_peer = new Peer(searchParams.get("id") + "admin-roleplayer", {
 			config: iceConfig,
 		});
@@ -114,23 +134,6 @@ function JoinExam() {
 
 			call.on("stream", function (remoteStream) {
 				console.log("connected with admin");
-			});
-		});
-
-		peer.on("open", (id) => {
-			console.log(id);
-			setPeerId(id);
-		});
-
-		peer.on("call", (call) => {
-			console.log("examiner calling");
-
-			call.answer(myStream.current);
-
-			call.on("stream", function (exmrStream) {
-				exmrVideoRef.current.srcObject = exmrStream;
-				exmrVideoRef.current.play();
-				console.log("connected with examiner");
 			});
 		});
 
@@ -281,6 +284,7 @@ function JoinExam() {
 											sP={setProgress}
 											sCT={setCurrentgTime}
 											sOg={setOngoing}
+											cvr={candidateVideoRef}
 										/>
 									</div>
 

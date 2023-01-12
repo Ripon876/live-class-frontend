@@ -51,7 +51,7 @@ function Requirements({ rq, srq }) {
 								camera: true,
 								connection: true,
 							});
-						}, 4000);
+						}, 3000);
 					}
 				})
 				.then(() => {
@@ -62,7 +62,7 @@ function Requirements({ rq, srq }) {
 							connection: true,
 							speed: true,
 						});
-					}, 6000);
+					}, 4000);
 				});
 		};
 		checkRequirements();

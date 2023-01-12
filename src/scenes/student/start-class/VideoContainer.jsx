@@ -24,12 +24,17 @@ import { useSelector } from "react-redux";
 import Video from "./video-streams/Video";
 import TimeRenderer from "./TimeRenderer";
 
-function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls, usr }) {
+function VideoContainer({ cvr, evr, og, clsId, rp, msr, ct, rt, cls, usr }) {
 	const [mic, setMic] = useState(true);
 	const [note, setNote] = useState(false);
 	const [readed, setReaded] = useState(false);
 	const rpVideoRef = useRef(null);
 	const iceConfig = useSelector((state) => state.iceConfig);
+
+	const [changeableRefs, setCR] = useState([
+		{ ex: true, rp: false, ref: evr, title: "Examiner" },
+		{ ex: false, rp: true, ref: rpVideoRef, title: "Roleplayer" },
+	]);
 
 	useEffect(() => {
 		const peer = new Peer(clsId + "candidate-roleplayer", {
@@ -70,6 +75,15 @@ function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls, usr }) {
 		setNote(!note);
 	};
 
+	const changeStrems = () => {
+		let refs = [...changeableRefs];
+		refs = refs.reverse();
+		refs.map((item) => {
+			item.ex = item.ex ? false : true;
+			item.rp = item.rp ? false : true;
+		});
+		setCR([...refs]);
+	};
 	return (
 		<div>
 			<Box sx={{ flexGrow: 1 }} className="px-3 mt-5 pt-5">
@@ -169,7 +183,12 @@ function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls, usr }) {
 					</Grid>
 					<Grid item sm={8} md={7}>
 						<div>
-							<Video ex title={"Examiner"} itemRef={evr} />
+							<Video
+								rp={changeableRefs[0].rp}
+								ex={changeableRefs[0].ex}
+								title={changeableRefs[0].title}
+								itemRef={changeableRefs[0].ref}
+							/>
 						</div>
 					</Grid>
 					<Grid item sm={4} md={2.5}>
@@ -177,9 +196,11 @@ function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls, usr }) {
 							{cls?.roleplayer && (
 								<div className="mb-5">
 									<Video
-										rp
-										title={"Roleplayer"}
-										itemRef={rpVideoRef}
+										rp={changeableRefs[1].rp}
+										ex={changeableRefs[1].ex}
+										title={changeableRefs[1].title}
+										itemRef={changeableRefs[1].ref}
+										oc={changeStrems}
 									/>
 								</div>
 							)}
@@ -202,4 +223,4 @@ function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls, usr }) {
 	);
 }
 
-export default VideoContainer2;
+export default VideoContainer;

@@ -91,7 +91,7 @@ function AddExam({ fd, hc, hs, examiners, roleplayers, sfd }) {
 					type="time"
 					name="startTime"
 					variant="filled"
-					value={fd.startTime}
+					// value={fd.startTime}
 					required
 					sx={{
 						minWidth: "300px",
@@ -104,6 +104,7 @@ function AddExam({ fd, hc, hs, examiners, roleplayers, sfd }) {
 					}}
 					sx={{ width: 150 }}
 					onChange={hc}
+					// onChange={(e) => console.log( new Date().toUTCString() + ' '+  e.target.value)}
 				/>
 			</div>
 			<div>
@@ -123,7 +124,7 @@ function AddExam({ fd, hc, hs, examiners, roleplayers, sfd }) {
 					startIcon={<AddIcon />}
 					onClick={handleSubmit}
 				>
-					Add
+					Add Exam
 				</Button>
 			</div>
 		</div>

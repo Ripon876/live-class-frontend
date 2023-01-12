@@ -88,10 +88,23 @@ function HostClass() {
 		let evalue = e.target.value;
 		setValue(evalue);
 		setAlert({ ...alert, show: false });
-		setFormData({
-			...formData,
-			[e.target.name]: e.target.value,
-		});
+
+		if (e.target.name === "startTime") {
+			let time =
+				new Date().toString().slice(0, 15) +
+				" " +
+				e.target.value +
+				":00";
+			setFormData({
+				...formData,
+				[e.target.name]: new Date(time).toUTCString(),
+			});
+		} else {
+			setFormData({
+				...formData,
+				[e.target.name]: e.target.value,
+			});
+		}
 	};
 
 	const handleSubmit = () => {
@@ -117,10 +130,10 @@ function HostClass() {
 	};
 	const startexams = () => {
 		Start(socket, setExams, setAlert, setSpin);
-		
-		setTimeout(()=> {
+
+		setTimeout(() => {
 			getExams(setExams, setCanStart);
-		},2500)
+		}, 2500);
 	};
 
 	const clearStates = () => {

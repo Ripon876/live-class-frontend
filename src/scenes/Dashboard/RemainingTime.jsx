@@ -11,11 +11,12 @@ function RemainingTime() {
 			.get(process.env.REACT_APP_SERVER_URL + "/get-start-time")
 			.then((data) => {
 				setStartingTime(
-					new Date().toJSON().slice(0, 10) +
-						"T" +
-						data.data.st +
-						":00"
+					Date.parse(new Date(data.data.st).toString()) - Date.now()
 				);
+
+				// (new Date('Fri Jan 13 2023 15:32:50')).toUTCString()
+				// 'Fri, 13 Jan 2023 09:32:50 GMT'
+				// (new Date('Fri, 13 Jan 2023 09:32:50 GMT')).toString()
 
 				if (data.data.msg) {
 					setMsg(data.data.msg);
@@ -26,9 +27,11 @@ function RemainingTime() {
 
 	return (
 		<div style={{ marginTop: "100px", textAlign: "center" }}>
-{!msg && 			<Typography variant="h4" mb="10px">
-				Remainig Time
-			</Typography>}
+			{!msg && (
+				<Typography variant="h4" mb="10px">
+					Remainig Time
+				</Typography>
+			)}
 			<Typography
 				variant="h1"
 				mb="20px"
@@ -37,9 +40,7 @@ function RemainingTime() {
 				{startingTime && (
 					<Countdown
 						key={Date.now()}
-						date={
-							Date.now() + (Date.parse(startingTime) - Date.now())
-						}
+						date={Date.now() + startingTime}
 						renderer={renderer}
 					>
 						<Completionist msg={msg} />

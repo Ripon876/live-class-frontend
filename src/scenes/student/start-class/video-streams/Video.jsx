@@ -3,7 +3,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 
-function Video({ cd, ex, rp, title, stream ,itemRef,usr}) {
+function Video({ cd, ex, rp, title, stream, itemRef, usr, oc }) {
 	const vRef = useRef(null);
 
 	useEffect(() => {
@@ -13,8 +13,17 @@ function Video({ cd, ex, rp, title, stream ,itemRef,usr}) {
 		}
 	}, []);
 
+	const handeClick = () => {
+		if (oc) {
+			oc();
+		}
+	};
 	return (
-		<Card className="mb-2" style={{ cursor: rp ? "pointer" : "normal" }}>
+		<Card
+			className="mb-2"
+			style={{ cursor: rp ? "pointer" : "normal" }}
+			onClick={handeClick}
+		>
 			<div
 				className={`video cd-video ${rp ? "small-video" : ""}  ${
 					ex ? "large-video" : ""

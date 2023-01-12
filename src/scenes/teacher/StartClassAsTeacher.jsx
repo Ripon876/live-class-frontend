@@ -83,6 +83,7 @@ function StartClassAsTeacher() {
 			console.log("classes end : ", text);
 			setClsEnd(true);
 			peerInstance.current.destroy();
+			myStream.current.getTracks()?.forEach((x) => x.stop());
 		});
 
 		socket.on("addWithAdmin", (id) => {
@@ -187,6 +188,7 @@ function StartClassAsTeacher() {
 				exam={cls}
 				pr={progress}
 				setPr={setProgress}
+				setOg={setOngoing}
 			/>
 
 			<Box

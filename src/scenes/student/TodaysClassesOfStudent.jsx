@@ -72,7 +72,13 @@ function TodaysClassesOfStudent() {
 										{singleClass?.classDuration}
 									</TableCell>
 									<TableCell align="right">
-										{singleClass?.startTime}
+										{new Date(singleClass?.startTime)
+											.toLocaleTimeString()
+											.slice(0, 4) +
+											" " +
+											new Date(singleClass?.startTime)
+												.toLocaleTimeString()
+												.slice(8)}
 									</TableCell>
 									<TableCell align="center">
 										{singleClass?.status}

@@ -2,12 +2,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
-function Preloader({ cls, call, rf, exId }) {
+function Preloader({ cls, call, rf, exId,clsTitle }) {
 	return (
 		<div style={{ marginTop: "100px",textAlign: 'center' }}>
 			<CircularProgress size="100px" mt="50px" color="success" />
 			<Typography variant="h3" mt="40px">
-				' {cls?.title} '
+				' {cls?.title} {clsTitle && clsTitle}'
 			</Typography>
 
 			<Typography variant="h4" mb="20px">
