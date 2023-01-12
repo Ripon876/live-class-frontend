@@ -15,7 +15,6 @@ import MoodIcon from "@mui/icons-material/Mood";
 
 import Preloader from "./Preloader";
 import Timer from "./Timer";
-import VideoContainer from "./VideoContainer";
 import VideoContainer2 from "./VideoContainer2";
 import PDFViewer from "./PDFViewer";
 
@@ -29,7 +28,8 @@ function StartClassAsStudent() {
 	const [cookies, setCookie] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
 	const [showPdf, setShowPdf] = useState(false);
-	const stdId = useSelector((state) => state.id);
+	const stdId = useSelector((state) => state.user.id);
+	const iceConfig = useSelector((state) => state.iceConfig);
 	const [onGoing, setOngoing] = useState(false);
 	const [clsEnd, setClsEnd] = useState(false);
 	const [loader, setLoader] = useState(true);
@@ -108,8 +108,12 @@ function StartClassAsStudent() {
 	}, []);
 
 	useEffect(() => {
-		const peer = new Peer();
-		const ad_peer = new Peer(searchParams.get("id") + "admin-candidate");
+		const peer = new Peer({
+			config: iceConfig,
+		});
+		const ad_peer = new Peer(searchParams.get("id") + "admin-candidate", {
+			config: iceConfig,
+		});
 
 		peer.on("open", (id) => {
 			setPeerId(id);

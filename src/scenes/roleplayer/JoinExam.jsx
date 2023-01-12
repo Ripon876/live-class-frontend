@@ -26,7 +26,8 @@ function JoinExam() {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [cookies, setCookie] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
-	const rolplayerId = useSelector((state) => state.id);
+	const rolplayerId = useSelector((state) => state.user.id);
+	const iceConfig = useSelector((state) => state.iceConfig);
 	const [clsEnd, setClsEnd] = useState(false);
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
@@ -99,8 +100,12 @@ function JoinExam() {
 	}, [cls]);
 
 	useEffect(() => {
-		const peer = new Peer(searchParams.get("id") + "roleplayer");
-		const ad_peer = new Peer(searchParams.get("id") + "admin-roleplayer");
+		const peer = new Peer(searchParams.get("id") + "roleplayer", {
+			config: iceConfig,
+		});
+		const ad_peer = new Peer(searchParams.get("id") + "admin-roleplayer", {
+			config: iceConfig,
+		});
 
 		ad_peer.on("call", (call) => {
 			console.log("admin calling");
@@ -123,7 +128,6 @@ function JoinExam() {
 			call.answer(myStream.current);
 
 			call.on("stream", function (exmrStream) {
-				
 				exmrVideoRef.current.srcObject = exmrStream;
 				exmrVideoRef.current.play();
 				console.log("connected with examiner");

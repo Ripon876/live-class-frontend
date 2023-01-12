@@ -26,7 +26,8 @@ function StartClassAsTeacher() {
 	const [searchParams] = useSearchParams();
 	const [cookies] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
-	const teacherId = useSelector((state) => state.id);
+	const teacherId = useSelector((state) => state.user.id);
+	const iceConfig = useSelector((state) => state.iceConfig);
 	const [clsEnd, setClsEnd] = useState(false);
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
@@ -91,9 +92,15 @@ function StartClassAsTeacher() {
 	}, []);
 
 	useEffect(() => {
-		const peer = new Peer(searchParams.get("id"));
-		const rp_peer = new Peer(searchParams.get("id") + "examiner");
-		const ad_peer = new Peer(searchParams.get("id") + "admin-examiner");
+		const peer = new Peer(searchParams.get("id"), {
+			config: iceConfig,
+		});
+		const rp_peer = new Peer(searchParams.get("id") + "examiner", {
+			config: iceConfig,
+		});
+		const ad_peer = new Peer(searchParams.get("id") + "admin-examiner", {
+			config: iceConfig,
+		});
 
 		ad_peer.on("call", (call) => {
 			console.log("admin calling");

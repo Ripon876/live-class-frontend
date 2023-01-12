@@ -33,7 +33,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 };
 
 const AppSidebar = () => {
-  const userType = useSelector((state) => state.type);
+  const userType = useSelector((state) => state.user.type);
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);

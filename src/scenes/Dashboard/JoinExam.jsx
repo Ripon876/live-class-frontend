@@ -6,7 +6,7 @@ import axios from "axios";
 let socket;
 let examId;
 function JoinExam() {
-	const user = useSelector((state) => state);
+	const user = useSelector((state) => state.user);
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 

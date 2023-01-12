@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 function Settings() {
 	const [cookies, setCookie] = useCookies([]);
 	const [user, setUser] = useState({});
-	const userType = useSelector((state) => state.type);
+	const userType = useSelector((state) => state.user.type);
 	const [alert, setAlert] = useState({
 		show: false,
 		type: "",

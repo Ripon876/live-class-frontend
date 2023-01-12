@@ -19,18 +19,22 @@ import Typography from "@mui/material/Typography";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Countdown from "react-countdown";
 import { Peer } from "peerjs";
+import { useSelector } from "react-redux";
 // custom component
 import Video from "./video-streams/Video";
 import TimeRenderer from "./TimeRenderer";
 
-function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls ,usr}) {
+function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls, usr }) {
 	const [mic, setMic] = useState(true);
 	const [note, setNote] = useState(false);
 	const [readed, setReaded] = useState(false);
 	const rpVideoRef = useRef(null);
+	const iceConfig = useSelector((state) => state.iceConfig);
 
 	useEffect(() => {
-		const peer = new Peer(clsId + "candidate-roleplayer");
+		const peer = new Peer(clsId + "candidate-roleplayer", {
+			config: iceConfig,
+		});
 
 		peer.on("call", (call) => {
 			console.log("receving call from roleplayer");
@@ -72,7 +76,12 @@ function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls ,usr}) {
 				<Grid container spacing={3}>
 					<Grid item sm={4} md={2.5}>
 						<div>
-							<Video cd title={"Candidate"} stream={msr} usr={usr}/>
+							<Video
+								cd
+								title={"Candidate"}
+								stream={msr}
+								usr={usr}
+							/>
 							<Card className="mb-2">
 								<ButtonGroup
 									className="justify-content-around w-100 py-1"
@@ -167,16 +176,14 @@ function VideoContainer2({ cvr, evr, og, clsId, rp, msr, ct, rt, cls ,usr}) {
 						<div>
 							{cls?.roleplayer && (
 								<div className="mb-5">
-								<Video
-									rp
-									title={"Roleplayer"}
-									itemRef={rpVideoRef}
-								/>	
+									<Video
+										rp
+										title={"Roleplayer"}
+										itemRef={rpVideoRef}
+									/>
 								</div>
-								
 							)}
-							<div style={{ display: note ? "block" : "none" }}
-							>
+							<div style={{ display: note ? "block" : "none" }}>
 								<div className="form-group">
 									<label htmlFor="note">Note</label>
 									<textarea

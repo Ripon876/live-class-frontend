@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Peer } from "peerjs";
 
 function Roleplayer({ peer, rpId, msr }) {
 	const rpVideoRef = useRef(null);

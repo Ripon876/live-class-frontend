@@ -5,77 +5,69 @@ import WifiIcon from "@mui/icons-material/Wifi";
 import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
+import CheckIcon from "@mui/icons-material/Check";
 import CircularProgress from "@mui/material/CircularProgress";
 import { green, pink } from "@mui/material/colors";
 
-function Requirements() {
-	const [requirements, setR] = useState({
-		mic: false,
-		camera: false,
-		connection: false,
-		speed: false,
-	});
-
+function Requirements({ rq, srq }) {
 	const streamRef = useRef(null);
 
-	useEffect(async () => {
-		await navigator.mediaDevices
-			.getUserMedia({
-				audio: true,
-				video: true,
-			})
-			.then((strean) => {
-				if (strean) {
+	useEffect(() => {
+		const checkRequirements = async () => {
+			await navigator.mediaDevices
+				.getUserMedia({
+					audio: true,
+					video: true,
+				})
+				.then((strean) => {
+					if (strean) {
+						setTimeout(() => {
+							srq({
+								camera: true,
+								mic: false,
+								connection: false,
+								speed: false,
+							});
+							strean?.getTracks()?.forEach((x) => x.stop());
+						}, 1000);
+					}
+				})
+				.then(() => {
 					setTimeout(() => {
-						console.log("closing");
-						setR({
-							camera: true,
-							mic: false,
+						srq({
 							connection: false,
-							speed: false,
-						});
-						strean?.getTracks()?.forEach((x) => x.stop());
-					}, 1000);
-				}
-			})
-			.then(() => {
-				setTimeout(() => {
-					setR({
-						connection: false,
-						speed: false,
-						mic: true,
-						camera: true,
-					});
-				}, 2000);
-			})
-			.then(() => {
-				if (navigator.onLine) {
-					setTimeout(() => {
-						setR({
 							speed: false,
 							mic: true,
 							camera: true,
-							connection: true,
 						});
-					}, 4000);
-				}
-			})
-			.then(() => {
-				setTimeout(() => {
-					setR({
-						mic: true,
-						camera: true,
-						connection: true,
-						speed: true,
-					});
-				}, 6000);
-			});
+					}, 2000);
+				})
+				.then(() => {
+					if (navigator.onLine) {
+						setTimeout(() => {
+							srq({
+								speed: false,
+								mic: true,
+								camera: true,
+								connection: true,
+							});
+						}, 4000);
+					}
+				})
+				.then(() => {
+					setTimeout(() => {
+						srq({
+							mic: true,
+							camera: true,
+							connection: true,
+							speed: true,
+						});
+					}, 6000);
+				});
+		};
+		checkRequirements();
 	}, []);
 
-	useEffect(() => {
-		console.log("requirements updated");
-		console.log(requirements);
-	}, [requirements]);
 	return (
 		<div className="mt-5">
 			<div>
@@ -88,18 +80,23 @@ function Requirements() {
 						sx={{
 							width: 100,
 							height: 100,
-							bgcolor: green[requirements.camera ? 500 : 1],
+							bgcolor: green[rq.camera ? 500 : 1],
 						}}
 					>
 						<VideocamIcon
 							sx={{
 								fontSize: "50px",
-								opacity: requirements.camera ? 1 : 0.3,
+								opacity: rq.camera ? 1 : 0.3,
 							}}
 						/>
-						{!requirements.camera && (
+						{!rq.camera ? (
 							<CircularProgress
 								color="success"
+								sx={{ position: "absolute" }}
+							/>
+						) : (
+							<CheckIcon
+								color="info"
 								sx={{ position: "absolute" }}
 							/>
 						)}
@@ -108,18 +105,23 @@ function Requirements() {
 						sx={{
 							width: 100,
 							height: 100,
-							bgcolor: green[requirements.mic ? 500 : 1],
+							bgcolor: green[rq.mic ? 500 : 1],
 						}}
 					>
 						<MicIcon
 							sx={{
 								fontSize: "50px",
-								opacity: requirements.mic ? 1 : 0.3,
+								opacity: rq.mic ? 1 : 0.3,
 							}}
 						/>
-						{!requirements.mic && (
+						{!rq.mic ? (
 							<CircularProgress
 								color="success"
+								sx={{ position: "absolute" }}
+							/>
+						) : (
+							<CheckIcon
+								color="info"
 								sx={{ position: "absolute" }}
 							/>
 						)}
@@ -128,18 +130,23 @@ function Requirements() {
 						sx={{
 							width: 100,
 							height: 100,
-							bgcolor: green[requirements.connection ? 500 : 1],
+							bgcolor: green[rq.connection ? 500 : 1],
 						}}
 					>
 						<WifiIcon
 							sx={{
 								fontSize: "50px",
-								opacity: requirements.connection ? 1 : 0.3,
+								opacity: rq.connection ? 1 : 0.3,
 							}}
 						/>
-						{!requirements.connection && (
+						{!rq.connection ? (
 							<CircularProgress
 								color="success"
+								sx={{ position: "absolute" }}
+							/>
+						) : (
+							<CheckIcon
+								color="info"
 								sx={{ position: "absolute" }}
 							/>
 						)}
@@ -148,18 +155,23 @@ function Requirements() {
 						sx={{
 							width: 100,
 							height: 100,
-							bgcolor: green[requirements.speed ? 500 : 1],
+							bgcolor: green[rq.speed ? 500 : 1],
 						}}
 					>
 						<NetworkCheckIcon
 							sx={{
 								fontSize: "50px",
-								opacity: requirements.speed ? 1 : 0.3,
+								opacity: rq.speed ? 1 : 0.3,
 							}}
 						/>
-						{!requirements.speed && (
+						{!rq.speed ? (
 							<CircularProgress
 								color="success"
+								sx={{ position: "absolute" }}
+							/>
+						) : (
+							<CheckIcon
+								color="info"
 								sx={{ position: "absolute" }}
 							/>
 						)}

@@ -1,10 +1,13 @@
-import { createStore } from "redux";
+import { createStore, combineReducers } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import userReducer from "./userReducer";
+import iceConfigReducer from "./iceConfig";
 
-const store = createStore(
-	userReducer,
-	composeWithDevTools()
-);
+const rootReducer = combineReducers({
+	user: userReducer,
+	iceConfig: iceConfigReducer,
+});
+
+const store = createStore(rootReducer, composeWithDevTools());
 
 export default store;

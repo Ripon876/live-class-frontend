@@ -1,13 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Peer } from "peerjs";
+import { useSelector } from "react-redux";
 
 function Candidate({ og, socket, clsId, msr, setStd, sP, sCT, sOg }) {
 	const candidateVideoRef = useRef(null);
 	const cdPeerRef = useRef(null);
+	const iceConfig = useSelector((state) => state.iceConfig);
 
 	useEffect(() => {
 		console.log("component loaded");
-		const peer = new Peer();
+		const peer = new Peer({
+			config: iceConfig,
+		});
 		cdPeerRef.current = peer;
 
 		socket.on("joinCandidate", (stdId) => {
