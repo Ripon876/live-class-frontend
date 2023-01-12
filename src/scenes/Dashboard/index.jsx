@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import RemainingTime from "./RemainingTime";
 import JoinExam from "./JoinExam";
+import Requirements from "./Requirements";
 import { useSelector } from "react-redux";
 
 const Dashboard = () => {
@@ -16,6 +17,7 @@ const Dashboard = () => {
         <Header title="DASHBOARD" subtitle="Welcome to your Dashboard" />
       </Box>
       {userType !== "admin" && <RemainingTime />}
+      {/*{userType !== "admin" && <Requirements />}*/}
       {userType !== "admin" && <JoinExam />}
     </Box>
   );
