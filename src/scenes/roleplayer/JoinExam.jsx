@@ -158,6 +158,23 @@ function JoinExam() {
 			setMic(true);
 		}
 	};
+	useEffect(() => {
+		if (cls) {
+			let examTime =
+				cls.hasToJoin * cls.classDuration + (cls.hasToJoin * 30) / 60;
+
+			if (examTime) {
+				setTimeout(() => {
+					socket.emit("markExamEnd", searchParams.get("id"), () => {
+						console.log("ending exam");
+						setClsEnd(true);
+						peerInstance.current.destroy();
+						myStream.current.getTracks()?.forEach((x) => x.stop());
+					});
+				}, (examTime + 2) * 60 * 1000);
+			}
+		}
+	}, [cls]);
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>

@@ -35,6 +35,7 @@ function StartClassAsStudent() {
 	const [clsEnd, setClsEnd] = useState(false);
 	const [loader, setLoader] = useState(true);
 	const [remainingTIme, setRemainingTime] = useState(0);
+	const [rTime, setRTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 	const stratClsBtn = useRef(null);
 	const [user, setUser] = useState({});
@@ -49,9 +50,7 @@ function StartClassAsStudent() {
 	const [progress, setProgress] = useState(0);
 
 	useEffect(() => {
-		document
-			.querySelector(".opendMenuIcon")
-			.click();
+		document.querySelector(".opendMenuIcon").click();
 		setTimeout(() => {
 			stratClsBtn.current.click();
 			setClsStarted(true);
@@ -87,6 +86,7 @@ function StartClassAsStudent() {
 					setCls(cls);
 					console.log(cls);
 					setRemainingTime(cls.classDuration);
+					setRTime(cls.classDuration)
 				} else {
 					window.location.href = "/";
 				}
@@ -136,38 +136,49 @@ function StartClassAsStudent() {
 
 	useEffect(() => {
 		if (cls?.classDuration) {
-			setTimeout(() => {
-				setClsStarted(false);
-				setLoader(true);
-				socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
-					if (res.type === "joinNextClass") {
-						// console.log("next class is their ,id : ", res.id);
+			setTimeout(
+				() => {
+					setClsStarted(false);
+					setLoader(true);
+					socket.emit(
+						"clsEnd",
+						{ stdId: stdId, clsId: clsId },
+						(res) => {
+							if (res.type === "joinNextClass") {
+								// console.log("next class is their ,id : ", res.id);
 
-						setTimeout(() => {
-							setClsStarted(true);
-							setLoader(false);
-							call(res.id);
-						}, 30000);
+								setTimeout(() => {
+									setClsStarted(true);
+									setLoader(false);
+									call(res.id);
+								}, 30000);
 
-						setClsId(res.id);
-						setSearchParams({ id: res.id });
-						socket.emit("getClass", res.id, (cls) => {
-							setClsTitle(cls?.title);
-							setTimeout(() => {
-								setCls(cls);
-								setRemainingTime(cls.classDuration);
-							}, 30000);
-						});
-					}
+								setClsId(res.id);
+								setSearchParams({ id: res.id });
+								socket.emit("getClass", res.id, (cls) => {
+									setClsTitle(cls?.title);
+									setTimeout(() => {
+										setCls(cls);
+										setRemainingTime(cls.classDuration);
+										setRTime(cls.classDuration)
+									}, 30000);
+								});
+							}
 
-					if (res.type === "allClassEnd") {
-						// console.log("no more cls , msg: ", res.text);
-						setClsEnd(true);
-						peerInstance.current.destroy();
-						myStream.current.getTracks()?.forEach((x) => x.stop());
-					}
-				});
-			}, cls?.classDuration * 60 * 1000 + 5000);
+							if (res.type === "allClassEnd") {
+								setClsEnd(true);
+								peerInstance.current.destroy();
+								myStream.current
+									.getTracks()
+									?.forEach((x) => x.stop());
+							}
+						}
+					);
+				},
+				searchParams.get("d")
+					? searchParams.get("d") * 60 * 1000
+					: cls?.classDuration * 60 * 1000 + 5000
+			);
 		}
 	}, [cls]);
 

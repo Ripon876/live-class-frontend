@@ -180,6 +180,35 @@ function StartClassAsTeacher() {
 		}, 1000);
 	}, []);
 
+	useEffect(() => {
+		if (cls) {
+			let examTime =
+				cls.hasToJoin * cls.classDuration + (cls.hasToJoin * 30) / 60;
+
+			if (examTime) {
+				// console.log(
+				// 	new Date().toLocaleTimeString(),
+				// 	" ",
+				// 	"auto exam end in :",
+				// 	examTime
+				// );
+				setTimeout(() => {
+					// console.log(
+					// 	new Date().toLocaleTimeString(),
+					// 	" ",
+					// 	"ending exam"
+					// );
+					socket.emit("markExamEnd", searchParams.get("id"), () => {
+						console.log("ending exam");
+						setClsEnd(true);
+						peerInstance.current.destroy();
+						myStream.current.getTracks()?.forEach((x) => x.stop());
+					});
+				}, (examTime + 2) * 60 * 1000);
+			}
+		}
+	}, [cls]);
+
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
 			<ProgressBar
@@ -189,6 +218,7 @@ function StartClassAsTeacher() {
 				pr={progress}
 				setPr={setProgress}
 				setOg={setOngoing}
+				ct={currentTime}
 			/>
 
 			<Box

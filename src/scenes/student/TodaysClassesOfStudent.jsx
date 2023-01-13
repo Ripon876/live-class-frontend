@@ -12,14 +12,34 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { useCookies } from "react-cookie";
+import { useSelector } from "react-redux";
 import axios from "axios";
+import io from "socket.io-client";
+let socket;
 
 function TodaysClassesOfStudent() {
 	const [cookies, setCookie] = useCookies([]);
 	const [classes, setClasses] = useState([]);
 	const [firstClassId, setFCI] = useState("");
+	const [studentsStates, setSS] = useState([]);
+	const stdId = useSelector((state) => state.user.id);
 
 	useEffect(() => {
+		socket = io.connect(process.env.REACT_APP_SERVER_URL);
+
+		socket.emit("getStudentExamState", stdId, (sts) => {
+			let TIme = Date.now() - Date.parse(sts.startTime);
+			let remainigTime = sts.duration - TIme / 1000 / 60;
+
+			setSS({
+				...sts,
+				remainigTime: remainigTime,
+			});
+			// if (Object.values(sts).length !== 0) {
+			// 	setSpin(true);
+			// }
+		});
+
 		axios
 			.get(process.env.REACT_APP_SERVER_URL + "/student/get-classes", {
 				headers: { Authorization: `Bearer ${cookies.token}` },
@@ -88,29 +108,32 @@ function TodaysClassesOfStudent() {
 						</TableBody>
 					</Table>
 				</TableContainer>
-				{/*	<Box
-					component="div"
-					mt="50px"
-					sx={{ display: "flex", justifyContent: "center" }}
-				>
-					<Button
-						disabled={classes.length === 0}
-						size="large"
-						variant="filled"
-						sx={{
-							boxShadow: 3,
-							pt: "10px",
-							pb: "10px",
-						}}
-						onClick={() => {
-							window.location.href = `/live-class?id=${firstClassId}`;
-						}}
-					>
-						<Typography variant="h3">
-							<PlayArrowIcon /> Start Exams
-						</Typography>
-					</Button>
-				</Box>*/}
+
+				{studentsStates.cls &&
+					Math.floor(studentsStates.remainigTime) > 0 && (
+						<Box
+							component="div"
+							mt="50px"
+							sx={{ display: "flex", justifyContent: "center" }}
+						>
+							<Button
+								size="large"
+								variant="filled"
+								sx={{
+									boxShadow: 3,
+									pt: "10px",
+									pb: "10px",
+								}}
+								onClick={() => {
+									window.location.href = `/live-class?id=${studentsStates.cls._id}&d=${studentsStates.remainigTime}`;
+								}}
+							>
+								<Typography variant="h3">
+									<PlayArrowIcon /> Rejoin
+								</Typography>
+							</Button>
+						</Box>
+					)}
 			</Box>
 		</div>
 	);

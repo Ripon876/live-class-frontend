@@ -65,6 +65,7 @@ function HostClass() {
 
 		socket.on("studentsStates", (states) => {
 			setSS(Object.values(states));
+			getExams(setExams, setCanStart);
 		});
 
 		socket.on("allClsTaken", () => {
@@ -130,10 +131,6 @@ function HostClass() {
 	};
 	const startexams = () => {
 		Start(socket, setExams, setAlert, setSpin);
-
-		setTimeout(() => {
-			getExams(setExams, setCanStart);
-		}, 2500);
 	};
 
 	const clearStates = () => {
