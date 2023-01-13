@@ -74,6 +74,7 @@ const AppSidebar = () => {
           <Box display="flex" justifyContent="space-between">
             <Box>
               <IconButton
+                className='opendMenuIcon'
                 onClick={() => {
                   collapseSidebar();
                 }}

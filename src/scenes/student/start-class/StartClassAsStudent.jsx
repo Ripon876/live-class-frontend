@@ -50,7 +50,7 @@ function StartClassAsStudent() {
 
 	useEffect(() => {
 		document
-			.querySelector(".css-1ljns5e-MuiButtonBase-root-MuiIconButton-root")
+			.querySelector(".opendMenuIcon")
 			.click();
 		setTimeout(() => {
 			stratClsBtn.current.click();
