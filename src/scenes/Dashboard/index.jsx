@@ -4,7 +4,6 @@ import Header from "../../components/Header";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import RemainingTime from "./RemainingTime";
-import JoinExam from "./JoinExam";
 import Requirements from "./Requirements";
 import { useSelector } from "react-redux";
 
@@ -28,10 +27,7 @@ const Dashboard = () => {
           <Requirements rq={requirements} srq={setR} />
         )}
       {Object.values(requirements).every((item) => item) && (
-        <>
-          {userType !== "admin" && <RemainingTime />}
-          {userType !== "admin" && <JoinExam />}
-        </>
+        <>{userType !== "admin" && <RemainingTime />}</>
       )}
     </Box>
   );

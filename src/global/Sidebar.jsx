@@ -74,7 +74,7 @@ const AppSidebar = () => {
           <Box display="flex" justifyContent="space-between">
             <Box>
               <IconButton
-                className='opendMenuIcon'
+                className="opendMenuIcon"
                 onClick={() => {
                   collapseSidebar();
                 }}
@@ -82,7 +82,7 @@ const AppSidebar = () => {
                 <MenuOpenOutlinedIcon style={{ color: colors.primary[100] }} />
               </IconButton>
             </Box>
-            <Typography
+            {/*<Typography
               variant="h4"
               pr={4}
               style={{ color: colors.primary[100] }}
@@ -91,7 +91,8 @@ const AppSidebar = () => {
               {userType === "teacher" && "Examiner"}
               {userType === "student" && "Candidate"}
               {userType === "roleplayer" && "Roleplayer"}
-            </Typography>
+            </Typography>*/}
+            <img src="./logo-header.png" className="img-fluid w-75 me-2 mt-1 p-1" />
           </Box>
         )}
 
@@ -163,6 +164,7 @@ const AppSidebar = () => {
             />
           )}
         </Menu>
+       
       </Sidebar>
     </Box>
   );

@@ -51,8 +51,9 @@ function Login() {
 				});
 
 				setTimeout(() => {
-					navigate("/");
-				}, 1500);
+					// navigate("/");
+					window.location.href = "/";
+				}, 1000);
 			})
 			.catch((err) => {
 				setErrMsg(err.response.data.message);
