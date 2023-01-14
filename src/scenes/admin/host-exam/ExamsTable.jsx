@@ -23,8 +23,9 @@ function ExamsTable({ exams, dltExm }) {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{exams?.map((singleClass) => (
+					{exams?.map((singleClass, i) => (
 						<TableRow
+							key={"jhs45df" + i}
 							sx={{
 								"&:last-child td, &:last-child th": {
 									border: 0,

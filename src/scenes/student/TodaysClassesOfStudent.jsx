@@ -20,24 +20,24 @@ let socket;
 function TodaysClassesOfStudent() {
 	const [cookies, setCookie] = useCookies([]);
 	const [classes, setClasses] = useState([]);
-	const [firstClassId, setFCI] = useState("");
-	const [studentsStates, setSS] = useState([]);
+	const [studentsStates, setSS] = useState({});
+	const [ns, setNS] = useState(false);
+	const [f, setF] = useState(false);
 	const stdId = useSelector((state) => state.user.id);
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 		socket.emit("getStudentExamState", stdId, (sts) => {
-			let TIme = Date.now() - Date.parse(sts.startTime);
-			let remainigTime = sts.duration - TIme / 1000 / 60;
-
-			setSS({
-				...sts,
-				remainigTime: remainigTime,
+			socket.emit("getClsId", stdId, (data, notstarted, finished) => {
+				setSS(data);
+				if (notstarted) {
+					setNS(notstarted);
+				}
+				if (finished) {
+					setF(finished);
+				}
 			});
-			// if (Object.values(sts).length !== 0) {
-			// 	setSpin(true);
-			// }
 		});
 
 		axios
@@ -45,9 +45,9 @@ function TodaysClassesOfStudent() {
 				headers: { Authorization: `Bearer ${cookies.token}` },
 			})
 			.then((data) => {
+				console.log("called");
+				console.log(data.data.classes);
 				setClasses([...data.data.classes]);
-				setFCI(data.data.classes[data.data.firstClassIndex]._id);
-				console.log(data.data.classes[data.data.firstClassIndex]._id);
 			})
 			.catch((err) => console.log("err :", err));
 	}, []);
@@ -58,7 +58,6 @@ function TodaysClassesOfStudent() {
 				<Typography variant="h4" mb="20px">
 					Today's Class Schedule
 				</Typography>
-
 				<TableContainer component={Paper}>
 					<Table sx={{ minWidth: "90%" }} aria-label="simple table">
 						<TableHead>
@@ -73,8 +72,9 @@ function TodaysClassesOfStudent() {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{classes?.map((singleClass) => (
+							{classes?.map((singleClass, i) => (
 								<TableRow
+									key={"sdfsd" + i}
 									sx={{
 										"&:last-child td, &:last-child th": {
 											border: 0,
@@ -108,32 +108,48 @@ function TodaysClassesOfStudent() {
 						</TableBody>
 					</Table>
 				</TableContainer>
-
-				{studentsStates.cls &&
-					Math.floor(studentsStates.remainigTime) > 0 && (
-						<Box
-							component="div"
-							mt="50px"
-							sx={{ display: "flex", justifyContent: "center" }}
-						>
-							<Button
-								size="large"
-								variant="filled"
-								sx={{
-									boxShadow: 3,
-									pt: "10px",
-									pb: "10px",
-								}}
-								onClick={() => {
-									window.location.href = `/live-class?id=${studentsStates.cls._id}&d=${studentsStates.remainigTime}`;
-								}}
-							>
-								<Typography variant="h3">
-									<PlayArrowIcon /> Rejoin
-								</Typography>
-							</Button>
-						</Box>
+				<Box
+					component="div"
+					mt="50px"
+					sx={{ display: "flex", justifyContent: "center" }}
+				>
+					{studentsStates?.canJoin ? (
+						<>
+							{studentsStates?.timeLeft - 0.5 > 0 ? (
+								<Button
+									size="large"
+									variant="filled"
+									sx={{
+										boxShadow: 3,
+										pt: "10px",
+										pb: "10px",
+									}}
+									onClick={() => {
+										window.location.href = `/live-class?id=${
+											studentsStates.id
+										}&d=${studentsStates.timeLeft - 0.5}`;
+									}}
+								>
+									<Typography variant="h3">
+										<PlayArrowIcon /> Rejoin
+									</Typography>
+								</Button>
+							) : (
+								<p>You can't join in break time</p>
+							)}
+						</>
+					) : (
+						<>
+						{ns &&
+							<p>Exams Not Started Yet</p>
+						}
+						{f &&
+							<p>All Exams Ended</p>
+						}
+						</>
 					)}
+					 
+				</Box>
 			</Box>
 		</div>
 	);

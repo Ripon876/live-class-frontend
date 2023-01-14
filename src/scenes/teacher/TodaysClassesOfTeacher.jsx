@@ -44,8 +44,9 @@ function TodaysClassesOfTeacher() {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{classes?.map((singleClass) => (
+							{classes?.map((singleClass, i) => (
 								<TableRow
+									key={"sdf433df" + i}
 									sx={{
 										"&:last-child td, &:last-child th": {
 											border: 0,

@@ -45,8 +45,9 @@ function TodaysClassesOfRoleplayer() {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{classes?.map((singleClass) => (
+							{classes?.map((singleClass, i) => (
 								<TableRow
+									key={"s4d43jhdf" + i}
 									sx={{
 										"&:last-child td, &:last-child th": {
 											border: 0,

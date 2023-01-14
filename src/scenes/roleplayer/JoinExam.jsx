@@ -85,19 +85,16 @@ function JoinExam() {
 
 	useEffect(() => {
 		const timer = setInterval(() => {
-			if (progress === 100) {
-				clearInterval(timer);
-			}
-
 			setProgress((oldProgress) => {
+				if (oldProgress === 100) {
+					setOngoing(false);
+					clearInterval(timer);
+					return 0;
+				}
+
 				return oldProgress + 1;
 			});
 		}, ((cls.classDuration * 60) / 100) * 1000);
-
-		setTimeout(() => {
-			setOngoing(false);
-			console.log("hiding tiemr");
-		}, cls?.classDuration * 60 * 1000 + 5000);
 
 		return () => {
 			clearInterval(timer);
@@ -160,8 +157,7 @@ function JoinExam() {
 	};
 	useEffect(() => {
 		if (cls) {
-			let examTime =
-				cls.hasToJoin * cls.classDuration + (cls.hasToJoin * 30) / 60;
+			let examTime = cls.hasToJoin * (cls.classDuration + 0.5);
 
 			if (examTime) {
 				setTimeout(() => {
@@ -171,7 +167,7 @@ function JoinExam() {
 						peerInstance.current.destroy();
 						myStream.current.getTracks()?.forEach((x) => x.stop());
 					});
-				}, (examTime + 2) * 60 * 1000);
+				}, examTime * 60 * 1000);
 			}
 		}
 	}, [cls]);

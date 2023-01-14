@@ -84,7 +84,7 @@ function InspectExam() {
 	}, []);
 
 	const call = (peer, idToCall, vRef) => {
-		console.log("calling", idToCall);
+		// console.log("calling", idToCall);
 
 		const call = peer.call(idToCall, myStream.current);
 		call?.on("stream", (remoteStream) => {
@@ -94,12 +94,12 @@ function InspectExam() {
 	};
 	const exmInfo = () => {
 		socket.emit("getExamInfo", searchParams.get("id"), (exam) => {
-			console.log(exam);
+			// console.log(exam);
 			setNames({
 				examiner: exam?.cls?.teacher,
 				roleplayer: exam?.cls?.roleplayer,
 				candidate: exam?.student?.name,
-				subject: exam?.cls?.subject,
+				title: exam?.cls?.title,
 			});
 		});
 	};
@@ -129,15 +129,16 @@ function InspectExam() {
 									/>
 								</div>
 							)}
-							{!examsEnd && names.subject && (
+							{!examsEnd && names.title && (
 								<>
-									subject: <h3>{names.subject}</h3>
+									Title: <h3>{names.title}</h3>
 								</>
 							)}
 							{examsEnd && <h4>Exam Ended</h4>}
 						</div>
-						{reload && (
+						{/*	{reload && (
 							<div>
+							
 								<Button
 									variant="filled"
 									sx={{
@@ -153,7 +154,7 @@ function InspectExam() {
 									Reload
 								</Button>
 							</div>
-						)}
+						)}*/}
 						<div>
 							<Button
 								variant="filled"

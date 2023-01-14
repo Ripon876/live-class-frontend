@@ -176,7 +176,7 @@ function StartClassAsStudent() {
 					);
 				},
 				searchParams.get("d")
-					? searchParams.get("d") * 60 * 1000
+					? searchParams.get("d") * 60 * 1000 + 5000
 					: cls?.classDuration * 60 * 1000 + 5000
 			);
 		}

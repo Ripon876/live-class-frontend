@@ -1,23 +1,45 @@
 import React, { useEffect } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 
-function ProgressBar({ og, ee, exam, pr, setPr, setOg ,ct}) {
+function ProgressBar({
+	og,
+	ee,
+	exam,
+	pr,
+	setPr,
+	setOg,
+	ct,
+	pTime,
+	taken,
+	setTaken,
+	socket,
+}) {
 	useEffect(() => {
 		const timer = setInterval(() => {
-			if (pr === 100) {
-				clearInterval(timer);
-				console.log("closing tiemr");
-			}
-
 			setPr((oldProgress) => {
+				console.log(oldProgress);
+
+				if (oldProgress === 100) {
+					setOg(false);
+					console.log("closing tiemr");
+					clearInterval(timer);
+					setTimeout(() => {
+						socket.emit("markedTaken", taken, exam._id, () => {
+							console.log("marking taken");
+							setTaken((t) => t + 1);
+						});
+					}, 1500);
+					return 0;
+				}
+
 				return oldProgress + 1;
 			});
-		}, ((exam.classDuration * 60) / 100) * 1000);
+		}, pTime);
 
-		setTimeout(() => {
-			setOg(false);
-			console.log("hiding tiemr");
-		}, exam?.classDuration * 60 * 1000 + 5000);
+		// setTimeout(() => {
+		// 	setOg(false);
+		// 	console.log("hiding tiemr");
+		// }, exam?.classDuration * 60 * 1000 + 5);
 
 		return () => {
 			clearInterval(timer);

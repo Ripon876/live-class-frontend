@@ -24,6 +24,7 @@ function ExamStates({ states }) {
 				<TableBody>
 					{states?.map((state, i) => (
 						<TableRow
+							key={"mdfhdf" + i}
 							sx={{
 								"&:last-child td, &:last-child th": {
 									border: 0,

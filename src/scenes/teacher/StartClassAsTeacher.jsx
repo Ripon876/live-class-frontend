@@ -45,6 +45,8 @@ function StartClassAsTeacher() {
 	const [std, setStd] = useState({});
 	const [aPId, setAPid] = useState("");
 	const [progress, setProgress] = useState(0);
+	const [progressTime, setProgressTime] = useState(0);
+	const [taken, setTaken] = useState(0);
 
 	useEffect(() => {
 		setClsStarted(true);
@@ -72,6 +74,7 @@ function StartClassAsTeacher() {
 				if (!notfound) {
 					setCls(cls);
 					console.log(cls);
+					setProgressTime(((cls.classDuration * 60) / 100) * 1000);
 					setRemainingTime(cls.classDuration);
 				} else {
 					window.location.href = "/";
@@ -182,16 +185,15 @@ function StartClassAsTeacher() {
 
 	useEffect(() => {
 		if (cls) {
-			let examTime =
-				cls.hasToJoin * cls.classDuration + (cls.hasToJoin * 30) / 60;
+			let examTime = cls.hasToJoin * (cls.classDuration + 0.5);
 
 			if (examTime) {
-				// console.log(
-				// 	new Date().toLocaleTimeString(),
-				// 	" ",
-				// 	"auto exam end in :",
-				// 	examTime
-				// );
+				console.log(
+					new Date().toLocaleTimeString(),
+					" ",
+					"auto exam end in :",
+					examTime
+				);
 				setTimeout(() => {
 					// console.log(
 					// 	new Date().toLocaleTimeString(),
@@ -204,22 +206,41 @@ function StartClassAsTeacher() {
 						peerInstance.current.destroy();
 						myStream.current.getTracks()?.forEach((x) => x.stop());
 					});
-				}, (examTime + 2) * 60 * 1000);
+				}, examTime * 60 * 1000);
 			}
+		}
+	}, [cls]);
+
+	useEffect(() => {
+		if (cls._id) {
+			setTimeout(() => {
+				setTimeout(() => {
+					socket.emit("markedTaken", taken, cls._id, () => {
+						console.log("marking taken");
+						setTaken((t) => t + 1);
+					});
+				}, 1500);
+			}, cls.classDuration * 60 * 1000 + 5000);
 		}
 	}, [cls]);
 
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
-			<ProgressBar
-				og={onGoing}
-				ee={clsEnd}
-				exam={cls}
-				pr={progress}
-				setPr={setProgress}
-				setOg={setOngoing}
-				ct={currentTime}
-			/>
+			{onGoing && (
+				<ProgressBar
+					og={onGoing}
+					ee={clsEnd}
+					exam={cls}
+					pr={progress}
+					setPr={setProgress}
+					setOg={setOngoing}
+					ct={currentTime}
+					pTime={progressTime}
+					taken={taken}
+					setTaken={setTaken}
+					socket={socket}
+				/>
+			)}
 
 			<Box
 				component="div"

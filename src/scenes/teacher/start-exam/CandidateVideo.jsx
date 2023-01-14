@@ -15,7 +15,7 @@ function CandidateVideo({ cvr, og }) {
 				autoPlay
 				className={og ? "d-block" : "d-none"}
 			/>
-			{!og && <h3 className="watingText">Wating for student</h3>}
+			{!og && <h3 className="watingText">Wating for Candidate</h3>}
 		</div>
 	);
 }
