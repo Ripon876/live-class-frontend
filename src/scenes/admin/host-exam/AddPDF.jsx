@@ -13,7 +13,7 @@ function AddPDF({ fd, sfd }) {
 	const [fileStr, setFileStr] = useState("");
 
 	const handleFile = (e) => {
-		console.log("file reading");
+		// console.log("file reading");
 		if (e.target.files[0]) {
 			// setFile({ ...file, name: e.target.files[0].name });
 			fileToBase64(e.target.files[0], (err, str) => {

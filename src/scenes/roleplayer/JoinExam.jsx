@@ -55,7 +55,7 @@ function JoinExam() {
 			socket.emit("getClass", searchParams.get("id"), (cls, notfound) => {
 				if (!notfound) {
 					setCls(cls);
-					console.log(cls);
+					// console.log(cls);
 					setRemainingTime(cls.classDuration);
 				} else {
 					window.location.href = "/";
@@ -108,7 +108,7 @@ function JoinExam() {
 
 		peer.on("open", () => {
 			peer.on("call", (call) => {
-				console.log("examiner calling");
+				// console.log("examiner calling");
 
 				call.answer(myStream.current);
 
@@ -125,12 +125,12 @@ function JoinExam() {
 		});
 
 		ad_peer.on("call", (call) => {
-			console.log("admin calling");
+			// console.log("admin calling");
 
 			call.answer(myStream.current);
 
 			call.on("stream", function (remoteStream) {
-				console.log("connected with admin");
+				// console.log("connected with admin");
 			});
 		});
 

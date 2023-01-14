@@ -17,15 +17,15 @@ function ProgressBar({
 	useEffect(() => {
 		const timer = setInterval(() => {
 			setPr((oldProgress) => {
-				console.log(oldProgress);
+				// console.log(oldProgress);
 
 				if (oldProgress === 100) {
 					setOg(false);
-					console.log("closing tiemr");
+					// console.log("closing tiemr");
 					clearInterval(timer);
 					setTimeout(() => {
 						socket.emit("markedTaken", taken, exam._id, () => {
-							console.log("marking taken");
+							// console.log("marking taken");
 							setTaken((t) => t + 1);
 						});
 					}, 1500);

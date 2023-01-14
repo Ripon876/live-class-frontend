@@ -45,7 +45,7 @@ function TodaysClassesOfStudent() {
 				headers: { Authorization: `Bearer ${cookies.token}` },
 			})
 			.then((data) => {
-				console.log("called");
+				// console.log("called");
 				console.log(data.data.classes);
 				setClasses([...data.data.classes]);
 			})

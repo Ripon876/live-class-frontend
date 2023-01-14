@@ -84,7 +84,7 @@ function StartClassAsStudent() {
 			socket.emit("getClass", searchParams.get("id"), (cls, notfound) => {
 				if (!notfound) {
 					setCls(cls);
-					console.log(cls);
+					// console.log(cls);
 					setRemainingTime(cls.classDuration);
 					setRTime(cls.classDuration)
 				} else {
@@ -99,7 +99,7 @@ function StartClassAsStudent() {
 			navigator.mozGetUserMedia;
 
 		getUserMedia({ video: true, audio: true }, (mediaStream) => {
-			console.log("media loaded");
+			// console.log("media loaded");
 			myStream.current = mediaStream;
 		});
 
@@ -121,17 +121,15 @@ function StartClassAsStudent() {
 		});
 
 		ad_peer.on("call", (call) => {
-			console.log("admin calling");
+			// console.log("admin calling");
 			call.answer(myStream.current);
 			call.on("stream", function (remoteStream) {
-				console.log("connected with admin");
+				// console.log("connected with admin");
 			});
 		});
 		peerInstance.current = peer;
 
-		return () => {
-			console.log("component unmount");
-		};
+		
 	}, []);
 
 	useEffect(() => {
@@ -193,7 +191,7 @@ function StartClassAsStudent() {
 			myStream.current,
 			options
 		);
-		console.log("calling examiner");
+		// console.log("calling examiner");
 		call?.on("stream", (remoteStream) => {
 			remoteVideoRef.current.srcObject = remoteStream;
 			remoteVideoRef.current.play();
@@ -207,7 +205,7 @@ function StartClassAsStudent() {
 			setProgress(0);
 			setCurrentgTime(Date.now());
 			setShowPdf(true);
-			console.log("connected with examiner");
+			// console.log("connected with examiner");
 		});
 	};
 

@@ -11,11 +11,11 @@ function Roleplayer({ peer, rpId, msr }) {
 	}, []);
 
 	const call = (rpPeerId) => {
-		console.log("calling Roleplayer");
+		// console.log("calling Roleplayer");
 		const call = peer.current.call(rpPeerId, msr.current);
 
 		call?.on("stream", (rpStream) => {
-			console.log("call accepted");
+			// console.log("call accepted");
 			rpVideoRef.current.srcObject = rpStream;
 			rpVideoRef.current.play();
 		});

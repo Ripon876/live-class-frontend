@@ -56,7 +56,7 @@ function StartClassAsTeacher() {
 			navigator.mozGetUserMedia;
 
 		getUserMedia({ video: true, audio: true }, (mediaStream) => {
-			console.log("media loaded");
+			// console.log("media loaded");
 			myStream.current = mediaStream;
 			examinerVideoRef.current.srcObject = mediaStream;
 			examinerVideoRef.current.play();
@@ -73,7 +73,7 @@ function StartClassAsTeacher() {
 			socket.emit("getClass", searchParams.get("id"), (cls, notfound) => {
 				if (!notfound) {
 					setCls(cls);
-					console.log(cls);
+					// console.log(cls);
 					setProgressTime(((cls.classDuration * 60) / 100) * 1000);
 					setRemainingTime(cls.classDuration);
 				} else {
@@ -83,7 +83,7 @@ function StartClassAsTeacher() {
 		});
 
 		socket.on("allClassEnd", (text) => {
-			console.log("classes end : ", text);
+			// console.log("classes end : ", text);
 			setClsEnd(true);
 			peerInstance.current.destroy();
 			myStream.current.getTracks()?.forEach((x) => x.stop());
@@ -91,7 +91,7 @@ function StartClassAsTeacher() {
 
 		socket.on("addWithAdmin", (id) => {
 			setAPid(id);
-			console.log("admin want to join , : ", id);
+			// console.log("admin want to join , : ", id);
 		});
 	}, []);
 
@@ -107,15 +107,13 @@ function StartClassAsTeacher() {
 		});
 
 		ad_peer.on("call", (call) => {
-			console.log("admin calling");
+			// console.log("admin calling");
 			call.answer(myStream.current);
 			call.on("stream", function (remoteStream) {
 				console.log("connected with admin");
 			});
 		});
-		peer.on("open", (id) => {
-			console.log(id);
-		});
+	 
 
 		peerInstance.current = peer;
 		rpPeerInstance.current = rp_peer;
@@ -124,7 +122,7 @@ function StartClassAsTeacher() {
 
 	useEffect(() => {
 		peerInstance.current.on("call", (call) => {
-			console.log("candidate calling");
+			// console.log("candidate calling");
 
 			call.answer(myStream.current);
 
@@ -188,12 +186,12 @@ function StartClassAsTeacher() {
 			let examTime = cls.hasToJoin * (cls.classDuration + 0.5);
 
 			if (examTime) {
-				console.log(
-					new Date().toLocaleTimeString(),
-					" ",
-					"auto exam end in :",
-					examTime
-				);
+				// console.log(
+				// 	new Date().toLocaleTimeString(),
+				// 	" ",
+				// 	"auto exam end in :",
+				// 	examTime
+				// );
 				setTimeout(() => {
 					// console.log(
 					// 	new Date().toLocaleTimeString(),
@@ -201,7 +199,7 @@ function StartClassAsTeacher() {
 					// 	"ending exam"
 					// );
 					socket.emit("markExamEnd", searchParams.get("id"), () => {
-						console.log("ending exam");
+						// console.log("ending exam");
 						setClsEnd(true);
 						peerInstance.current.destroy();
 						myStream.current.getTracks()?.forEach((x) => x.stop());
@@ -216,7 +214,7 @@ function StartClassAsTeacher() {
 			setTimeout(() => {
 				setTimeout(() => {
 					socket.emit("markedTaken", taken, cls._id, () => {
-						console.log("marking taken");
+						// console.log("marking taken");
 						setTaken((t) => t + 1);
 					});
 				}, 1500);

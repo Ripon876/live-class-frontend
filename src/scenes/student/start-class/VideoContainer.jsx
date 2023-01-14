@@ -42,7 +42,7 @@ function VideoContainer({ cvr, evr, og, clsId, rp, msr, ct, rt, cls, usr }) {
 		});
 
 		peer.on("call", (call) => {
-			console.log("receving call from roleplayer");
+			// console.log("receving call from roleplayer");
 			call.answer(msr.current);
 			call.on("stream", function (rpStream) {
 				console.log("call accepted");

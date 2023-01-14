@@ -11,11 +11,11 @@ function JoinExam() {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 		socket.on("startClass", async () => {
-			console.log("starting cls");
+			// console.log("starting cls");
 			axios
 				.post(process.env.REACT_APP_SERVER_URL + "/get-exam-id", user)
 				.then((data) => {
-					console.log(data.data.id);
+					// console.log(data.data.id);
 
 					if (data.data.id) {
 						if (user.type === "student") {
@@ -34,7 +34,7 @@ function JoinExam() {
 				.catch((err) => console.log("err :", err));
 		});
 
-		console.log("component loaded");
+		// console.log("component loaded");
 
 		return () => {
 			socket.disconnect();

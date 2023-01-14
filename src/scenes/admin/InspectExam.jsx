@@ -52,7 +52,7 @@ function InspectExam() {
 			config: iceConfig,
 		});
 		ex_peer.on("open", (id) => {
-			console.log(id);
+			// console.log(id);
 			call(
 				ex_peer,
 				searchParams.get("id") + "admin-examiner",
@@ -63,7 +63,7 @@ function InspectExam() {
 			config: iceConfig,
 		});
 		rp_peer.on("open", (id) => {
-			console.log(id);
+			// console.log(id);
 			call(
 				cd_peer,
 				searchParams.get("id") + "admin-roleplayer",
@@ -74,7 +74,7 @@ function InspectExam() {
 			config: iceConfig,
 		});
 		cd_peer.on("open", (id) => {
-			console.log(id);
+			// console.log(id);
 			call(
 				cd_peer,
 				searchParams.get("id") + "admin-candidate",

@@ -157,7 +157,7 @@ export const getExaminers = (setE) => {
 		.get(process.env.REACT_APP_SERVER_URL + "/admin/get-examiners")
 		.then((data) => {
 			setE([...data.data.roles]);
-			console.log(data.data.roles);
+			// console.log(data.data.roles);
 		})
 		.catch((err) => console.log("err :", err));
 };
@@ -167,7 +167,7 @@ export const getRoleplayers = (setR) => {
 		.get(process.env.REACT_APP_SERVER_URL + "/admin/get-roleplayers")
 		.then((data) => {
 			setR([...data.data.roles]);
-			console.log(data.data.roles);
+			// console.log(data.data.roles);
 		})
 		.catch((err) => console.log("err :", err));
 };
