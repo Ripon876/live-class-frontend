@@ -64,7 +64,7 @@ function ExamsTable({ exams, dltExm }) {
 										startIcon={<AssignmentIcon />}
 										onClick={() => {
 											window.location.href =
-												"/exam-details?id" +
+												"/exam-details?id=" +
 												singleClass._id;
 										}}
 									>
