@@ -101,6 +101,18 @@ export const Start = (socket, setClss, setAlt, setSp) => {
 	});
 };
 
+//  handleing renewing exam
+export const Renew = (token, setExams) => {
+	axios
+		.get(process.env.REACT_APP_SERVER_URL + "/admin/renew-exams", {
+			headers: { Authorization: `Bearer ${token}` },
+		})
+		.then((data) => {
+			setExams([...data.data.exams].reverse());
+		})
+		.catch((err) => console.log("err :", err));
+};
+
 export const subjects = [
 	{
 		value: "English",

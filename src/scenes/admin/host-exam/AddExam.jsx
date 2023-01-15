@@ -2,7 +2,7 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import { useState } from "react";
-import AddIcon from "@mui/icons-material/Add"; 
+import AddIcon from "@mui/icons-material/Add";
 import CheckList from "./CheckList";
 import AddPDF from "./AddPDF";
 
@@ -33,7 +33,7 @@ function AddExam({ fd, hc, hs, examiners, roleplayers, sfd }) {
 					}}
 					onChange={hc}
 				/>
- 
+
 				<TextField
 					id="filled-select-currency"
 					select
@@ -47,8 +47,10 @@ function AddExam({ fd, hc, hs, examiners, roleplayers, sfd }) {
 					}}
 					onChange={hc}
 				>
-					{examiners.map((examiner) => (
-						<MenuItem value={examiner}>{examiner.name}</MenuItem>
+					{examiners.map((examiner, i) => (
+						<MenuItem key={"dfsbv45" + i} value={examiner}>
+							{examiner.name}
+						</MenuItem>
 					))}
 				</TextField>
 				<TextField
@@ -63,8 +65,8 @@ function AddExam({ fd, hc, hs, examiners, roleplayers, sfd }) {
 					}}
 					onChange={hc}
 				>
-					{roleplayers.map((roleplayer) => (
-						<MenuItem value={roleplayer}>
+					{roleplayers.map((roleplayer, i) => (
+						<MenuItem value={roleplayer} key={"dfsfd45" + i}>
 							{roleplayer.name}
 						</MenuItem>
 					))}

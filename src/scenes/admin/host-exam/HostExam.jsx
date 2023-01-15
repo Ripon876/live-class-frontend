@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DeleteIcon from "@mui/icons-material/Delete";
+import HistoryIcon from "@mui/icons-material/History";
 import Alert from "@mui/material/Alert";
 import CachedIcon from "@mui/icons-material/Cached";
 import { useCookies } from "react-cookie";
@@ -23,6 +24,7 @@ import {
 	getExaminers,
 	getRoleplayers,
 	Start,
+	Renew,
 } from "./helpers";
 
 let socket;
@@ -45,6 +47,7 @@ function HostClass() {
 	const [value, setValue] = useState(null);
 	const [studentsStates, setSS] = useState([]);
 	const [canStart, setCanStart] = useState(false);
+	const [canRenew, setCanRenew] = useState(false);
 	const [spin, setSpin] = useState(false);
 	const [alert, setAlert] = useState({
 		show: false,
@@ -140,6 +143,19 @@ function HostClass() {
 		});
 	};
 
+	const renewExams = () => {
+		console.log("renewing");
+		Renew(cookies.token, setExams);
+	};
+
+	useEffect(() => {
+		let tempExams = [...exams];
+		let cr = tempExams.every((exam) => {
+			return exam.status === "Finished";
+		});
+		setCanRenew(cr);
+	}, [exams]);
+
 	return (
 		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
 			<Box
@@ -175,22 +191,42 @@ function HostClass() {
 				<Box
 					component="div"
 					mb="20px"
-					sx={{ display: "flex", justifyContent: "space-between" }}
+					sx={{
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "end",
+					}}
 				>
 					<Typography variant="h4" className="mt-3">
 						Today's Exam Schedule
 					</Typography>
-					<div style={{ cursor: spin ? "not-allowed" : "pointer" }}>
+					<div className="text-end">
+						<div
+							style={{ cursor: spin ? "not-allowed" : "pointer" }}
+						>
+							<Button
+								variant="filled"
+								sx={{
+									boxShadow: 3,
+								}}
+								disabled={spin || !canStart}
+								startIcon={<PlayArrowIcon />}
+								onClick={startexams}
+							>
+								Start Today's Exams
+							</Button>
+						</div>
 						<Button
 							variant="filled"
 							sx={{
 								boxShadow: 3,
+								mt: 1,
 							}}
-							disabled={spin || !canStart}
-							startIcon={<PlayArrowIcon />}
-							onClick={startexams}
+							disabled={!canRenew}
+							startIcon={<HistoryIcon />}
+							onClick={renewExams}
 						>
-							Start Today's Exams
+							Renew Exams
 						</Button>
 					</div>
 				</Box>

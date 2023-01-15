@@ -91,7 +91,7 @@ function CheckList({ fd, sfd }) {
 					}}
 				>
 					{checkList?.map((item, i) => (
-						<div>
+						<div key={"dfgfd4534sdf" + i}>
 							<FormControlLabel
 								control={
 									<Checkbox
