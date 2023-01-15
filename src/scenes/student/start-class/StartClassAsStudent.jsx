@@ -196,11 +196,6 @@ function StartClassAsStudent() {
 			remoteVideoRef.current.srcObject = remoteStream;
 			remoteVideoRef.current.play();
 			setClsStarted(true);
-			document
-				.querySelector(
-					".css-1ljns5e-MuiButtonBase-root-MuiIconButton-root"
-				)
-				.click();
 			setOngoing(true);
 			setProgress(0);
 			setCurrentgTime(Date.now());
