@@ -1,5 +1,6 @@
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -54,15 +55,36 @@ function ExamsTable({ exams, dltExm }) {
 								{singleClass?.status}
 							</TableCell>
 							<TableCell align="right">
-								<Button
-									variant="filled"
-									startIcon={<DeleteIcon />}
-									onClick={() => {
-										dltExm(singleClass._id);
-									}}
-								>
-									Delete
-								</Button>
+								<div>
+									<Button
+										sx={{
+											boxShadow: 3,
+										}}
+										variant="filled"
+										startIcon={<AssignmentIcon />}
+										onClick={() => {
+											window.location.href =
+												"/exam-details?id" +
+												singleClass._id;
+										}}
+									>
+										See Details
+									</Button>
+								</div>
+								<div>
+									<Button
+										sx={{
+											boxShadow: 3,
+										}}
+										variant="filled"
+										startIcon={<DeleteIcon />}
+										onClick={() => {
+											dltExm(singleClass._id);
+										}}
+									>
+										Delete
+									</Button>
+								</div>
 							</TableCell>
 						</TableRow>
 					))}

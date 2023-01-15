@@ -13,6 +13,7 @@ import HostExam from "./scenes/admin/host-exam/HostExam";
 import InspectExam from "./scenes/admin/InspectExam";
 import MangeExaminers from "./scenes/admin/MangeExaminers";
 import MangeRoleplayers from "./scenes/admin/MangeRoleplayers";
+import ExamDetails from "./scenes/admin/ExamDetails";
 
 // teacher
 import TodaysClassesOfTeacher from "./scenes/teacher/TodaysClassesOfTeacher";
@@ -54,6 +55,7 @@ function App() {
             <Route path="manage_examiners" element={<MangeExaminers />} />
             <Route path="manage_roleplayers" element={<MangeRoleplayers />} />
             <Route path="inspect-exam" element={<InspectExam />} />
+            <Route path="exam-details" element={<ExamDetails />} />
 
             {/*teacher & student */}
 

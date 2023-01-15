@@ -26,7 +26,7 @@ function TodaysClassesOfTeacher() {
 			.catch((err) => console.log("err :", err));
 	}, []);
 	return (
-		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
+		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
 			<Box component="div" m="40px 40px " width="90%" p="0 0 0 20px">
 				<Typography variant="h4" mb="20px">
 					Today's Class Schedule

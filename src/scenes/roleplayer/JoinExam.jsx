@@ -173,7 +173,7 @@ function JoinExam() {
 	}, [cls]);
 
 	return (
-		<div style={{ overflowY: "scroll", maxHeight: "90%" }}>
+		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
 			{onGoing && !clsEnd && (
 				<LinearProgress
 					variant="determinate"
