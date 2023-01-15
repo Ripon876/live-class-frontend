@@ -17,14 +17,14 @@ function Mark({ list, cId, eId, sm, ms }) {
 	});
 
 	useEffect(() => {
-		list.map((item) => {
+		list?.map((item) => {
 			delete item.required;
 		});
 		setCheckList(list);
 	}, []);
 
 	const markPassed = (sn, qn) => {
-		if (checkList[sn].questions[qn].passed) {
+		if (checkList[sn]?.questions[qn]?.passed) {
 			checkList[sn].questions[qn].passed = false;
 		} else {
 			checkList[sn].questions[qn].passed = true;
