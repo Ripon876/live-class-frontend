@@ -9,7 +9,6 @@ import Alert from "@mui/material/Alert";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
 import { useCookies } from "react-cookie";
-import io from "socket.io-client";
 import "./style.css";
 
 function MangeRoleplayers() {
@@ -26,7 +25,7 @@ function MangeRoleplayers() {
 	const [formData, setFormData] = useState(initialFormData);
 	const [roleplayers, setRolePlayers] = useState([]);
 	const [instructor, setInstructor] = useState("");
-	const [cookies, setCookie] = useCookies([]);
+	const [cookies] = useCookies([]);
 
 	useEffect(() => {
 		getRoleplayers();
@@ -35,7 +34,7 @@ function MangeRoleplayers() {
 	const handleSubmit = () => {
 		// console.log(formData);
 
-		let emptyfield = Object.values(formData).some((item) => item == "");
+		let emptyfield = Object.values(formData).some((item) => item === "");
 		if (emptyfield) {
 			setAlert({
 				show: true,
