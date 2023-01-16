@@ -18,11 +18,13 @@ import ProgressBar from "./start-exam/ProgressBar";
 import RemainingTime from "./start-exam/RemainingTime";
 import CandidateInfo from "./start-exam/CandidateInfo";
 import Mark from "./start-exam/Mark";
+import BreakTimer from "./start-exam/BreakTimer";
 
 let socket;
 
 function StartClassAsTeacher() {
 	const [cls, setCls] = useState({});
+	const [breakTime, setBreakTime] = useState(false);
 	const [searchParams] = useSearchParams();
 	const [cookies] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
@@ -82,6 +84,14 @@ function StartClassAsTeacher() {
 			});
 		});
 
+		socket.on("breakTime", () => {
+			setBreakTime(true);
+			console.log("break time");
+			setTimeout(() => {
+				setBreakTime(false);
+			}, cls?.classDuration * 60 * 1000);
+		});
+
 		socket.on("allClassEnd", (text) => {
 			// console.log("classes end : ", text);
 			setClsEnd(true);
@@ -113,7 +123,6 @@ function StartClassAsTeacher() {
 				console.log("connected with admin");
 			});
 		});
-	 
 
 		peerInstance.current = peer;
 		rpPeerInstance.current = rp_peer;
@@ -253,7 +262,21 @@ function StartClassAsTeacher() {
 
 						{clsStarted && (
 							<div>
-								<div className="container">
+								{breakTime && (
+									<h3 style={{ marginTop: "300px" }}>
+										Exam will continue after{" "}
+										<BreakTimer
+											ct={Date.now()}
+											rt={cls?.classDuration}
+										/>
+									</h3>
+								)}
+								<div
+									className="container"
+									style={{
+										display: !breakTime ? "block" : "none",
+									}}
+								>
 									<div className="video-container">
 										{remainingTIme !== 0 && (
 											<RemainingTime

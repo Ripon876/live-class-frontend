@@ -133,6 +133,8 @@ function StartClassAsStudent() {
 								// console.log("next class is their ,id : ", res.id);
 
 								if (breakIn === exmCount) {
+									socket.emit("breakTime");
+
 									setTimeout(() => {
 										setClsStarted(true);
 										setBreakIn((old) => 0);
@@ -202,7 +204,10 @@ function StartClassAsStudent() {
 			setClsStarted(true);
 			setOngoing(true);
 			setCurrentgTime(Date.now());
-			setShowPdf(true);
+
+			if (cls?.pdf) {
+				setShowPdf(true);
+			}
 			// console.log("connected with examiner");
 		});
 	};
@@ -224,24 +229,24 @@ function StartClassAsStudent() {
 					)}
 					<div style={{ display: clsStarted ? "block" : "none" }}>
 						{myStream.current && (
-							<div style={{ display: !showPdf ? "block" : "none" }}>
-									<VideoContainer
-								msr={myStream}
-								evr={remoteVideoRef}
-								og={onGoing}
-								clsId={searchParams.get("id")}
-								rp={cls.roleplayer}
-								ct={currentTime}
-								rt={remainingTIme}
-								cls={cls}
-								usr={user}
-							/>
+							<div
+								style={{ display: !showPdf ? "block" : "none" }}
+							>
+								<VideoContainer
+									msr={myStream}
+									evr={remoteVideoRef}
+									og={onGoing}
+									clsId={searchParams.get("id")}
+									rp={cls.roleplayer}
+									ct={currentTime}
+									rt={remainingTIme}
+									cls={cls}
+									usr={user}
+								/>
 							</div>
-						
-
 						)}
 						<div className="px-5">
-							{ cls?.pdf && (
+							{cls?.pdf && (
 								<PDFViewer
 									pdf={cls?.pdf?.file}
 									vf={cls?.pdf?.visibleFor}
