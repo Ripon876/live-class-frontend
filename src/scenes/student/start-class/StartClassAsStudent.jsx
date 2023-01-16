@@ -19,6 +19,8 @@ let socket;
 function StartClassAsStudent() {
 	const [cls, setCls] = useState({});
 	const [clsTitle, setClsTitle] = useState("");
+	const [breakIn, setBreakIn] = useState(0);
+	const [exmCount, setExmCount] = useState(0);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [clsStarted, setClsStarted] = useState(false);
 	const [showPdf, setShowPdf] = useState(false);
@@ -71,7 +73,12 @@ function StartClassAsStudent() {
 			socket.emit("getClass", searchParams.get("id"), (cls, notfound) => {
 				if (!notfound) {
 					setCls(cls);
-					// console.log(cls);
+					setTimeout(() => {
+						setBreakIn((old) => cls.hasToJoin / 2);
+						setExmCount((old) => old + 1);
+					}, 5000);
+
+					console.log(cls);
 					setRemainingTime(cls.classDuration);
 				} else {
 					window.location.href = "/";
@@ -125,20 +132,38 @@ function StartClassAsStudent() {
 							if (res.type === "joinNextClass") {
 								// console.log("next class is their ,id : ", res.id);
 
-								setTimeout(() => {
-									setClsStarted(true);
+								if (breakIn === exmCount) {
+									setTimeout(() => {
+										setClsStarted(true);
+										setBreakIn((old) => 0);
+										call(res.id);
+									}, remainingTIme * 60 * 1000);
+								} else {
+									setTimeout(() => {
+										setClsStarted(true);
 
-									call(res.id);
-								}, 30000);
+										call(res.id);
+									}, 30000);
+								}
 
 								setClsId(res.id);
 								setSearchParams({ id: res.id });
+
 								socket.emit("getClass", res.id, (cls) => {
 									setClsTitle(cls?.title);
-									setTimeout(() => {
-										setCls(cls);
-										setRemainingTime(cls.classDuration);
-									}, 30000);
+
+									if (breakIn === exmCount) {
+										setTimeout(() => {
+											setCls(cls);
+											setExmCount((old) => old + 1);
+											setRemainingTime(cls.classDuration);
+										}, cls.classDuration * 60 * 1000);
+									} else {
+										setTimeout(() => {
+											setCls(cls);
+											setRemainingTime(cls.classDuration);
+										}, 30000);
+									}
 								});
 							}
 
@@ -193,6 +218,8 @@ function StartClassAsStudent() {
 							call={call}
 							exId={searchParams.get("id")}
 							rf={stratClsBtn}
+							bi={breakIn}
+							ec={exmCount}
 						/>
 					)}
 					<div style={{ display: clsStarted ? "block" : "none" }}>

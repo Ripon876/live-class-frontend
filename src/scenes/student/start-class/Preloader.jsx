@@ -2,20 +2,30 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
-function Preloader({ cls, call, rf, exId,clsTitle }) {
+function Preloader({ cls, call, rf, exId, clsTitle, bi, ec }) {
+	console.log(bi,ec);
 	return (
-		<div style={{ marginTop: "100px",textAlign: 'center' }}>
+		<div style={{ marginTop: "100px", textAlign: "center" }}>
 			<CircularProgress size="100px" mt="50px" color="success" />
-			<Typography variant="h3" mt="40px">
-				' {cls?.title} {clsTitle && clsTitle}'
-			</Typography>
+			{bi === ec && (bi === 1 || bi > 1) ? (
+				<Typography variant="h3" mt="40px">
+					Exam will continue afteer {cls?.classDuration}
+					min
+				</Typography>
+			) : (
+				<>
+					<Typography variant="h3" mt="40px">
+						'{cls?.title} {clsTitle && clsTitle}'
+					</Typography>
+					<Typography variant="h4" mb="20px">
+						Exam will be : {cls?.classDuration} min
+					</Typography>
+					<Typography variant="h2" mb="20px">
+						Getting You In
+					</Typography>
+				</>
+			)}
 
-			<Typography variant="h4" mb="20px">
-				Exam will be : {cls?.classDuration} min
-			</Typography>
-			<Typography variant="h2" mb="20px">
-				Getting You In
-			</Typography>
 			<Button
 				variant="contained"
 				size="large"
