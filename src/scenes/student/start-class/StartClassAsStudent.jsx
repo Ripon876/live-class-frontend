@@ -1,20 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Peer } from "peerjs";
 import io from "socket.io-client";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
-
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
 import MoodIcon from "@mui/icons-material/Mood";
 
 import Preloader from "./Preloader";
-import Timer from "./Timer";
 import VideoContainer from "./VideoContainer";
 import PDFViewer from "./PDFViewer";
 
@@ -26,35 +20,29 @@ function StartClassAsStudent() {
 	const [cls, setCls] = useState({});
 	const [clsTitle, setClsTitle] = useState("");
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [cookies, setCookie] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
 	const [showPdf, setShowPdf] = useState(false);
 	const stdId = useSelector((state) => state.user.id);
 	const iceConfig = useSelector((state) => state.iceConfig);
 	const [onGoing, setOngoing] = useState(false);
 	const [clsEnd, setClsEnd] = useState(false);
-	const [loader, setLoader] = useState(true);
 	const [remainingTIme, setRemainingTime] = useState(0);
-	const [rTime, setRTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 	const stratClsBtn = useRef(null);
 	const [user, setUser] = useState({});
-	const [peerId, setPeerId] = useState("");
-	const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
 	const remoteVideoRef = useRef(null);
 	const currentUserVideoRef = useRef(null);
 	const peerInstance = useRef(null);
-	const rpPeerInstance = useRef(null);
 	const myStream = useRef(null);
 	const [clsId, setClsId] = useState(searchParams.get("id"));
-	const [progress, setProgress] = useState(0);
+
 
 	useEffect(() => {
 		document.querySelector(".opendMenuIcon").click();
 		setTimeout(() => {
 			stratClsBtn.current.click();
 			setClsStarted(true);
-			setLoader(false);
+			
 			currentUserVideoRef.current.srcObject = myStream.current;
 			currentUserVideoRef.current.play();
 			// call();
@@ -86,7 +74,7 @@ function StartClassAsStudent() {
 					setCls(cls);
 					// console.log(cls);
 					setRemainingTime(cls.classDuration);
-					setRTime(cls.classDuration)
+				
 				} else {
 					window.location.href = "/";
 				}
@@ -116,10 +104,6 @@ function StartClassAsStudent() {
 			config: iceConfig,
 		});
 
-		peer.on("open", (id) => {
-			setPeerId(id);
-		});
-
 		ad_peer.on("call", (call) => {
 			// console.log("admin calling");
 			call.answer(myStream.current);
@@ -137,7 +121,7 @@ function StartClassAsStudent() {
 			setTimeout(
 				() => {
 					setClsStarted(false);
-					setLoader(true);
+					
 					socket.emit(
 						"clsEnd",
 						{ stdId: stdId, clsId: clsId },
@@ -147,7 +131,7 @@ function StartClassAsStudent() {
 
 								setTimeout(() => {
 									setClsStarted(true);
-									setLoader(false);
+									
 									call(res.id);
 								}, 30000);
 
@@ -158,7 +142,7 @@ function StartClassAsStudent() {
 									setTimeout(() => {
 										setCls(cls);
 										setRemainingTime(cls.classDuration);
-										setRTime(cls.classDuration)
+										
 									}, 30000);
 								});
 							}
@@ -197,21 +181,12 @@ function StartClassAsStudent() {
 			remoteVideoRef.current.play();
 			setClsStarted(true);
 			setOngoing(true);
-			setProgress(0);
 			setCurrentgTime(Date.now());
 			setShowPdf(true);
 			// console.log("connected with examiner");
 		});
 	};
 
-	const TimeRenderer = ({ minutes, seconds }) => {
-		return (
-			<span>
-				{minutes < 10 ? "0" + minutes : minutes}:
-				{seconds < 10 ? "0" + seconds : seconds}
-			</span>
-		);
-	};
 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
