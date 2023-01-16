@@ -209,18 +209,16 @@ function StartClassAsTeacher() {
 		}
 	}, [cls]);
 
-	useEffect(() => {
-		if (cls._id) {
-			setTimeout(() => {
-				setTimeout(() => {
-					socket.emit("markedTaken", taken, cls._id, () => {
-						// console.log("marking taken");
-						setTaken((t) => t + 1);
-					});
-				}, 1500);
-			}, cls.classDuration * 60 * 1000 + 5000);
-		}
-	}, [cls]);
+	// useEffect(() => {
+	// 	if (cls._id) {
+	// 		setTimeout(() => {
+	// 				socket.emit("markedTaken", taken, cls._id, () => {
+	// 					// console.log("marking taken");
+	// 					setTaken((t) => t + 1);
+	// 				});
+	// 		}, cls.classDuration * 60 * 1000 + 5000);
+	// 	}
+	// }, [cls]);
 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>

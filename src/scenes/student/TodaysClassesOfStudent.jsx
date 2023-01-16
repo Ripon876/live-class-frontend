@@ -31,6 +31,7 @@ function TodaysClassesOfStudent() {
 		socket.emit("getStudentExamState", stdId, (sts) => {
 			socket.emit("getClsId", stdId, (data, notstarted, finished) => {
 				setSS(data);
+
 				if (notstarted) {
 					setNS(notstarted);
 				}
@@ -108,7 +109,7 @@ function TodaysClassesOfStudent() {
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<Box
+			{/*	<Box
 					component="div"
 					mt="50px"
 					sx={{ display: "flex", justifyContent: "center" }}
@@ -140,16 +141,14 @@ function TodaysClassesOfStudent() {
 						</>
 					) : (
 						<>
-						{ns &&
-							<p>Exams Not Started Yet</p>
-						}
-						{f &&
-							<p>All Exams Ended</p>
-						}
+							{ns && <p>Exams Not Started Yet</p>}
+							{f && <p>All Exams Ended</p>}
+							{studentsStates?.break && (
+								<p>You can join after break</p>
+							)}
 						</>
 					)}
-					 
-				</Box>
+				</Box>*/}
 			</Box>
 		</div>
 	);

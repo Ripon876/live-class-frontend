@@ -23,12 +23,12 @@ function ProgressBar({
 					setOg(false);
 					// console.log("closing tiemr");
 					clearInterval(timer);
-					setTimeout(() => {
-						socket.emit("markedTaken", taken, exam._id, () => {
-							// console.log("marking taken");
-							setTaken((t) => t + 1);
-						});
-					}, 1500);
+					// setTimeout(() => {
+					// 	socket.emit("markedTaken", taken, exam._id, () => {
+					// 		// console.log("marking taken");
+					// 		setTaken((t) => t + 1);
+					// 	});
+					// }, 1500);
 					return 0;
 				}
 
