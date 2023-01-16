@@ -36,13 +36,12 @@ function StartClassAsStudent() {
 	const myStream = useRef(null);
 	const [clsId, setClsId] = useState(searchParams.get("id"));
 
-
 	useEffect(() => {
 		document.querySelector(".opendMenuIcon").click();
 		setTimeout(() => {
 			stratClsBtn.current.click();
 			setClsStarted(true);
-			
+
 			currentUserVideoRef.current.srcObject = myStream.current;
 			currentUserVideoRef.current.play();
 			// call();
@@ -74,7 +73,6 @@ function StartClassAsStudent() {
 					setCls(cls);
 					// console.log(cls);
 					setRemainingTime(cls.classDuration);
-				
 				} else {
 					window.location.href = "/";
 				}
@@ -112,8 +110,6 @@ function StartClassAsStudent() {
 			});
 		});
 		peerInstance.current = peer;
-
-		
 	}, []);
 
 	useEffect(() => {
@@ -121,7 +117,7 @@ function StartClassAsStudent() {
 			setTimeout(
 				() => {
 					setClsStarted(false);
-					
+
 					socket.emit(
 						"clsEnd",
 						{ stdId: stdId, clsId: clsId },
@@ -131,7 +127,7 @@ function StartClassAsStudent() {
 
 								setTimeout(() => {
 									setClsStarted(true);
-									
+
 									call(res.id);
 								}, 30000);
 
@@ -142,7 +138,6 @@ function StartClassAsStudent() {
 									setTimeout(() => {
 										setCls(cls);
 										setRemainingTime(cls.classDuration);
-										
 									}, 30000);
 								});
 							}
@@ -186,7 +181,6 @@ function StartClassAsStudent() {
 			// console.log("connected with examiner");
 		});
 	};
-
 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
