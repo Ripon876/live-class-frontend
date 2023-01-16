@@ -56,6 +56,18 @@ function CheckList({ fd, sfd }) {
 		}
 	};
 
+	const removeQs = (itemN, qsN) => {
+		let newList = [...checkList];
+		let item = newList[itemN].questions;
+		item.splice(qsN, 1);
+		setCheckList([...newList]);
+		let requiredItems = newList.filter((item) => item.required);
+		sfd({
+			...fd,
+			checklist: requiredItems,
+		});
+	};
+
 	const clear = () => {
 		setCheckList(initialList);
 	};
@@ -90,8 +102,8 @@ function CheckList({ fd, sfd }) {
 						maxWidth: "350px",
 					}}
 				>
-					{checkList?.map((item, i) => (
-						<div key={"dfgfd4534sdf" + i}>
+					{checkList?.map((item, i1) => (
+						<div key={"dfgfd4534sdf" + i1}>
 							<FormControlLabel
 								control={
 									<Checkbox
@@ -117,7 +129,7 @@ function CheckList({ fd, sfd }) {
 											}}
 										>
 											{item?.questions?.map(
-												(question) => (
+												(question, i2) => (
 													<FormControlLabel
 														label={question.title}
 														control={
@@ -126,6 +138,12 @@ function CheckList({ fd, sfd }) {
 																checked={
 																	question.required
 																}
+																onClick={() => {
+																	removeQs(
+																		i1,
+																		i2
+																	);
+																}}
 															/>
 														}
 													/>
@@ -137,7 +155,7 @@ function CheckList({ fd, sfd }) {
 									<div className="align-items-center d-flex">
 										<TextField
 											required
-											id={"checkbox" + i}
+											id={"checkbox" + i1}
 											placeholder="question"
 											variant="filled"
 											required
@@ -156,7 +174,7 @@ function CheckList({ fd, sfd }) {
 													fontSize: "15px",
 												}}
 												onClick={() => {
-													addQuestion(i);
+													addQuestion(i1);
 												}}
 												startIcon={<AddIcon />}
 											>
