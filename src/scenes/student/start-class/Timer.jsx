@@ -4,7 +4,7 @@ import Countdown from "react-countdown";
 function Timer({ ct, rt }) {
 	return (
 		<Typography variant="h4" align="right" pr="10px" mb="5px">
-			Remainig Time :
+			visibleFor : {' '}
 			<b pl="5px">
 				<Countdown
 					key={ct}

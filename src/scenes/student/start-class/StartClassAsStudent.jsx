@@ -224,7 +224,8 @@ function StartClassAsStudent() {
 					)}
 					<div style={{ display: clsStarted ? "block" : "none" }}>
 						{myStream.current && (
-							<VideoContainer
+							<div style={{ display: !showPdf ? "block" : "none" }}>
+									<VideoContainer
 								msr={myStream}
 								evr={remoteVideoRef}
 								og={onGoing}
@@ -235,13 +236,17 @@ function StartClassAsStudent() {
 								cls={cls}
 								usr={user}
 							/>
+							</div>
+						
+
 						)}
 						<div className="px-5">
-							{showPdf && cls?.pdf && (
+							{ cls?.pdf && (
 								<PDFViewer
 									pdf={cls?.pdf?.file}
 									vf={cls?.pdf?.visibleFor}
 									ssp={setShowPdf}
+									s={showPdf}
 								/>
 							)}
 						</div>
