@@ -154,7 +154,7 @@ function MangeRoleplayers() {
 						label="Name"
 						name="name"
 						defaultValue=""
-						placeholder="Instructor name"
+						placeholder="roleplayer name"
 						variant="filled"
 						value={formData.name}
 						required
