@@ -36,9 +36,10 @@ function StartClassAsStudent() {
 	const peerInstance = useRef(null);
 	const myStream = useRef(null);
 	const [clsId, setClsId] = useState(searchParams.get("id"));
-
+	const params = new URLSearchParams(window.location.search);
 	useEffect(() => {
 		document.querySelector(".opendMenuIcon").click();
+
 		setTimeout(() => {
 			stratClsBtn.current.click();
 			setClsStarted(true);
@@ -112,66 +113,7 @@ function StartClassAsStudent() {
 		});
 		peerInstance.current = peer;
 	}, []);
-
-	useEffect(() => {
-		if (cls?.classDuration) {
-			setTimeout(
-				() => {
-					setClsStarted(false);
-
-					socket.emit(
-						"clsEnd",
-						{ stdId: stdId, clsId: clsId },
-						(res) => {
-							if (res.type === "joinNextClass") {
-								if (res.break) {
-									setShowBreak(true);
-									setTimeout(() => {
-										setShowBreak(false);
-										setClsStarted(true);
-										call(res.id);
-									}, remainingTIme * 60 * 1000);
-								} else {
-									setTimeout(() => {
-										setClsStarted(true);
-										call(res.id);
-									}, 30000);
-								}
-
-								setClsId(res.id);
-								setSearchParams({ id: res.id });
-
-								socket.emit("getClass", res.id, (cls) => {
-									setClsTitle(cls?.title);
-
-									if (res.break) {
-										setTimeout(() => {
-											setCls(cls);
-											setRemainingTime(cls.classDuration);
-										}, cls.classDuration * 60 * 1000);
-									} else {
-										setTimeout(() => {
-											setCls(cls);
-											setRemainingTime(cls.classDuration);
-										}, 30000);
-									}
-								});
-							} else {
-								setClsEnd(true);
-								peerInstance.current.destroy();
-								myStream.current
-									.getTracks()
-									?.forEach((x) => x.stop());
-							}
-						}
-					);
-				},
-				searchParams.get("d")
-					? searchParams.get("d") * 60 * 1000 + 5000
-					: cls?.classDuration * 60 * 1000 + 5000
-			);
-		}
-	}, [cls]);
+ 
 
 	const call = (remotePeerId) => {
 		let options = {
@@ -196,6 +138,51 @@ function StartClassAsStudent() {
 				setShowPdf(true);
 			}
 			// console.log("connected with examiner");
+		});
+	};
+
+	const callClsEnd = () => {
+		setClsStarted(false);
+
+		socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
+			if (res.type === "joinNextClass") {
+				if (res.break) {
+					setShowBreak(true);
+					setTimeout(() => {
+						setShowBreak(false);
+						setClsStarted(true);
+						call(res.id);
+					}, remainingTIme * 60 * 1000);
+				} else {
+					setTimeout(() => {
+						setClsStarted(true);
+						call(res.id);
+					}, 30000);
+				}
+
+				setClsId(res.id);
+				setSearchParams({ id: res.id });
+
+				socket.emit("getClass", res.id, (cls) => {
+					setClsTitle(cls?.title);
+
+					if (res.break) {
+						setTimeout(() => {
+							setCls(cls);
+							setRemainingTime(cls.classDuration);
+						}, cls.classDuration * 60 * 1000);
+					} else {
+						setTimeout(() => {
+							setCls(cls);
+							setRemainingTime(cls.classDuration);
+						}, 30000);
+					}
+				});
+			} else {
+				setClsEnd(true);
+				peerInstance.current.destroy();
+				myStream.current.getTracks()?.forEach((x) => x.stop());
+			}
 		});
 	};
 
@@ -225,9 +212,14 @@ function StartClassAsStudent() {
 									clsId={searchParams.get("id")}
 									rp={cls.roleplayer}
 									ct={currentTime}
-									rt={remainingTIme}
+									rt={
+										params.get("tl")
+											? params.get("tl")
+											: remainingTIme
+									}
 									cls={cls}
 									usr={user}
+									callClsEnd={callClsEnd}
 								/>
 							</div>
 						)}

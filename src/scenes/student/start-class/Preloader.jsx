@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import BreakTimer from "./BreakTimer";
 
 function Preloader({ cls, call, rf, exId, clsTitle, bt }) {
- 
+	const params = new URLSearchParams(window.location.search);
 	return (
 		<div style={{ marginTop: "100px", textAlign: "center" }}>
 			{bt ? (
@@ -19,7 +19,11 @@ function Preloader({ cls, call, rf, exId, clsTitle, bt }) {
 						'{cls?.title} {clsTitle && clsTitle}'
 					</Typography>
 					<Typography variant="h4" mb="20px">
-						Exam will be : {cls?.classDuration} min
+						Exam will be :{" "}
+						{params.get("tl")
+							? Math.round(params.get("tl"))
+							: cls?.classDuration}{" "}
+						min
 					</Typography>
 					<Typography variant="h2" mb="20px">
 						Getting You In

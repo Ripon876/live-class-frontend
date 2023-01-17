@@ -24,7 +24,19 @@ import { useSelector } from "react-redux";
 import Video from "./video-streams/Video";
 import TimeRenderer from "./TimeRenderer";
 
-function VideoContainer({ cvr, evr, og, clsId, rp, msr, ct, rt, cls, usr }) {
+function VideoContainer({
+	cvr,
+	evr,
+	og,
+	clsId,
+	rp,
+	msr,
+	ct,
+	rt,
+	cls,
+	usr,
+	callClsEnd,
+}) {
 	const [mic, setMic] = useState(true);
 	const [note, setNote] = useState(false);
 	const [readed, setReaded] = useState(false);
@@ -157,6 +169,10 @@ function VideoContainer({ cvr, evr, og, clsId, rp, msr, ct, rt, cls, usr }) {
 											<ListItemText
 												primary={
 													<Countdown
+														onComplete={() => {
+															// setOg(false);
+															callClsEnd();
+														}}
 														key={ct}
 														date={
 															ct + rt * 60 * 1000
