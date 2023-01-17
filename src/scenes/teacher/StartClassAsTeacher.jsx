@@ -71,6 +71,11 @@ function StartClassAsTeacher() {
 			examinerVideoRef.current.srcObject = mediaStream;
 			examinerVideoRef.current.play();
 		});
+
+		return () => {
+			socket.disconnect();
+			myStream.current.getTracks()?.forEach((x) => x.stop());
+		};
 	}, []);
 
 	useEffect(() => {
@@ -103,12 +108,13 @@ function StartClassAsTeacher() {
 		socket.on("stdDisconnected", (id) => {
 			console.log("std disconnected ", id);
 			setOngoing(false);
-
-			setAlert({
-				msg: "Candidate disconnected",
-				type: "error",
-				open: true,
-			});
+			if (!clsEnd) {
+				setAlert({
+					msg: "Candidate disconnected",
+					type: "error",
+					open: true,
+				});
+			}
 		});
 
 		socket.on("addWithAdmin", (id) => {
@@ -121,8 +127,10 @@ function StartClassAsTeacher() {
 		console.log(t);
 		socket.once("breakTime", () => {
 			setShowBreak((old) => true);
+			myStream.current.getAudioTracks()[0].enabled = false;
 			console.log("break time");
 			setTimeout(() => {
+				myStream.current.getAudioTracks()[0].enabled = true;
 				setShowBreak(false);
 			}, t * 60 * 1000);
 		});
@@ -173,11 +181,13 @@ function StartClassAsTeacher() {
 				if (call.metadata.timeleft) {
 					searchParams.set("tl", call.metadata.timeleft);
 					setSearchParams(searchParams);
-					setAlert({
-						msg: "Candidate Reconnected",
-						type: "success",
-						open: true,
-					});
+					if (!clsEnd) {
+						setAlert({
+							msg: "Candidate Reconnected",
+							type: "success",
+							open: true,
+						});
+					}
 				}
 				socket.emit(
 					"addWithRoleplayer",

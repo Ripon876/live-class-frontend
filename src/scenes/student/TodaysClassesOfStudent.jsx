@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import io from "socket.io-client";
 let socket;
+let pTime;
 
 function TodaysClassesOfStudent() {
 	const [cookies, setCookie] = useCookies([]);
@@ -26,11 +27,17 @@ function TodaysClassesOfStudent() {
 	const stdId = useSelector((state) => state.user.id);
 
 	useEffect(() => {
+		pTime = performance.now();
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 		socket.emit("getStudentExamState", stdId, (sts) => {
 			socket.emit("getClsId", stdId, (data, notstarted, finished) => {
 				setSS(data);
+
+				// if (data.canJoin && studentsStates?.timeLeft - 0.5 > 0) {
+				// 	console.log(data)
+
+				// }
 
 				if (notstarted) {
 					setNS(notstarted);
@@ -109,7 +116,7 @@ function TodaysClassesOfStudent() {
 						</TableBody>
 					</Table>
 				</TableContainer>
-			{/*	<Box
+				<Box
 					component="div"
 					mt="50px"
 					sx={{ display: "flex", justifyContent: "center" }}
@@ -128,15 +135,20 @@ function TodaysClassesOfStudent() {
 									onClick={() => {
 										window.location.href = `/live-class?id=${
 											studentsStates.id
-										}&d=${studentsStates.timeLeft - 0.5}`;
+										}&tl=${
+											studentsStates.timeLeft -
+											(0.5 +
+												0.0833 +
+												(pTime - performance.now()) /
+													1000 /
+													60)
+										}`;
 									}}
 								>
-									<Typography variant="h3">
-										<PlayArrowIcon /> Rejoin
-									</Typography>
+									<Typography variant="h3">Rejoin</Typography>
 								</Button>
 							) : (
-								<p>You can't join in break time</p>
+								<p>You can't join Now</p>
 							)}
 						</>
 					) : (
@@ -148,7 +160,7 @@ function TodaysClassesOfStudent() {
 							)}
 						</>
 					)}
-				</Box>*/}
+				</Box>
 			</Box>
 		</div>
 	);

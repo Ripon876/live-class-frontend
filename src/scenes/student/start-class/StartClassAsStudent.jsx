@@ -93,6 +93,7 @@ function StartClassAsStudent() {
 
 		return () => {
 			socket.disconnect();
+			myStream.current.getTracks()?.forEach((x) => x.stop());
 		};
 	}, []);
 
@@ -148,7 +149,9 @@ function StartClassAsStudent() {
 			if (res.type === "joinNextClass") {
 				if (res.break) {
 					setShowBreak(true);
+					myStream.current.getAudioTracks()[0].enabled = false;
 					setTimeout(() => {
+						myStream.current.getAudioTracks()[0].enabled = true;
 						setShowBreak(false);
 						setClsStarted(true);
 						call(res.id);
