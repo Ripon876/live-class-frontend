@@ -24,7 +24,7 @@ let socket;
 
 function StartClassAsTeacher() {
 	const [cls, setCls] = useState({});
-	const [breakTime, setBreakTime] = useState(false);
+	const [showBreak, setShowBreak] = useState(false);
 	const [searchParams] = useSearchParams();
 	const [cookies] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
@@ -75,21 +75,14 @@ function StartClassAsTeacher() {
 			socket.emit("getClass", searchParams.get("id"), (cls, notfound) => {
 				if (!notfound) {
 					setCls(cls);
-					// console.log(cls);
+					console.log(cls);
+					breaker(cls.classDuration);
 					setProgressTime(((cls.classDuration * 60) / 100) * 1000);
 					setRemainingTime(cls.classDuration);
 				} else {
 					window.location.href = "/";
 				}
 			});
-		});
-
-		socket.on("breakTime", () => {
-			setBreakTime(true);
-			console.log("break time");
-			setTimeout(() => {
-				setBreakTime(false);
-			}, cls?.classDuration * 60 * 1000);
 		});
 
 		socket.on("allClassEnd", (text) => {
@@ -104,6 +97,17 @@ function StartClassAsTeacher() {
 			// console.log("admin want to join , : ", id);
 		});
 	}, []);
+
+	const breaker = (t) => {
+		console.log(t)
+		socket.once("breakTime", () => {
+			setShowBreak((old) => true);
+			console.log("break time");
+			setTimeout(() => {
+				setShowBreak(false);
+			}, t * 60 * 1000);
+		});
+	};
 
 	useEffect(() => {
 		const peer = new Peer(searchParams.get("id"), {
@@ -201,37 +205,26 @@ function StartClassAsTeacher() {
 				// 	"auto exam end in :",
 				// 	examTime
 				// );
-				setTimeout(() => {
-					// console.log(
-					// 	new Date().toLocaleTimeString(),
-					// 	" ",
-					// 	"ending exam"
-					// );
-					socket.emit("markExamEnd", searchParams.get("id"), () => {
-						// console.log("ending exam");
-						setClsEnd(true);
-						peerInstance.current.destroy();
-						myStream.current.getTracks()?.forEach((x) => x.stop());
-					});
-				}, examTime * 60 * 1000);
+				// setTimeout(() => {
+				// 	// console.log(
+				// 	// 	new Date().toLocaleTimeString(),
+				// 	// 	" ",
+				// 	// 	"ending exam"
+				// 	// );
+				// 	socket.emit("markExamEnd", searchParams.get("id"), () => {
+				// 		// console.log("ending exam");
+				// 		setClsEnd(true);
+				// 		peerInstance.current.destroy();
+				// 		myStream.current.getTracks()?.forEach((x) => x.stop());
+				// 	});
+				// }, examTime * 60 * 1000);
 			}
 		}
 	}, [cls]);
 
-	// useEffect(() => {
-	// 	if (cls._id) {
-	// 		setTimeout(() => {
-	// 				socket.emit("markedTaken", taken, cls._id, () => {
-	// 					// console.log("marking taken");
-	// 					setTaken((t) => t + 1);
-	// 				});
-	// 		}, cls.classDuration * 60 * 1000 + 5000);
-	// 	}
-	// }, [cls]);
-
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
-			{onGoing && (
+			{/*	{onGoing && (
 				<ProgressBar
 					og={onGoing}
 					ee={clsEnd}
@@ -245,7 +238,7 @@ function StartClassAsTeacher() {
 					setTaken={setTaken}
 					socket={socket}
 				/>
-			)}
+			)}*/}
 
 			<Box
 				component="div"
@@ -262,7 +255,7 @@ function StartClassAsTeacher() {
 
 						{clsStarted && (
 							<div>
-								{breakTime && (
+								{showBreak && (
 									<h3 style={{ marginTop: "300px" }}>
 										Exam will continue after{" "}
 										<BreakTimer
@@ -274,13 +267,14 @@ function StartClassAsTeacher() {
 								<div
 									className="container"
 									style={{
-										display: !breakTime ? "block" : "none",
+										display: !showBreak ? "block" : "none",
 									}}
 								>
 									<div className="video-container">
 										{remainingTIme !== 0 && (
 											<RemainingTime
 												og={onGoing}
+												setOg={setOngoing}
 												ct={currentTime}
 												rt={remainingTIme}
 											/>

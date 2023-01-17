@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import Countdown from "react-countdown";
 import TimeRenderer from "./TimeRenderer";
 
-function RemainingTime({ og, ct, rt }) {
+function RemainingTime({ og, ct, rt, setOg }) {
 	return (
 		<Typography
 			variant="h4"
@@ -20,7 +20,11 @@ function RemainingTime({ og, ct, rt }) {
 					key={ct}
 					date={ct + rt * 60 * 1000}
 					renderer={TimeRenderer}
-				/>
+					onComplete={() => {
+						setOg(false);
+						console.log("countdown ends");
+					}}
+				></Countdown>
 			</b>
 			min
 		</Typography>

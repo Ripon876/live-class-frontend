@@ -19,8 +19,7 @@ let socket;
 function StartClassAsStudent() {
 	const [cls, setCls] = useState({});
 	const [clsTitle, setClsTitle] = useState("");
-	const [breakIn, setBreakIn] = useState(0);
-	const [exmCount, setExmCount] = useState(0);
+	const [showBreak, setShowBreak] = useState(false);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [clsStarted, setClsStarted] = useState(false);
 	const [showPdf, setShowPdf] = useState(false);
@@ -73,11 +72,6 @@ function StartClassAsStudent() {
 			socket.emit("getClass", searchParams.get("id"), (cls, notfound) => {
 				if (!notfound) {
 					setCls(cls);
-					setTimeout(() => {
-						setBreakIn((old) => cls.hasToJoin / 2);
-						setExmCount((old) => old + 1);
-					}, 5000);
-
 					console.log(cls);
 					setRemainingTime(cls.classDuration);
 				} else {
@@ -130,20 +124,16 @@ function StartClassAsStudent() {
 						{ stdId: stdId, clsId: clsId },
 						(res) => {
 							if (res.type === "joinNextClass") {
-								// console.log("next class is their ,id : ", res.id);
-
-								if (breakIn === exmCount) {
-									socket.emit("breakTime");
-
+								if (res.break) {
+									setShowBreak(true);
 									setTimeout(() => {
+										setShowBreak(false);
 										setClsStarted(true);
-										setBreakIn((old) => 0);
 										call(res.id);
 									}, remainingTIme * 60 * 1000);
 								} else {
 									setTimeout(() => {
 										setClsStarted(true);
-
 										call(res.id);
 									}, 30000);
 								}
@@ -154,10 +144,9 @@ function StartClassAsStudent() {
 								socket.emit("getClass", res.id, (cls) => {
 									setClsTitle(cls?.title);
 
-									if (breakIn === exmCount) {
+									if (res.break) {
 										setTimeout(() => {
 											setCls(cls);
-											setExmCount((old) => old + 1);
 											setRemainingTime(cls.classDuration);
 										}, cls.classDuration * 60 * 1000);
 									} else {
@@ -167,9 +156,7 @@ function StartClassAsStudent() {
 										}, 30000);
 									}
 								});
-							}
-
-							if (res.type === "allClassEnd") {
+							} else {
 								setClsEnd(true);
 								peerInstance.current.destroy();
 								myStream.current
@@ -223,8 +210,7 @@ function StartClassAsStudent() {
 							call={call}
 							exId={searchParams.get("id")}
 							rf={stratClsBtn}
-							bi={breakIn}
-							ec={exmCount}
+							bt={showBreak}
 						/>
 					)}
 					<div style={{ display: clsStarted ? "block" : "none" }}>

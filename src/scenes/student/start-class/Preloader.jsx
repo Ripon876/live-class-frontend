@@ -3,11 +3,11 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import BreakTimer from "./BreakTimer";
 
-function Preloader({ cls, call, rf, exId, clsTitle, bi, ec }) {
-	console.log(bi, ec);
+function Preloader({ cls, call, rf, exId, clsTitle, bt }) {
+ 
 	return (
 		<div style={{ marginTop: "100px", textAlign: "center" }}>
-			{bi === ec && (bi === 1 || bi > 1) ? (
+			{bt ? (
 				<h3 style={{ marginTop: "300px" }}>
 					Exam will continue after{" "}
 					<BreakTimer ct={Date.now()} rt={cls?.classDuration} />
