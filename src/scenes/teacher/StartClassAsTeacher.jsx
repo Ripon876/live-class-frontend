@@ -7,9 +7,10 @@ import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
 
 import Box from "@mui/material/Box";
-import Roleplayer from "./Roleplayer";
-import "./style.css";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
+import Roleplayer from "./Roleplayer";
 import ExamDetail from "./start-exam/ExamDetail";
 import EndScreen from "./start-exam/EndScreen";
 import MyVideo from "./start-exam/MyVideo";
@@ -19,6 +20,7 @@ import RemainingTime from "./start-exam/RemainingTime";
 import CandidateInfo from "./start-exam/CandidateInfo";
 import Mark from "./start-exam/Mark";
 import BreakTimer from "./start-exam/BreakTimer";
+import "./style.css";
 
 let socket;
 
@@ -36,6 +38,11 @@ function StartClassAsTeacher() {
 	const [mark, setMark] = useState(true);
 	const [mSubmited, setMSubmited] = useState(false);
 	// for call
+	const [alert, setAlert] = useState({
+		msg: "",
+		type: "",
+		open: false,
+	});
 
 	const [onGoing, setOngoing] = useState(false);
 	const candidateVideoRef = useRef(null);
@@ -91,6 +98,17 @@ function StartClassAsTeacher() {
 			setClsEnd(true);
 			peerInstance.current.destroy();
 			myStream.current.getTracks()?.forEach((x) => x.stop());
+		});
+
+		socket.on("stdDisconnected", (id) => {
+			console.log("std disconnected ", id);
+			setOngoing(false);
+
+			setAlert({
+				msg: "Candidate disconnected",
+				type: "error",
+				open: true,
+			});
 		});
 
 		socket.on("addWithAdmin", (id) => {
@@ -152,9 +170,14 @@ function StartClassAsTeacher() {
 				setMark(true);
 				setMSubmited(false);
 
-				if (call.metadata.timeleft) { 
+				if (call.metadata.timeleft) {
 					searchParams.set("tl", call.metadata.timeleft);
 					setSearchParams(searchParams);
+					setAlert({
+						msg: "Candidate Reconnected",
+						type: "success",
+						open: true,
+					});
 				}
 				socket.emit(
 					"addWithRoleplayer",
@@ -202,6 +225,21 @@ function StartClassAsTeacher() {
 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
+			<Snackbar
+				open={alert.open}
+				autoHideDuration={6000}
+				onClose={() => {
+					setAlert({
+						msg: "",
+						type: "",
+						open: false,
+					});
+				}}
+			>
+				<Alert severity={alert.type} sx={{ width: "100%" }}>
+					{alert.msg}
+				</Alert>
+			</Snackbar>
 			<Box
 				component="div"
 				m="40px 40px "
@@ -238,7 +276,11 @@ function StartClassAsTeacher() {
 												og={onGoing}
 												setOg={setOngoing}
 												ct={currentTime}
-												rt={params.get("tl") ? params.get("tl") : remainingTIme}
+												rt={
+													params.get("tl")
+														? params.get("tl")
+														: remainingTIme
+												}
 											/>
 										)}
 										{cls.roleplayer && (
