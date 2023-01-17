@@ -113,12 +113,12 @@ function StartClassAsStudent() {
 		});
 		peerInstance.current = peer;
 	}, []);
- 
 
 	const call = (remotePeerId) => {
 		let options = {
 			metadata: {
 				std: { id: stdId },
+				timeleft: params.get("tl") ? params.get("tl") : null,
 			},
 		};
 		const call = peerInstance.current.call(

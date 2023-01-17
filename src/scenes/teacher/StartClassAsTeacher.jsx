@@ -25,7 +25,7 @@ let socket;
 function StartClassAsTeacher() {
 	const [cls, setCls] = useState({});
 	const [showBreak, setShowBreak] = useState(false);
-	const [searchParams] = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 	const [cookies] = useCookies([]);
 	const [clsStarted, setClsStarted] = useState(false);
 	const teacherId = useSelector((state) => state.user.id);
@@ -49,6 +49,7 @@ function StartClassAsTeacher() {
 	const [progress, setProgress] = useState(0);
 	const [progressTime, setProgressTime] = useState(0);
 	const [taken, setTaken] = useState(0);
+	const params = new URLSearchParams(window.location.search);
 
 	useEffect(() => {
 		setClsStarted(true);
@@ -99,7 +100,7 @@ function StartClassAsTeacher() {
 	}, []);
 
 	const breaker = (t) => {
-		console.log(t)
+		console.log(t);
 		socket.once("breakTime", () => {
 			setShowBreak((old) => true);
 			console.log("break time");
@@ -150,6 +151,11 @@ function StartClassAsTeacher() {
 				// get joined student info
 				setMark(true);
 				setMSubmited(false);
+
+				if (call.metadata.timeleft) { 
+					searchParams.set("tl", call.metadata.timeleft);
+					setSearchParams(searchParams);
+				}
 				socket.emit(
 					"addWithRoleplayer",
 					{ _id: call.metadata.std.id },
@@ -194,10 +200,8 @@ function StartClassAsTeacher() {
 		}, 1000);
 	}, []);
 
- 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
-		 
 			<Box
 				component="div"
 				m="40px 40px "
@@ -234,7 +238,7 @@ function StartClassAsTeacher() {
 												og={onGoing}
 												setOg={setOngoing}
 												ct={currentTime}
-												rt={remainingTIme}
+												rt={params.get("tl") ? params.get("tl") : remainingTIme}
 											/>
 										)}
 										{cls.roleplayer && (

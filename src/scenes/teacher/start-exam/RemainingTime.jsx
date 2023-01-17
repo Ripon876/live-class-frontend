@@ -2,8 +2,11 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import Countdown from "react-countdown";
 import TimeRenderer from "./TimeRenderer";
+import { useSearchParams } from "react-router-dom";
 
 function RemainingTime({ og, ct, rt, setOg }) {
+	const [searchParams, setSearchParams] = useSearchParams();
+	const params = new URLSearchParams(window.location.search);
 	return (
 		<Typography
 			variant="h4"
@@ -21,6 +24,11 @@ function RemainingTime({ og, ct, rt, setOg }) {
 					date={ct + rt * 60 * 1000}
 					renderer={TimeRenderer}
 					onComplete={() => {
+						if (params.get("tl")) {
+							searchParams.delete("tl");
+							setSearchParams(searchParams);
+						}
+
 						setOg(false);
 						console.log("countdown ends");
 					}}

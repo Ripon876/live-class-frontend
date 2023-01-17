@@ -20,6 +20,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Countdown from "react-countdown";
 import { Peer } from "peerjs";
 import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+
 // custom component
 import Video from "./video-streams/Video";
 import TimeRenderer from "./TimeRenderer";
@@ -37,6 +39,9 @@ function VideoContainer({
 	usr,
 	callClsEnd,
 }) {
+	const [searchParams, setSearchParams] = useSearchParams();
+	const params = new URLSearchParams(window.location.search);
+
 	const [mic, setMic] = useState(true);
 	const [note, setNote] = useState(false);
 	const [readed, setReaded] = useState(false);
@@ -170,7 +175,17 @@ function VideoContainer({
 												primary={
 													<Countdown
 														onComplete={() => {
-															// setOg(false);
+															if (
+																params.get("tl")
+															) {
+																searchParams.delete(
+																	"tl"
+																);
+																setSearchParams(
+																	searchParams
+																);
+															}
+
 															callClsEnd();
 														}}
 														key={ct}
