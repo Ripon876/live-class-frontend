@@ -6,6 +6,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DeleteIcon from "@mui/icons-material/Delete";
 import HistoryIcon from "@mui/icons-material/History";
 import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 import CachedIcon from "@mui/icons-material/Cached";
 import { useCookies } from "react-cookie";
 import io from "socket.io-client";
@@ -133,7 +134,12 @@ function HostClass() {
 		getRoleplayers(setRoleplayers);
 	};
 	const startexams = () => {
-		Start(socket, setExams, setAlert, setSpin);
+		let confirmed = window.confirm(
+			"Do you want to start exams? you will not be able to revert this"
+		);
+		if (confirmed) {
+			Start(socket, setExams, setAlert, setSpin);
+		}
 	};
 
 	const clearStates = () => {
@@ -144,8 +150,12 @@ function HostClass() {
 	};
 
 	const renewExams = () => {
-		console.log("renewing");
-		Renew(cookies.token, setExams);
+		let confirmed = window.confirm(
+			"Do you want to renew exams? you will not be able to revert this"
+		);
+		if (confirmed) {
+			Renew(cookies.token, setExams);
+		}
 	};
 
 	useEffect(() => {
@@ -167,12 +177,21 @@ function HostClass() {
 				noValidate
 				autoComplete="off"
 			>
-				{alert.show && (
+				<Snackbar
+					open={alert.show}
+					autoHideDuration={6000}
+					onClose={() => {
+						setAlert({
+							msg: "",
+							type: "",
+							show: false,
+						});
+					}}
+				>
 					<Alert severity={alert.type} sx={{ mb: 2 }}>
 						{alert.msg}
 					</Alert>
-				)}
-
+				</Snackbar>
 				<Typography variant="h3" mb="20px">
 					Host a new exam
 				</Typography>
