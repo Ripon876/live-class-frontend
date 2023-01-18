@@ -42,6 +42,7 @@ function TodaysClassesOfRoleplayer() {
 								</TableCell>
 								<TableCell align="right">Start Time</TableCell>
 								<TableCell align="right">Status</TableCell>
+								<TableCell align="right">Action</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -71,6 +72,26 @@ function TodaysClassesOfRoleplayer() {
 									</TableCell>
 									<TableCell align="right">
 										{singleClass.status}
+									</TableCell>
+									<TableCell align="right">
+										{singleClass.status === "Ongoing" && (
+											<Button
+												size="normal"
+												variant="filled"
+												sx={{
+													boxShadow: 3,
+													pt: "10px",
+													pb: "10px",
+												}}
+												onClick={() => {
+													window.location.href = `/live-class?id=${singleClass._id}&rejoin=true`;
+												}}
+											>
+												<Typography variant="h3">
+													Rejoin
+												</Typography>
+											</Button>
+										)}
 									</TableCell>
 								</TableRow>
 							))}

@@ -33,12 +33,6 @@ function TodaysClassesOfStudent() {
 		socket.emit("getStudentExamState", stdId, (sts) => {
 			socket.emit("getClsId", stdId, (data, notstarted, finished) => {
 				setSS(data);
-
-				// if (data.canJoin && studentsStates?.timeLeft - 0.5 > 0) {
-				// 	console.log(data)
-
-				// }
-
 				if (notstarted) {
 					setNS(notstarted);
 				}
@@ -64,7 +58,7 @@ function TodaysClassesOfStudent() {
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
 			<Box component="div" m="40px 40px " width="90%" p="0 0 0 20px">
 				<Typography variant="h4" mb="20px">
-					Today's Class Schedule
+					Today's Exams Schedule
 				</Typography>
 				<TableContainer component={Paper}>
 					<Table sx={{ minWidth: "90%" }} aria-label="simple table">
