@@ -37,7 +37,6 @@ function StartClassAsTeacher() {
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 	const [mark, setMark] = useState(true);
 	const [mSubmited, setMSubmited] = useState(false);
-	 
 	const [alert, setAlert] = useState({
 		msg: "",
 		type: "",
@@ -191,7 +190,10 @@ function StartClassAsTeacher() {
 				}
 				socket.emit(
 					"addWithRoleplayer",
-					{ _id: call.metadata.std.id , timeleft : call.metadata.timeleft},
+					{
+						_id: call.metadata.std.id,
+						timeleft: call.metadata.timeleft,
+					},
 					searchParams.get("id")
 				);
 
@@ -295,6 +297,9 @@ function StartClassAsTeacher() {
 										)}
 										{cls.roleplayer && (
 											<Roleplayer
+												setA={setAlert}
+												ce={clsEnd}
+												socket={socket}
 												peer={rpPeerInstance}
 												rpId={
 													searchParams.get("id") +

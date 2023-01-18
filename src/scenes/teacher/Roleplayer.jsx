@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-function Roleplayer({ peer, rpId, msr }) {
+function Roleplayer({ peer, rpId, msr, socket, setA, ce }) {
 	const rpVideoRef = useRef(null);
 	const peerInstance = useRef(null);
 
@@ -8,6 +8,31 @@ function Roleplayer({ peer, rpId, msr }) {
 		setTimeout(() => {
 			call(rpId);
 		}, 3500);
+
+
+
+		socket.on("roDisconnected", (ro) => {
+			console.log("Roleplayer disconnected ");
+			if (!ce) {
+				rpVideoRef.current.srcObject = null;
+				setA({
+					msg: "Roleplayer disconnected",
+					type: "error",
+					open: true,
+				});
+			}
+		});
+
+		socket.on("connectWithRp", () => {
+			if (!ce) {
+				call(rpId);
+				setA({
+					msg: "Roleplayer Rejoining",
+					type: "success",
+					open: true,
+				});
+			}
+		});
 	}, []);
 
 	const call = (rpPeerId) => {

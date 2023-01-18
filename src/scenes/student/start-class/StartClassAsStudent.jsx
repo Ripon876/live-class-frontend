@@ -91,7 +91,7 @@ function StartClassAsStudent() {
 		socket.on("exDisconnected", (ex) => {
 			console.log("Examiner disconnected ");
 			if (!clsEnd) {
-				remoteVideoRef.current = null;
+				remoteVideoRef.current.srcObject = null;
 				setAlert({
 					msg: "Examiner disconnected",
 					type: "error",

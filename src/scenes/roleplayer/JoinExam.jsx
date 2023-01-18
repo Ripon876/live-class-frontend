@@ -71,6 +71,10 @@ function JoinExam() {
 			});
 		});
 
+		if (params.get("rejoin")) {
+			socket.emit("reConnectWithRp", searchParams.get("id"));
+		}
+
 		setClsStarted(true);
 		var getUserMedia =
 			navigator.getUserMedia ||

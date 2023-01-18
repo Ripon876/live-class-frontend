@@ -74,7 +74,7 @@ function VideoContainer({
 		socket.on("roDisconnected", (ro) => {
 			console.log("Roleplayer disconnected ");
 			if (!ce) {
-				rpVideoRef.current = null;
+				rpVideoRef.current.srcObject = null;
 				setA({
 					msg: "Roleplayer disconnected",
 					type: "error",
