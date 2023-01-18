@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import MoodIcon from "@mui/icons-material/Mood";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 import Preloader from "./Preloader";
 import VideoContainer from "./VideoContainer";
@@ -35,8 +37,14 @@ function StartClassAsStudent() {
 	const currentUserVideoRef = useRef(null);
 	const peerInstance = useRef(null);
 	const myStream = useRef(null);
+	const [alert, setAlert] = useState({
+		msg: "",
+		type: "",
+		open: false,
+	});
 	const [clsId, setClsId] = useState(searchParams.get("id"));
 	const params = new URLSearchParams(window.location.search);
+
 	useEffect(() => {
 		document.querySelector(".opendMenuIcon").click();
 
@@ -79,6 +87,17 @@ function StartClassAsStudent() {
 					window.location.href = "/";
 				}
 			});
+		});
+		socket.on("exDisconnected", (ex) => {
+			console.log("Examiner disconnected ");
+			if (!clsEnd) {
+				remoteVideoRef.current = null;
+				setAlert({
+					msg: "Examiner disconnected",
+					type: "error",
+					open: true,
+				});
+			}
 		});
 
 		var getUserMedia =
@@ -191,6 +210,22 @@ function StartClassAsStudent() {
 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
+			<Snackbar
+				open={alert.open}
+				autoHideDuration={6000}
+				onClose={() => {
+					setAlert({
+						msg: "",
+						type: "",
+						open: false,
+					});
+				}}
+			>
+				<Alert severity={alert.type} sx={{ width: "100%" }}>
+					{alert.msg}
+				</Alert>
+			</Snackbar>
+
 			{!clsEnd ? (
 				<div>
 					{!clsStarted && (
@@ -223,6 +258,9 @@ function StartClassAsStudent() {
 									cls={cls}
 									usr={user}
 									callClsEnd={callClsEnd}
+									socket={socket}
+									setA={setAlert}
+									ce={clsEnd}
 								/>
 							</div>
 						)}

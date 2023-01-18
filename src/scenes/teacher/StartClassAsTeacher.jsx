@@ -37,7 +37,7 @@ function StartClassAsTeacher() {
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 	const [mark, setMark] = useState(true);
 	const [mSubmited, setMSubmited] = useState(false);
-	// for call
+	 
 	const [alert, setAlert] = useState({
 		msg: "",
 		type: "",

@@ -38,6 +38,9 @@ function VideoContainer({
 	cls,
 	usr,
 	callClsEnd,
+	socket,
+	setA,
+	ce,
 }) {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const params = new URLSearchParams(window.location.search);
@@ -66,6 +69,18 @@ function VideoContainer({
 				rpVideoRef.current.srcObject = rpStream;
 				rpVideoRef.current.play();
 			});
+		});
+
+		socket.on("roDisconnected", (ro) => {
+			console.log("Roleplayer disconnected ");
+			if (!ce) {
+				rpVideoRef.current = null;
+				setA({
+					msg: "Roleplayer disconnected",
+					type: "error",
+					open: true,
+				});
+			}
 		});
 	}, []);
 
