@@ -154,7 +154,7 @@ function HostClass() {
 			"Do you want to renew exams? you will not be able to revert this"
 		);
 		if (confirmed) {
-			Renew(cookies.token, setExams);
+			Renew(cookies.token, setExams,setAlert);
 		}
 	};
 
