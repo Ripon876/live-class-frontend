@@ -191,7 +191,7 @@ function StartClassAsTeacher() {
 				}
 				socket.emit(
 					"addWithRoleplayer",
-					{ _id: call.metadata.std.id },
+					{ _id: call.metadata.std.id , timeleft : call.metadata.timeleft},
 					searchParams.get("id")
 				);
 

@@ -15,6 +15,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 import MoodIcon from "@mui/icons-material/Mood";
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 import Candidate from "./Candidate";
 import "./style.css";
@@ -32,7 +34,12 @@ function JoinExam() {
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 	const [mic, setMic] = useState(true);
-	// for call
+	const [alert, setAlert] = useState({
+		msg: "",
+		type: "",
+		open: false,
+	});
+
 	const [calling, setCaling] = useState(false);
 	const [peerId, setPeerId] = useState(searchParams.get("id"));
 	const [onGoing, setOngoing] = useState(false);
@@ -43,7 +50,8 @@ function JoinExam() {
 	const callerRef = useRef(null);
 	const [std, setStd] = useState({});
 	const myStream = useRef(null);
-	const [progress, setProgress] = useState(0);
+
+	const params = new URLSearchParams(window.location.search);
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
@@ -75,6 +83,18 @@ function JoinExam() {
 			currentUserVideoRef.current.play();
 		});
 
+		socket.on("stdDisconnected", (id) => {
+			console.log("std disconnected ", id);
+			setOngoing(false);
+			if (!clsEnd) {
+				setAlert({
+					msg: "Candidate disconnected",
+					type: "error",
+					open: true,
+				});
+			}
+		});
+
 		socket.on("allClassEnd", (text) => {
 			// console.log("classes end : ", text);
 			setClsEnd(true);
@@ -82,24 +102,6 @@ function JoinExam() {
 			myStream.current.getTracks()?.forEach((x) => x.stop());
 		});
 	}, []);
-
-	useEffect(() => {
-		const timer = setInterval(() => {
-			setProgress((oldProgress) => {
-				if (oldProgress === 100) {
-					setOngoing(false);
-					clearInterval(timer);
-					return 0;
-				}
-
-				return oldProgress + 1;
-			});
-		}, ((cls.classDuration * 60) / 100) * 1000);
-
-		return () => {
-			clearInterval(timer);
-		};
-	}, [cls]);
 
 	useEffect(() => {
 		const peer = new Peer(searchParams.get("id") + "roleplayer", {
@@ -155,33 +157,24 @@ function JoinExam() {
 			setMic(true);
 		}
 	};
-	useEffect(() => {
-		if (cls) {
-			let examTime = cls.hasToJoin * (cls.classDuration + 0.5);
-
-			if (examTime) {
-				setTimeout(() => {
-					socket.emit("markExamEnd", searchParams.get("id"), () => {
-						console.log("ending exam");
-						setClsEnd(true);
-						peerInstance.current.destroy();
-						myStream.current.getTracks()?.forEach((x) => x.stop());
-					});
-				}, examTime * 60 * 1000);
-			}
-		}
-	}, [cls]);
 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
-			{onGoing && !clsEnd && (
-				<LinearProgress
-					variant="determinate"
-					color="success"
-					value={progress}
-				/>
-			)}
-
+			<Snackbar
+				open={alert.open}
+				autoHideDuration={6000}
+				onClose={() => {
+					setAlert({
+						msg: "",
+						type: "",
+						open: false,
+					});
+				}}
+			>
+				<Alert severity={alert.type} sx={{ width: "100%" }}>
+					{alert.msg}
+				</Alert>
+			</Snackbar>
 			<Box
 				component="div"
 				m="40px 40px "
@@ -227,11 +220,32 @@ function JoinExam() {
 														key={currentTime}
 														date={
 															currentTime +
-															remainingTIme *
+															(params.get("tl")
+																? params.get(
+																		"tl"
+																  )
+																: remainingTIme) *
 																60 *
 																1000
 														}
 														renderer={TimeRenderer}
+														onComplete={() => {
+															if (
+																params.get("tl")
+															) {
+																searchParams.delete(
+																	"tl"
+																);
+																setSearchParams(
+																	searchParams
+																);
+															}
+
+															setOngoing(false);
+															console.log(
+																"countdown ends"
+															);
+														}}
 													/>{" "}
 												</b>
 												min
@@ -294,10 +308,11 @@ function JoinExam() {
 											clsId={searchParams.get("id")}
 											msr={myStream}
 											setStd={setStd}
-											sP={setProgress}
 											sCT={setCurrentgTime}
 											sOg={setOngoing}
 											cvr={candidateVideoRef}
+											setA={setAlert}
+											ce={clsEnd}
 										/>
 									</div>
 
