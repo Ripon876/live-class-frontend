@@ -19,7 +19,7 @@ import ExamDetails from "./scenes/admin/ExamDetails";
 import TodaysClassesOfTeacher from "./scenes/teacher/TodaysClassesOfTeacher";
 // student
 import TodaysClassesOfStudent from "./scenes/student/TodaysClassesOfStudent";
-import Result from "./scenes/student/Result";
+import Result from "./scenes/student/result/Result";
 // roleplayer
 import TodaysClassesOfRoleplayer from "./scenes/roleplayer/TodaysClassesOfRoleplayer";
 
