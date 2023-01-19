@@ -39,7 +39,7 @@ function StartClassAsTeacher() {
 	const [mSubmited, setMSubmited] = useState(false);
 	const [alert, setAlert] = useState({
 		msg: "",
-		type: "",
+		type: "success",
 		open: false,
 	});
 
