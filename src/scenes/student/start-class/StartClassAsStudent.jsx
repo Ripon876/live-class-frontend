@@ -49,8 +49,8 @@ function StartClassAsStudent() {
 		document.querySelector(".opendMenuIcon").click();
 
 		setTimeout(() => {
-			stratClsBtn.current.click();
-			setClsStarted(true);
+			// stratClsBtn.current.click();
+			// setClsStarted(true);
 
 			currentUserVideoRef.current.srcObject = myStream.current;
 			currentUserVideoRef.current.play();
@@ -98,6 +98,40 @@ function StartClassAsStudent() {
 					open: true,
 				});
 			}
+		});
+		socket.on("examsStarted", () => {
+			console.log("exams Started");
+		});
+		socket.on("examIdCd", (id) => {
+			// stratClsBtn.current.click();
+			console.log("calling", id);
+			setClsId(id);
+			setSearchParams({ id: id });
+			setClsStarted(true);
+			call(id);
+		});
+
+		socket.on("delayStart", () => {
+			console.log("delay Started");
+			setClsStarted(false);
+		});
+		socket.on("delayEnd", () => {
+			console.log("delay Ended");
+			setClsStarted(false);
+		});
+
+		socket.on("breakStart", () => {
+			console.log("break Started");
+		});
+		socket.on("breakEnd", () => {
+			console.log("break End");
+		});
+
+		socket.on("examsEnded", () => {
+			console.log("exams Ended");
+			setClsEnd(true);
+			peerInstance.current.destroy();
+			myStream.current.getTracks()?.forEach((x) => x.stop());
 		});
 
 		var getUserMedia =

@@ -13,6 +13,8 @@ import io from "socket.io-client";
 import AddExam from "./AddExam";
 import ExamsTable from "./ExamsTable";
 import ExamStates from "./ExamStates";
+import StartExams from "./StartExams";
+import RenewExams from "./RenewExams";
 import "./style.css";
 
 // helpers
@@ -41,7 +43,7 @@ function HostClass() {
 		checklist: [],
 	};
 	const [formData, setFormData] = useState(initialFormData);
-	const [cookies, setCookie] = useCookies([]);
+	const [cookies] = useCookies([]);
 	const [exams, setExams] = useState([]);
 	const [examiners, setExaminers] = useState([]);
 	const [roleplayers, setRoleplayers] = useState([]);
@@ -52,7 +54,7 @@ function HostClass() {
 	const [spin, setSpin] = useState(false);
 	const [alert, setAlert] = useState({
 		show: false,
-		type: "",
+		type: "success",
 		msg: "",
 	});
 
@@ -66,10 +68,27 @@ function HostClass() {
 				setSpin(true);
 			}
 		});
-
+		/*
 		socket.on("studentsStates", (states) => {
 			setSS(Object.values(states));
 			getExams(setExams, setCanStart);
+		});
+*/
+
+		socket.on("breakStart", () => {
+			console.log("break Started");
+		});
+		socket.on("breakEnd", () => {
+			console.log("break End");
+		});
+		socket.on("examsStarted", () => {
+			console.log("exams Started");
+		});
+		socket.on("examsEnded", () => {
+			console.log("exams Ended");
+		});
+		socket.on("examsState", (states) => {
+			console.log(states);
 		});
 
 		socket.on("allClsTaken", () => {
@@ -133,12 +152,12 @@ function HostClass() {
 		getExaminers(setExaminers);
 		getRoleplayers(setRoleplayers);
 	};
-	const startexams = () => {
+	const startexams = (data) => {
 		let confirmed = window.confirm(
 			"Do you want to start exams? you will not be able to revert this"
 		);
 		if (confirmed) {
-			Start(socket, setExams, setAlert, setSpin);
+			Start(socket, setExams, setAlert, setSpin, data);
 		}
 	};
 
@@ -149,12 +168,12 @@ function HostClass() {
 		});
 	};
 
-	const renewExams = () => {
+	const renewExams = (time) => {
 		let confirmed = window.confirm(
 			"Do you want to renew exams? you will not be able to revert this"
 		);
 		if (confirmed) {
-			Renew(cookies.token, setExams,setAlert);
+			Renew(cookies.token, setExams, setAlert, time);
 		}
 	};
 
@@ -223,6 +242,11 @@ function HostClass() {
 						<div
 							style={{ cursor: spin ? "not-allowed" : "pointer" }}
 						>
+							<StartExams
+								cs={canStart}
+								sp={spin}
+								oc={startexams}
+							/>
 							<Button
 								variant="filled"
 								sx={{
@@ -235,18 +259,7 @@ function HostClass() {
 								Start Today's Exams
 							</Button>
 						</div>
-						<Button
-							variant="filled"
-							sx={{
-								boxShadow: 3,
-								mt: 1,
-							}}
-							disabled={!canRenew}
-							startIcon={<HistoryIcon />}
-							onClick={renewExams}
-						>
-							Renew Exams
-						</Button>
+						<RenewExams cr={canRenew} oc={renewExams} />
 					</div>
 				</Box>
 

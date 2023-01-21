@@ -97,6 +97,28 @@ function StartClassAsTeacher() {
 			});
 		});
 
+		socket.on("examEnd", () => {
+			// console.log("classes end : ", text);
+			console.log("station end");
+		});
+	 
+		socket.on("breakStart", () => {
+			console.log("break Started");
+		});
+		socket.on("breakEnd", () => {
+			console.log("break End");
+		});
+		socket.on("examsStarted", () => {
+			console.log("exams Started");
+		});
+		socket.on("examsEnded", () => {
+			console.log("exams Ended");
+		});
+
+
+
+
+
 		socket.on("allClassEnd", (text) => {
 			// console.log("classes end : ", text);
 			setClsEnd(true);
@@ -211,29 +233,7 @@ function StartClassAsTeacher() {
 		});
 	}, []);
 
-	const startClass = () => {
-		axios
-			.get(
-				process.env.REACT_APP_SERVER_URL +
-					"/teacher/starting-class/" +
-					searchParams.get("id"),
-				{
-					headers: {
-						Authorization: `Bearer ${cookies.token}`,
-					},
-				}
-			)
-			.then((data) => {
-				// console.log(data.data.msg)
-			})
-			.catch((err) => console.log("err :", err));
-	};
-
-	useEffect(() => {
-		setTimeout(() => {
-			startClass();
-		}, 1000);
-	}, []);
+	const startClass = () => {};
 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>

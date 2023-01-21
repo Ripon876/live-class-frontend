@@ -76,12 +76,8 @@ export const Delete = (id, cls, setClss, setAlt, setCS, gr) => {
 };
 
 // handle exams start
-export const Start = (socket, setClss, setAlt, setSp) => {
-	axios
-		.get(process.env.REACT_APP_SERVER_URL + "/admin/get-classes")
-		.then((data) => setClss([...data.data.classes].reverse()))
-		.catch((err) => console.log("err :", err));
-	socket.emit("startClasses", (msg, err) => {
+export const Start = (socket, setClss, setAlt, setSp, data) => {
+	socket.emit("startClasses", data, (msg, err) => {
 		if (msg) {
 			setSp(true);
 			setAlt({
@@ -99,14 +95,23 @@ export const Start = (socket, setClss, setAlt, setSp) => {
 			closeAlert(setAlt);
 		}
 	});
+	axios
+		.get(process.env.REACT_APP_SERVER_URL + "/admin/get-classes")
+		.then((data) => setClss([...data.data.classes].reverse()))
+		.catch((err) => console.log("err :", err));
 };
 
 //  handleing renewing exam
-export const Renew = (token, setExams, setAlt) => {
+export const Renew = (token, setExams, setAlt, time) => {
 	axios
-		.get(process.env.REACT_APP_SERVER_URL + "/admin/renew-exams", {
-			headers: { Authorization: `Bearer ${token}` },
-		})
+		.get(
+			process.env.REACT_APP_SERVER_URL +
+				"/admin/renew-exams?time=" +
+				time,
+			{
+				headers: { Authorization: `Bearer ${token}` },
+			}
+		)
 		.then((data) => {
 			setAlt({
 				show: true,
