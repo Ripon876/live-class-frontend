@@ -101,11 +101,23 @@ function StartClassAsTeacher() {
 			// console.log("classes end : ", text);
 			console.log("station end");
 		});
-	 
+		socket.on("delayStart", () => {
+			myStream.current.getAudioTracks()[0].enabled = false;
+			console.log("delay Started");
+			setOngoing(false);
+		});
+		socket.on("delayEnd", () => {
+			myStream.current.getAudioTracks()[0].enabled = true;
+			console.log("delay Ended");
+			setOngoing(true);
+		});
+
 		socket.on("breakStart", () => {
+			myStream.current.getAudioTracks()[0].enabled = false;
 			console.log("break Started");
 		});
 		socket.on("breakEnd", () => {
+			myStream.current.getAudioTracks()[0].enabled = true;
 			console.log("break End");
 		});
 		socket.on("examsStarted", () => {
@@ -113,19 +125,10 @@ function StartClassAsTeacher() {
 		});
 		socket.on("examsEnded", () => {
 			console.log("exams Ended");
-		});
-
-
-
-
-
-		socket.on("allClassEnd", (text) => {
-			// console.log("classes end : ", text);
 			setClsEnd(true);
 			peerInstance.current.destroy();
 			myStream.current.getTracks()?.forEach((x) => x.stop());
 		});
-
 		socket.on("stdDisconnected", (id) => {
 			console.log("std disconnected ", id);
 			setOngoing(false);

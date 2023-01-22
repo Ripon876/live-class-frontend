@@ -55,7 +55,7 @@ function StartClassAsStudent() {
 			currentUserVideoRef.current.srcObject = myStream.current;
 			currentUserVideoRef.current.play();
 			// call();
-		}, 5000);
+		}, 2000);
 	}, []);
 
 	useEffect(() => {
@@ -72,6 +72,10 @@ function StartClassAsStudent() {
 				console.log("err : ", err);
 			});
 	}, []);
+
+	useEffect(() => {
+		console.log("search param changes");
+	}, [searchParams.get("id")]);
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
@@ -109,6 +113,13 @@ function StartClassAsStudent() {
 			setSearchParams({ id: id });
 			setClsStarted(true);
 			call(id);
+
+			socket.emit("getClass", id, (cls) => {
+				setClsTitle(cls?.title);
+				console.log(cls)
+				setCls(cls);
+				setRemainingTime(cls.classDuration);
+			});
 		});
 
 		socket.on("delayStart", () => {
@@ -218,22 +229,6 @@ function StartClassAsStudent() {
 
 				setClsId(res.id);
 				setSearchParams({ id: res.id });
-
-				socket.emit("getClass", res.id, (cls) => {
-					setClsTitle(cls?.title);
-
-					if (res.break) {
-						setTimeout(() => {
-							setCls(cls);
-							setRemainingTime(cls.classDuration);
-						}, cls.classDuration * 60 * 1000);
-					} else {
-						setTimeout(() => {
-							setCls(cls);
-							setRemainingTime(cls.classDuration);
-						}, 30000);
-					}
-				});
 			}
 		});
 	};
@@ -287,7 +282,6 @@ function StartClassAsStudent() {
 									}
 									cls={cls}
 									usr={user}
-									callClsEnd={callClsEnd}
 									socket={socket}
 									setA={setAlert}
 									ce={clsEnd}

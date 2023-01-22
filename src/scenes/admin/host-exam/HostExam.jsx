@@ -68,12 +68,11 @@ function HostClass() {
 				setSpin(true);
 			}
 		});
-		/*
+
 		socket.on("studentsStates", (states) => {
 			setSS(Object.values(states));
 			getExams(setExams, setCanStart);
 		});
-*/
 
 		socket.on("breakStart", () => {
 			console.log("break Started");
@@ -86,12 +85,7 @@ function HostClass() {
 		});
 		socket.on("examsEnded", () => {
 			console.log("exams Ended");
-		});
-		socket.on("examsState", (states) => {
-			console.log(states);
-		});
 
-		socket.on("allClsTaken", () => {
 			setSS([]);
 			setAlert({
 				show: true,
@@ -99,9 +93,12 @@ function HostClass() {
 				msg: "All exams has been taken",
 			});
 			getExams(setExams, setCanStart);
-			closeAlert(setAlert);
+
 			setSpin(false);
 			checkExams(exams, setCanStart);
+		});
+		socket.on("examsState", (states) => {
+			console.log(states);
 		});
 
 		getExams(setExams, setCanStart);

@@ -37,7 +37,6 @@ function VideoContainer({
 	rt,
 	cls,
 	usr,
-	callClsEnd,
 	socket,
 	setA,
 	ce,
@@ -201,7 +200,6 @@ function VideoContainer({
 																);
 															}
 
-															callClsEnd();
 														}}
 														key={ct}
 														date={
