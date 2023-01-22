@@ -95,10 +95,13 @@ export const Start = (socket, setClss, setAlt, setSp, data) => {
 			closeAlert(setAlt);
 		}
 	});
-	axios
-		.get(process.env.REACT_APP_SERVER_URL + "/admin/get-classes")
-		.then((data) => setClss([...data.data.classes].reverse()))
-		.catch((err) => console.log("err :", err));
+
+	setTimeout(() => {
+		axios
+			.get(process.env.REACT_APP_SERVER_URL + "/admin/get-classes")
+			.then((data) => setClss([...data.data.classes].reverse()))
+			.catch((err) => console.log("err :", err));
+	}, 13000);
 };
 
 //  handleing renewing exam
