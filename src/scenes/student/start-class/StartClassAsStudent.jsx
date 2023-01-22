@@ -121,10 +121,18 @@ function StartClassAsStudent() {
 		});
 
 		socket.on("breakStart", () => {
+			setShowBreak(true);
+			myStream.current.getAudioTracks()[0].enabled = false;
+
 			console.log("break Started");
 		});
+
 		socket.on("breakEnd", () => {
 			console.log("break End");
+
+			myStream.current.getAudioTracks()[0].enabled = true;
+			setShowBreak(false);
+			setClsStarted(true);
 		});
 
 		socket.on("examsEnded", () => {
@@ -201,14 +209,6 @@ function StartClassAsStudent() {
 		socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
 			if (res.type === "joinNextClass") {
 				if (res.break) {
-					setShowBreak(true);
-					myStream.current.getAudioTracks()[0].enabled = false;
-					setTimeout(() => {
-						myStream.current.getAudioTracks()[0].enabled = true;
-						setShowBreak(false);
-						setClsStarted(true);
-						call(res.id);
-					}, remainingTIme * 60 * 1000);
 				} else {
 					setTimeout(() => {
 						setClsStarted(true);
@@ -234,10 +234,6 @@ function StartClassAsStudent() {
 						}, 30000);
 					}
 				});
-			} else {
-				setClsEnd(true);
-				peerInstance.current.destroy();
-				myStream.current.getTracks()?.forEach((x) => x.stop());
 			}
 		});
 	};
