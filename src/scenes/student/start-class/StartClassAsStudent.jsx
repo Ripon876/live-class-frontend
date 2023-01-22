@@ -109,26 +109,33 @@ function StartClassAsStudent() {
 		socket.on("examIdCd", (id) => {
 			// stratClsBtn.current.click();
 			console.log("calling", id);
-			setClsId(id);
+
 			setSearchParams({ id: id });
-			setClsStarted(true);
+			setClsId(id);
 			call(id);
 
 			socket.emit("getClass", id, (cls) => {
 				setClsTitle(cls?.title);
-				console.log(cls)
+				console.log(cls);
 				setCls(cls);
 				setRemainingTime(cls.classDuration);
 			});
 		});
-
+		socket.on("examEnd", () => {
+			// console.log("classes end : ", text);
+			console.log("station end");
+			setClsStarted(false);
+		});
 		socket.on("delayStart", () => {
+			myStream.current.getAudioTracks()[0].enabled = false;
 			console.log("delay Started");
 			setClsStarted(false);
 		});
 		socket.on("delayEnd", () => {
 			console.log("delay Ended");
-			setClsStarted(false);
+
+			myStream.current.getAudioTracks()[0].enabled = true;
+			// setClsStarted(false);
 		});
 
 		socket.on("breakStart", () => {
@@ -201,9 +208,10 @@ function StartClassAsStudent() {
 		);
 		// console.log("calling examiner");
 		call?.on("stream", (remoteStream) => {
+			setClsStarted(true);
 			remoteVideoRef.current.srcObject = remoteStream;
 			remoteVideoRef.current.play();
-			setClsStarted(true);
+
 			setOngoing(true);
 			setCurrentgTime(Date.now());
 

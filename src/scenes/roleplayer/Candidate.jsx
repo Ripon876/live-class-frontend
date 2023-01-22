@@ -3,7 +3,18 @@ import { Peer } from "peerjs";
 import { useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 
-function Candidate({ og, socket, clsId, msr, setStd, sCT, sOg, cvr, setA ,ce}) {
+function Candidate({
+	og,
+	socket,
+	clsId,
+	msr,
+	setStd,
+	sCT,
+	sOg,
+	cvr,
+	setA,
+	ce,
+}) {
 	const cdPeerRef = useRef(null);
 	const iceConfig = useSelector((state) => state.iceConfig);
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -16,9 +27,19 @@ function Candidate({ og, socket, clsId, msr, setStd, sCT, sOg, cvr, setA ,ce}) {
 		});
 		cdPeerRef.current = peer;
 
+		socket.on("examIdRp", (id) => {
+			// console.log("classes end : ", text);
+		});
+
 		socket.on("joinCandidate", (stdId) => {
-			call(clsId + "candidate-roleplayer");
 			console.log("join with Candidate", stdId);
+
+			setTimeout(() => {
+				console.log("station end");
+				console.log("calling candidate ");
+
+				call(params.get("id") + "candidate-roleplayer");
+			}, 500);
 
 			if (stdId.timeleft) {
 				searchParams.set("tl", stdId.timeleft);
@@ -41,15 +62,11 @@ function Candidate({ og, socket, clsId, msr, setStd, sCT, sOg, cvr, setA ,ce}) {
 	}, []);
 
 	const call = (cdPI) => {
-		// console.log("calling");
-		// console.log(cdPI);
-
 		const call = cdPeerRef.current.call(cdPI, msr.current);
 
 		call?.on("stream", (rpStream) => {
 			sCT(Date.now());
 			sOg(true);
-			// console.log("connected with candidte");
 			cvr.current.srcObject = rpStream;
 			cvr.current.play();
 		});

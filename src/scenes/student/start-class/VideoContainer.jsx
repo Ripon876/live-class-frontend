@@ -56,32 +56,34 @@ function VideoContainer({
 	]);
 
 	useEffect(() => {
-		const peer = new Peer(clsId + "candidate-roleplayer", {
-			config: iceConfig,
-		});
-
-		peer.on("call", (call) => {
-			// console.log("receving call from roleplayer");
-			call.answer(msr.current);
-			call.on("stream", function (rpStream) {
-				console.log("call accepted");
-				rpVideoRef.current.srcObject = rpStream;
-				rpVideoRef.current.play();
+		if (clsId !== "") {
+			const peer = new Peer(clsId + "candidate-roleplayer", {
+				config: iceConfig,
 			});
-		});
 
-		socket.on("roDisconnected", (ro) => {
-			console.log("Roleplayer disconnected ");
-			if (!ce) {
-				rpVideoRef.current.srcObject = null;
-				setA({
-					msg: "Roleplayer disconnected",
-					type: "error",
-					open: true,
+			peer.on("call", (call) => {
+				// console.log("receving call from roleplayer");
+				call.answer(msr.current);
+				call.on("stream", function (rpStream) {
+					console.log("call accepted");
+					rpVideoRef.current.srcObject = rpStream;
+					rpVideoRef.current.play();
 				});
-			}
-		});
-	}, []);
+			});
+
+			socket.on("roDisconnected", (ro) => {
+				console.log("Roleplayer disconnected ");
+				if (!ce) {
+					rpVideoRef.current.srcObject = null;
+					setA({
+						msg: "Roleplayer disconnected",
+						type: "error",
+						open: true,
+					});
+				}
+			});
+		}
+	}, [clsId]);
 
 	useEffect(() => {
 		setReaded(false);
@@ -199,7 +201,6 @@ function VideoContainer({
 																	searchParams
 																);
 															}
-
 														}}
 														key={ct}
 														date={

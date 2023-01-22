@@ -99,12 +99,46 @@ function JoinExam() {
 			}
 		});
 
-		socket.on("allClassEnd", (text) => {
+	
+		socket.on("examEnd", () => {
 			// console.log("classes end : ", text);
+			console.log("station end");
+		});
+		socket.on("delayStart", () => {
+			myStream.current.getAudioTracks()[0].enabled = false;
+			console.log("delay Started");
+			setOngoing(false);
+		});
+		socket.on("delayEnd", () => {
+			myStream.current.getAudioTracks()[0].enabled = true;
+			console.log("delay Ended");
+		 
+		});
+
+		socket.on("breakStart", () => {
+			myStream.current.getAudioTracks()[0].enabled = false;
+			console.log("break Started");
+		});
+		socket.on("breakEnd", () => {
+			myStream.current.getAudioTracks()[0].enabled = true;
+			console.log("break End");
+		});
+		socket.on("examsStarted", () => {
+			console.log("exams Started");
+		});
+		socket.on("examsEnded", () => {
+			console.log("exams Ended");
 			setClsEnd(true);
 			peerInstance.current.destroy();
 			myStream.current.getTracks()?.forEach((x) => x.stop());
 		});
+
+		// socket.on("allClassEnd", (text) => {
+		// 	// console.log("classes end : ", text);
+		// 	setClsEnd(true);
+		// 	peerInstance.current.destroy();
+		// 	myStream.current.getTracks()?.forEach((x) => x.stop());
+		// });
 	}, []);
 
 	useEffect(() => {

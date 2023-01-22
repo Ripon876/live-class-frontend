@@ -5,11 +5,9 @@ function Roleplayer({ peer, rpId, msr, socket, setA, ce }) {
 	const peerInstance = useRef(null);
 
 	useEffect(() => {
-		setTimeout(() => {
-			call(rpId);
-		}, 3500);
-
-
+		socket.on("examIdEx", (id) => {
+			call(id + "roleplayer");
+		});
 
 		socket.on("roDisconnected", (ro) => {
 			console.log("Roleplayer disconnected ");

@@ -100,6 +100,7 @@ function StartClassAsTeacher() {
 		socket.on("examEnd", () => {
 			// console.log("classes end : ", text);
 			console.log("station end");
+			setOngoing(false);
 		});
 		socket.on("delayStart", () => {
 			myStream.current.getAudioTracks()[0].enabled = false;
@@ -109,7 +110,7 @@ function StartClassAsTeacher() {
 		socket.on("delayEnd", () => {
 			myStream.current.getAudioTracks()[0].enabled = true;
 			console.log("delay Ended");
-			setOngoing(true);
+			// setOngoing(true);
 		});
 
 		socket.on("breakStart", () => {
@@ -186,21 +187,22 @@ function StartClassAsTeacher() {
 
 	useEffect(() => {
 		peerInstance.current.on("call", (call) => {
-			// console.log("candidate calling");
+			console.log("candidate calling");
 
 			call.answer(myStream.current);
 
-			setOngoing(true);
-			setProgress(0);
-			setCurrentgTime(Date.now());
-
 			call.on("stream", function (remoteStream) {
+				setOngoing(true);
+				setProgress(0);
+				setCurrentgTime(Date.now());
+
+				setMark(true);
+				setMSubmited(false);
+
 				// console.log("data : ", call.metadata);
 				candidateVideoRef.current.srcObject = remoteStream;
 				candidateVideoRef.current.play();
 				// get joined student info
-				setMark(true);
-				setMSubmited(false);
 
 				if (call.metadata.timeleft) {
 					searchParams.set("tl", call.metadata.timeleft);
