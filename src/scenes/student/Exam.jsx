@@ -26,7 +26,9 @@ import AgoraRTC from "agora-rtc-sdk-ng";
 
 function ExamC() {
 	const [mic, setMic] = useState(true);
-
+	const [note, setNote] = useState(false);
+	const [cls, setCls] = useState({});
+	const [readed, setReaded] = useState(false);
 	const cd = useRef(null);
 	const ex = useRef(null);
 	const rpRef = useRef(null);
@@ -159,7 +161,10 @@ function ExamC() {
 									<IconButton aria-label="delete">
 										{mic ? <MicIcon /> : <MicOffIcon />}
 									</IconButton>
-									<IconButton aria-label="delete">
+									<IconButton
+										aria-label="delete"
+										onClick={() => setNote(!note)}
+									>
 										<NoteAltIcon />
 									</IconButton>
 								</ButtonGroup>
@@ -181,6 +186,27 @@ function ExamC() {
 											</Typography>
 										</ListItemText>
 									</ListItem>
+									{cls?.pdf && (
+										<>
+											<Divider />
+											<ListItem>
+												<ListItemText
+													primary="Reading Time"
+													secondary={`${cls?.pdf?.visibleFor} minute`}
+												/>
+												{readed && (
+													<ListItemText
+														primary={
+															<CheckCircleIcon color="success" />
+														}
+														style={{
+															textAlign: "right",
+														}}
+													/>
+												)}
+											</ListItem>
+										</>
+									)}
 									<Divider />
 									<ListItem>
 										<ListItemText primary="Remaining Time" />
@@ -192,6 +218,7 @@ function ExamC() {
 													date={
 														Date.now() + 300 * 1000
 													}
+													renderer={TimeRenderer}
 												/>
 											}
 											style={{ textAlign: "right" }}
@@ -232,7 +259,7 @@ function ExamC() {
 							</Card>
 						</div>
 
-						<div className="mt-5">
+						<div className="mt-3 d-flex">
 							<div>
 								<Card
 									className="mb-2"
@@ -261,6 +288,20 @@ function ExamC() {
 									</CardContent>
 								</Card>
 							</div>
+							<div
+								style={{ display: note ? "block" : "none" }}
+								className="ms-5 w-75"
+							>
+								<div className="form-group">
+									<label htmlFor="note">Note</label>
+									<textarea
+										placeholder="Write note"
+										className="form-control"
+										rows="6"
+										id="note"
+									></textarea>
+								</div>
+							</div>
 						</div>
 					</Grid>
 				</Grid>
@@ -270,3 +311,12 @@ function ExamC() {
 }
 
 export default ExamC;
+
+function TimeRenderer({ minutes, seconds }) {
+	return (
+		<span>
+			{minutes < 10 ? "0" + minutes : minutes}:
+			{seconds < 10 ? "0" + seconds : seconds}
+		</span>
+	);
+}

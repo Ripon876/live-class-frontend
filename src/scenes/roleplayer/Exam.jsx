@@ -126,6 +126,34 @@ function ExamR() {
 							}}
 						>
 							<div className="video-container">
+								<Typography
+									variant="h4"
+									align="right"
+									pr="10px"
+									mb="5px"
+									style={{
+										opacity: 1,
+									}}
+								>
+									Remainig Time :
+									<b pl="5px">
+										<Countdown
+											key={Date.now()}
+											date={Date.now() + 5 * 60 * 1000}
+											renderer={TimeRenderer}
+											onComplete={() => {
+												// if (params.get("tl")) {
+												// 	searchParams.delete("tl");
+												// 	setSearchParams(searchParams);
+												// }
+
+												console.log("countdown ends");
+											}}
+										></Countdown>
+									</b>
+									min
+								</Typography>
+
 								<div className="video rpVideo">
 									<div>
 										<div
@@ -184,3 +212,12 @@ function ExamR() {
 }
 
 export default ExamR;
+
+function TimeRenderer({ minutes, seconds }) {
+	return (
+		<span>
+			{minutes < 10 ? "0" + minutes : minutes}:
+			{seconds < 10 ? "0" + seconds : seconds}
+		</span>
+	);
+}
