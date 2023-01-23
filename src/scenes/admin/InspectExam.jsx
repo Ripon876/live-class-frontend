@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
 import io from "socket.io-client";
 import { useSelector } from "react-redux";
 import AgoraRTC from "agora-rtc-sdk-ng";
@@ -19,7 +22,7 @@ function InspectExam() {
 	});
 	const [examsEnd, setExamsEnd] = useState(false);
 	const [reload, setReload] = useState(false);
-	const adRef = useRef(null);
+
 	const exRef = useRef(null);
 	const cdRef = useRef(null);
 	const rpRef = useRef(null);
@@ -65,6 +68,8 @@ function InspectExam() {
 				await client.subscribe(user, mediaType);
 
 				if (mediaType === "video") {
+					console.log("getting user data : ", user);
+
 					if (user.uid?.split("_")[1] === "Candidate") {
 						user.videoTrack.play(cdRef.current);
 					} else if (user.uid?.split("_")[1] === "Examiner") {
@@ -89,7 +94,7 @@ function InspectExam() {
 		let joinStream = async () => {
 			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
 
-			localTracks[1].play(exRef.current);
+			// localTracks[1].play(exRef.current);
 
 			await client.publish([localTracks[0], localTracks[1]]);
 		};
@@ -121,61 +126,82 @@ function InspectExam() {
 						<div className="container">
 							{!examsEnd && !reload && (
 								<div className="align-items-center justify-content-center row video-container">
-									<div className="video peerVideo col-6 p-0">
-										<div
-											className="h-100 w-100"
-											id="examiner-video"
-											ref={exRef}
-										></div>
+									<Card
+										className="m-2 p-0"
+										style={{
+											cursor: "pointer",
+											maxWidth: "300px",
+											maxHeight: "300px",
+										}}
+									>
+										<div className="video cd-video">
+											<div className="h-100 w-100">
+												<div
+													className="w-100 h-100 bg-black"
+													ref={exRef}
+												></div>
+											</div>
+										</div>
+										<CardContent className="p-2 ps-4">
+											<Typography
+												variant="body2"
+												color="text.secondary"
+											>
+												Examiner
+											</Typography>
+										</CardContent>
+									</Card>
 
-										<h2>
-											{names?.examiner}
-											<span
-												style={{
-													fontSize: "15px",
-													marginLeft: "10px",
-												}}
+									<Card
+										className="m-2 p-0"
+										style={{
+											cursor: "pointer",
+											maxWidth: "300px",
+											maxHeight: "300px",
+										}}
+									>
+										<div className="video cd-video">
+											<div className="h-100 w-100">
+												<div
+													className="w-100 h-100 bg-black"
+													ref={rpRef}
+												></div>
+											</div>
+										</div>
+										<CardContent className="p-2 ps-4">
+											<Typography
+												variant="body2"
+												color="text.secondary"
 											>
-												(examiner)
-											</span>
-										</h2>
-									</div>
-									<div className="video peerVideo col-6 p-0">
-										<div
-											className="h-100 w-100"
-											id="examiner-video"
-											ref={rpRef}
-										></div>
-										<h2>
-											{names?.roleplayer}
-											<span
-												style={{
-													fontSize: "15px",
-													marginLeft: "10px",
-												}}
+												Roleplayer
+											</Typography>
+										</CardContent>
+									</Card>
+									<Card
+										className="m-2 p-0"
+										style={{
+											cursor: "pointer",
+											maxWidth: "300px",
+											maxHeight: "300px",
+										}}
+									>
+										<div className="video cd-video">
+											<div className="h-100 w-100">
+												<div
+													className="w-100 h-100 bg-black"
+													ref={cdRef}
+												></div>
+											</div>
+										</div>
+										<CardContent className="p-2 ps-4">
+											<Typography
+												variant="body2"
+												color="text.secondary"
 											>
-												(roleplayer)
-											</span>
-										</h2>
-									</div>
-									<div className="video peerVideo col-6 p-0">
-										<div
-											className="h-100 w-100"
-											id="examiner-video"
-											ref={cdRef}
-										></div>
-										<h2>
-											{names?.candidate}
-											<span
-												style={{
-													fontSize: "15px",
-													marginLeft: "10px",
-												}}
-											>
-												(candidate)
-											</span>
-										</h2>
-									</div>
+												Candidate
+											</Typography>
+										</CardContent>
+									</Card>
 								</div>
 							)}
 							{examsEnd && <h4>Exam Ended</h4>}
