@@ -153,7 +153,7 @@ function ExamE() {
 							}}
 						>
 							<div className="video-container">
-								<div className="video rpVideo">
+								 <div className="video rpVideo">
 									<div>
 										<div
 											id="examiner-video"
@@ -163,6 +163,7 @@ function ExamE() {
 										<h2>Rp</h2>
 									</div>
 								</div>
+
 
 								<div
 									className="video myVideo"

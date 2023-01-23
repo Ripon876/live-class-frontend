@@ -94,10 +94,10 @@ function ExamC() {
 			await client.unpublish([localTracks[0], localTracks[1]]);
 		};
 
-		setTimeout(async () => {
-			await leaveStream();
-			console.log("closing");
-		}, 40000);
+		// setTimeout(async () => {
+		// 	await leaveStream();
+		// 	console.log("closing");
+		// }, 40000);
 
 		setTimeout(() => {
 			joinStream();
