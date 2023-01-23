@@ -32,7 +32,6 @@ function TodaysClassesOfStudent() {
 
 		socket.emit("getStudentExamState", stdId, (sts) => {
 			socket.emit("getClsId", stdId, (data, notstarted, finished) => {
-				setSS(data);
 				if (notstarted) {
 					setNS(notstarted);
 				}
@@ -41,6 +40,21 @@ function TodaysClassesOfStudent() {
 				}
 			});
 		});
+
+		socket.emit("rejoin", stdId, async (data, err) => {
+			console.log(data, err);
+			if (data) {
+				setSS(data);
+			}
+		});
+
+		// {
+		//     "canJoin": true,
+		//     "rt": "0.88",
+		//     "id": "63cd4b85f4a9a57f9c408191",
+		//     "break": false,
+		//     "delay": false
+		// }
 
 		axios
 			.get(process.env.REACT_APP_SERVER_URL + "/student/get-classes", {
@@ -117,7 +131,7 @@ function TodaysClassesOfStudent() {
 				>
 					{studentsStates?.canJoin ? (
 						<>
-							{studentsStates?.timeLeft - 0.5 > 0 ? (
+							{studentsStates?.rt > 0 ? (
 								<Button
 									size="large"
 									variant="filled"
@@ -127,16 +141,7 @@ function TodaysClassesOfStudent() {
 										pb: "10px",
 									}}
 									onClick={() => {
-										window.location.href = `/live-class?id=${
-											studentsStates.id
-										}&tl=${
-											studentsStates.timeLeft -
-											(0.5 +
-												0.0833 +
-												(pTime - performance.now()) /
-													1000 /
-													60)
-										}`;
+										window.location.href = `/live-class?id=${studentsStates.id}`;
 									}}
 								>
 									<Typography variant="h3">Rejoin</Typography>

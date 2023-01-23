@@ -244,17 +244,6 @@ function HostClass() {
 								sp={spin}
 								oc={startexams}
 							/>
-							<Button
-								variant="filled"
-								sx={{
-									boxShadow: 3,
-								}}
-								disabled={spin || !canStart}
-								startIcon={<PlayArrowIcon />}
-								onClick={startexams}
-							>
-								Start Today's Exams
-							</Button>
 						</div>
 						<RenewExams cr={canRenew} oc={renewExams} />
 					</div>

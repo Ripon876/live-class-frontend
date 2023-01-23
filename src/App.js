@@ -17,11 +17,14 @@ import ExamDetails from "./scenes/admin/ExamDetails";
 
 // teacher
 import TodaysClassesOfTeacher from "./scenes/teacher/TodaysClassesOfTeacher";
+import ExamE from "./scenes/teacher/Exam";
 // student
 import TodaysClassesOfStudent from "./scenes/student/TodaysClassesOfStudent";
+import ExamC from "./scenes/student/Exam";
 import Result from "./scenes/student/result/Result";
 // roleplayer
 import TodaysClassesOfRoleplayer from "./scenes/roleplayer/TodaysClassesOfRoleplayer";
+import ExamR from "./scenes/roleplayer/Exam";
 
 // new files v
 import DashboardPage from "./pages/DashboardPage";
@@ -68,6 +71,19 @@ function App() {
                   <TodaysClassesOfRoleplayer />
                 ) : (
                   <TodaysClassesOfStudent />
+                )
+              }
+            />
+
+            <Route
+              path="test-exam"
+              element={
+                userType === "teacher" ? (
+                  <ExamE />
+                ) : userType === "roleplayer" ? (
+                  <ExamR />
+                ) : (
+                  <ExamC />
                 )
               }
             />

@@ -46,19 +46,6 @@ function StartClassAsStudent() {
 	const params = new URLSearchParams(window.location.search);
 
 	useEffect(() => {
-		document.querySelector(".opendMenuIcon").click();
-
-		setTimeout(() => {
-			// stratClsBtn.current.click();
-			// setClsStarted(true);
-
-			currentUserVideoRef.current.srcObject = myStream.current;
-			currentUserVideoRef.current.play();
-			// call();
-		}, 2000);
-	}, []);
-
-	useEffect(() => {
 		axios
 			.get(process.env.REACT_APP_SERVER_URL + "/get-user-details", {
 				headers: {
@@ -74,10 +61,6 @@ function StartClassAsStudent() {
 	}, []);
 
 	useEffect(() => {
-		console.log("search param changes");
-	}, [searchParams.get("id")]);
-
-	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 		socket.on("connect", () => {
@@ -85,7 +68,7 @@ function StartClassAsStudent() {
 			socket.emit("getClass", searchParams.get("id"), (cls, notfound) => {
 				if (!notfound) {
 					setCls(cls);
-					console.log(cls);
+					// console.log(cls);
 					setRemainingTime(cls.classDuration);
 				} else {
 					window.location.href = "/";
@@ -93,7 +76,7 @@ function StartClassAsStudent() {
 			});
 		});
 		socket.on("exDisconnected", (ex) => {
-			console.log("Examiner disconnected ");
+			// console.log("Examiner disconnected ");
 			if (!clsEnd) {
 				remoteVideoRef.current.srcObject = null;
 				setAlert({
@@ -104,11 +87,16 @@ function StartClassAsStudent() {
 			}
 		});
 		socket.on("examsStarted", () => {
-			console.log("exams Started");
+			// console.log("exams Started");
 		});
 		socket.on("examIdCd", (id) => {
 			// stratClsBtn.current.click();
-			console.log("calling", id);
+			// console.log("calling", id);
+			if (params.get("tl")) {
+				searchParams.delete("tl");
+				searchParams.delete("rejoin");
+				setSearchParams(searchParams);
+			}
 
 			setSearchParams({ id: id });
 			setClsId(id);
@@ -116,23 +104,29 @@ function StartClassAsStudent() {
 
 			socket.emit("getClass", id, (cls) => {
 				setClsTitle(cls?.title);
-				console.log(cls);
+				// console.log(cls);
 				setCls(cls);
 				setRemainingTime(cls.classDuration);
 			});
 		});
 		socket.on("examEnd", () => {
 			// console.log("classes end : ", text);
-			console.log("station end");
+			// console.log("station end");
 			setClsStarted(false);
 		});
 		socket.on("delayStart", () => {
+			if (params.get("tl")) {
+				searchParams.delete("tl");
+				searchParams.delete("rejoin");
+				setSearchParams(searchParams);
+			}
+
 			myStream.current.getAudioTracks()[0].enabled = false;
-			console.log("delay Started");
+			// console.log("delay Started");
 			setClsStarted(false);
 		});
 		socket.on("delayEnd", () => {
-			console.log("delay Ended");
+			// console.log("delay Ended");
 
 			myStream.current.getAudioTracks()[0].enabled = true;
 			// setClsStarted(false);
@@ -142,11 +136,11 @@ function StartClassAsStudent() {
 			setShowBreak(true);
 			myStream.current.getAudioTracks()[0].enabled = false;
 
-			console.log("break Started");
+			// console.log("break Started");
 		});
 
 		socket.on("breakEnd", () => {
-			console.log("break End");
+			// console.log("break End");
 
 			myStream.current.getAudioTracks()[0].enabled = true;
 			setShowBreak(false);
@@ -154,7 +148,7 @@ function StartClassAsStudent() {
 		});
 
 		socket.on("examsEnded", () => {
-			console.log("exams Ended");
+			// console.log("exams Ended");
 			setClsEnd(true);
 			peerInstance.current.destroy();
 			myStream.current.getTracks()?.forEach((x) => x.stop());
@@ -206,7 +200,7 @@ function StartClassAsStudent() {
 			myStream.current,
 			options
 		);
-		// console.log("calling examiner");
+		// console.log("calling examiner", remotePeerId);
 		call?.on("stream", (remoteStream) => {
 			setClsStarted(true);
 			remoteVideoRef.current.srcObject = remoteStream;
@@ -222,24 +216,14 @@ function StartClassAsStudent() {
 		});
 	};
 
-	const callClsEnd = () => {
-		setClsStarted(false);
+	useEffect(() => {
+		document.querySelector(".opendMenuIcon").click();
 
-		socket.emit("clsEnd", { stdId: stdId, clsId: clsId }, (res) => {
-			if (res.type === "joinNextClass") {
-				if (res.break) {
-				} else {
-					setTimeout(() => {
-						setClsStarted(true);
-						call(res.id);
-					}, 30000);
-				}
-
-				setClsId(res.id);
-				setSearchParams({ id: res.id });
-			}
-		});
-	};
+		setTimeout(() => {
+			currentUserVideoRef.current.srcObject = myStream.current;
+			currentUserVideoRef.current.play();
+		}, 2000);
+	}, []);
 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>

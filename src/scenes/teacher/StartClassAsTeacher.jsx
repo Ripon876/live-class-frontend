@@ -87,7 +87,7 @@ function StartClassAsTeacher() {
 			socket.emit("getClass", searchParams.get("id"), (cls, notfound) => {
 				if (!notfound) {
 					setCls(cls);
-					console.log(cls);
+					// console.log(cls);
 					breaker(cls.classDuration);
 					setProgressTime(((cls.classDuration * 60) / 100) * 1000);
 					setRemainingTime(cls.classDuration);
@@ -99,39 +99,44 @@ function StartClassAsTeacher() {
 
 		socket.on("examEnd", () => {
 			// console.log("classes end : ", text);
-			console.log("station end");
+			// console.log("station end");
 			setOngoing(false);
 		});
 		socket.on("delayStart", () => {
+			if (params.get("tl")) {
+				searchParams.delete("tl");
+				setSearchParams(searchParams);
+			}
+
 			myStream.current.getAudioTracks()[0].enabled = false;
-			console.log("delay Started");
+			// console.log("delay Started");
 			setOngoing(false);
 		});
 		socket.on("delayEnd", () => {
 			myStream.current.getAudioTracks()[0].enabled = true;
-			console.log("delay Ended");
+			// console.log("delay Ended");
 			// setOngoing(true);
 		});
 
 		socket.on("breakStart", () => {
 			myStream.current.getAudioTracks()[0].enabled = false;
-			console.log("break Started");
+			// console.log("break Started");
 		});
 		socket.on("breakEnd", () => {
 			myStream.current.getAudioTracks()[0].enabled = true;
-			console.log("break End");
+			// console.log("break End");
 		});
 		socket.on("examsStarted", () => {
-			console.log("exams Started");
+			// console.log("exams Started");
 		});
 		socket.on("examsEnded", () => {
-			console.log("exams Ended");
+			// console.log("exams Ended");
 			setClsEnd(true);
 			peerInstance.current.destroy();
 			myStream.current.getTracks()?.forEach((x) => x.stop());
 		});
 		socket.on("stdDisconnected", (id) => {
-			console.log("std disconnected ", id);
+			// console.log("std disconnected ", id);
 			setOngoing(false);
 			if (!clsEnd) {
 				setAlert({
@@ -149,7 +154,7 @@ function StartClassAsTeacher() {
 	}, []);
 
 	const breaker = (t) => {
-		console.log(t);
+		// console.log(t);
 		socket.once("breakTime", () => {
 			setShowBreak((old) => true);
 			myStream.current.getAudioTracks()[0].enabled = false;
@@ -165,6 +170,9 @@ function StartClassAsTeacher() {
 		const peer = new Peer(searchParams.get("id"), {
 			config: iceConfig,
 		});
+		const peer_rejoin = new Peer(searchParams.get("id") + "rejoin", {
+			config: iceConfig,
+		});
 		const rp_peer = new Peer(searchParams.get("id") + "examiner", {
 			config: iceConfig,
 		});
@@ -176,7 +184,7 @@ function StartClassAsTeacher() {
 			// console.log("admin calling");
 			call.answer(myStream.current);
 			call.on("stream", function (remoteStream) {
-				console.log("connected with admin");
+				// console.log("connected with admin");
 			});
 		});
 
@@ -187,7 +195,7 @@ function StartClassAsTeacher() {
 
 	useEffect(() => {
 		peerInstance.current.on("call", (call) => {
-			console.log("candidate calling");
+			// console.log("candidate calling");
 
 			call.answer(myStream.current);
 
