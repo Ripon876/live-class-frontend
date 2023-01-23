@@ -75,19 +75,7 @@ function App() {
               }
             />
 
-            <Route
-              path="test-exam"
-              element={
-                userType === "teacher" ? (
-                  <ExamE />
-                ) : userType === "roleplayer" ? (
-                  <ExamR />
-                ) : (
-                  <ExamC />
-                )
-              }
-            />
-            <Route
+            {/* <Route
               path="live-class"
               element={
                 userType === "teacher" ? (
@@ -96,6 +84,18 @@ function App() {
                   <JoinExam />
                 ) : (
                   <StartClassAsStudent />
+                )
+              }
+            /> */}
+            <Route
+              path="live-class"
+              element={
+                userType === "teacher" ? (
+                  <ExamE />
+                ) : userType === "roleplayer" ? (
+                  <ExamR />
+                ) : (
+                  <ExamC />
                 )
               }
             />
