@@ -1,14 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { Peer } from "peerjs";
 import io from "socket.io-client";
 import { useSelector } from "react-redux";
+import AgoraRTC from "agora-rtc-sdk-ng";
 let socket;
 
 function InspectExam() {
-	const [searchParams] = useSearchParams();
 	const adminId = useSelector((state) => state.user.id);
 
 	const queryString = window.location.search;
@@ -29,7 +27,6 @@ function InspectExam() {
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
-		 
 		socket.on("allClsTaken", () => {
 			setExamsEnd(true);
 			setReload(false);
@@ -43,15 +40,79 @@ function InspectExam() {
 	}, []);
 
 	useEffect(() => {
-		// setNames({
-		// 			examiner: exam?.cls?.teacher,
-		// 			roleplayer: exam?.cls?.roleplayer,
-		// 			candidate: exam?.student?.name,
-		// 			title: exam?.cls?.title,
-		// 		});
+		const APP_ID = "0d85c587d13f40b39258dd698cd77421";
+		let uid = String(Math.floor(Math.random() * 10000) + "_Admin");
+		let token = null;
+		let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+		let roomId = params.get("id");
 
+		if (!roomId) {
+			roomId = "main";
+		}
+		let localTracks = [];
+		let remoteUsers = {};
+
+		let localScreenTracks;
+
+		let joinRoomInit = async (rId) => {
+			await client.join(APP_ID, rId, token, uid);
+
+			client.on("user-published", async (user, mediaType) => {
+				console.log("new user joined", user);
+
+				remoteUsers[user.uid] = user;
+
+				await client.subscribe(user, mediaType);
+
+				if (mediaType === "video") {
+					if (user.uid?.split("_")[1] === "Candidate") {
+						user.videoTrack.play(cdRef.current);
+					} else if (user.uid?.split("_")[1] === "Examiner") {
+						user.videoTrack.play(exRef.current);
+					} else {
+						user.videoTrack.play(rpRef.current);
+					}
+				}
+
+				if (mediaType === "audio") {
+					user.audioTrack.play();
+				}
+			});
+			client.on("user-joined", async (user) => {
+				console.log("user joined", user);
+			});
+			client.on("user-left", async (user) => {
+				console.log("user left", user);
+			});
+		};
+
+		let joinStream = async () => {
+			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
+
+			localTracks[1].play(exRef.current);
+
+			await client.publish([localTracks[0], localTracks[1]]);
+		};
+
+		let leaveStream = async () => {
+			for (let i = 0; localTracks.length > i; i++) {
+				localTracks[i].stop();
+				localTracks[i].close();
+			}
+			client.leave();
+			await client.unpublish([localTracks[0], localTracks[1]]);
+		};
+
+		setTimeout(() => {
+			joinStream();
+		}, 5000);
+
+		joinRoomInit(roomId);
+
+		return async () => {
+			await leaveStream();
+		};
 	}, []);
-
 	return (
 		<div>
 			<div style={{ overflowY: "auto", maxHeight: "90%" }}>
@@ -119,25 +180,7 @@ function InspectExam() {
 							)}
 							{examsEnd && <h4>Exam Ended</h4>}
 						</div>
-						{/*	{reload && (
-							<div>
-							
-								<Button
-									variant="filled"
-									sx={{
-										mt: 1,
-										ml: 2,
-										boxShadow: 3,
-									}}
-									onClick={() => {
-										window.location.reload();
-									}}
-									title="Session ended. please reload"
-								>
-									Reload
-								</Button>
-							</div>
-						)}*/}
+
 						<div>
 							<Button
 								variant="filled"

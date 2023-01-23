@@ -57,16 +57,16 @@ function ExamC() {
 			await client.join(APP_ID, rId, token, uid);
 
 			client.on("user-published", async (user, mediaType) => {
-				console.log("new user joined", user); 
-				remoteUsers[user.uid] = user; 
-				await client.subscribe(user, mediaType); 
+				console.log("new user joined", user);
+				remoteUsers[user.uid] = user;
+				await client.subscribe(user, mediaType);
 				if (mediaType === "video") {
 					if (user.uid?.split("_")[1] === "Examiner") {
 						user.videoTrack.play(ex.current);
-					} else {
+					} else if (user.uid?.split("_")[1] === "Roleplayer") {
 						user.videoTrack.play(rpRef.current);
 					}
-				} 
+				}
 				if (mediaType === "audio") {
 					user.audioTrack.play();
 				}

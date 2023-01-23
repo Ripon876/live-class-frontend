@@ -23,7 +23,6 @@ import { Peer } from "peerjs";
 import { useSelector } from "react-redux";
 // import { useSearchParams } from "react-router-dom";
 import AgoraRTC from "agora-rtc-sdk-ng";
-import { AgoraVideoPlayer } from "agora-rtc-react";
 import io from "socket.io-client";
 
 let socket;
@@ -90,7 +89,7 @@ function ExamE() {
 				if (mediaType === "video") {
 					if (user.uid?.split("_")[1] === "Candidate") {
 						user.videoTrack.play(cdRef.current);
-					} else {
+					} else if (user.uid?.split("_")[1] === "Roleplayer") {
 						user.videoTrack.play(rpRef.current);
 					}
 				}
@@ -153,7 +152,7 @@ function ExamE() {
 							}}
 						>
 							<div className="video-container">
-								 <div className="video rpVideo">
+								<div className="video rpVideo">
 									<div>
 										<div
 											id="examiner-video"
@@ -163,7 +162,6 @@ function ExamE() {
 										<h2>Rp</h2>
 									</div>
 								</div>
-
 
 								<div
 									className="video myVideo"
