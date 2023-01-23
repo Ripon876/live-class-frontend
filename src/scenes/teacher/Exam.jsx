@@ -21,24 +21,54 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Countdown from "react-countdown";
 import { Peer } from "peerjs";
 import { useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+// import { useSearchParams } from "react-router-dom";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import { AgoraVideoPlayer } from "agora-rtc-react";
+import io from "socket.io-client";
+
+let socket;
 
 function ExamE() {
 	const exRef = useRef(null);
 	const cdRef = useRef(null);
 	const rpRef = useRef(null);
+	const queryString = window.location.search;
+	const params = new URLSearchParams(queryString);
+	const [cls, setCls] = useState({});
+	const [remainingTIme, setRemainingTime] = useState(0);
+
+	const teacherId = useSelector((state) => state.user.id);
+	useEffect(() => {
+		socket = io.connect(process.env.REACT_APP_SERVER_URL);
+
+		socket.on("connect", () => {
+			// console.log("socket connected");
+			socket.emit("setActive", { id: teacherId });
+
+			socket.emit("getClass", params.get("id"), (cls, notfound) => {
+				if (!notfound) {
+					setCls(cls);
+					// console.log(cls);
+					// breaker(cls.classDuration);
+					setRemainingTime(cls.classDuration);
+				} else {
+					window.location.href = "/";
+				}
+			});
+		});
+
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
 
 	useEffect(() => {
 		const APP_ID = "0d85c587d13f40b39258dd698cd77421";
 		let uid = String(Math.floor(Math.random() * 10000) + "_Examiner");
 		let token = null;
 		let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+		let roomId = params.get("id");
 
-		const queryString = window.location.search;
-		const urlParams = new URLSearchParams(queryString);
-		let roomId = urlParams.get("id");
 		if (!roomId) {
 			roomId = "main";
 		}
@@ -80,9 +110,7 @@ function ExamE() {
 		let joinStream = async () => {
 			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
 
-		 
 			localTracks[1].play(exRef.current);
-		 
 
 			await client.publish([localTracks[0], localTracks[1]]);
 		};
@@ -95,8 +123,6 @@ function ExamE() {
 			client.leave();
 			await client.unpublish([localTracks[0], localTracks[1]]);
 		};
-
-	 
 
 		setTimeout(() => {
 			joinStream();
