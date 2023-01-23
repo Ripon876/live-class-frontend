@@ -10,8 +10,9 @@ let socket;
 function InspectExam() {
 	const [searchParams] = useSearchParams();
 	const adminId = useSelector((state) => state.user.id);
-	const iceConfig = useSelector((state) => state.iceConfig);
 
+	const queryString = window.location.search;
+	const params = new URLSearchParams(queryString);
 	const [names, setNames] = useState({
 		examiner: "",
 		roleplayer: "",
@@ -20,89 +21,36 @@ function InspectExam() {
 	});
 	const [examsEnd, setExamsEnd] = useState(false);
 	const [reload, setReload] = useState(false);
-	const exVideoRef = useRef(null);
-	const rpVideoRef = useRef(null);
-	const cdVideoRef = useRef(null);
-	const myStream = useRef(null);
+	const adRef = useRef(null);
+	const exRef = useRef(null);
+	const cdRef = useRef(null);
+	const rpRef = useRef(null);
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
-		const getUserMedia =
-			navigator.getUserMedia ||
-			navigator.webkitGetUserMedia ||
-			navigator.mozGetUserMedia;
-
-		getUserMedia({ video: true, audio: true }, (mediaStream) => {
-			myStream.current = mediaStream;
-		});
-
-		exmInfo();
+		 
 		socket.on("allClsTaken", () => {
 			setExamsEnd(true);
 			setReload(false);
-			myStream.current.getTracks()?.forEach((x) => x.stop());
 		});
 		socket.on("cdChanging", () => {
 			setReload(true);
-			myStream.current.getTracks()?.forEach((x) => x.stop());
 		});
-
-		const ex_peer = new Peer({
-			config: iceConfig,
-		});
-		ex_peer.on("open", (id) => {
-			// console.log(id);
-			call(
-				ex_peer,
-				searchParams.get("id") + "admin-examiner",
-				exVideoRef
-			);
-		});
-		const rp_peer = new Peer({
-			config: iceConfig,
-		});
-		rp_peer.on("open", (id) => {
-			// console.log(id);
-			call(
-				cd_peer,
-				searchParams.get("id") + "admin-roleplayer",
-				rpVideoRef
-			);
-		});
-		const cd_peer = new Peer({
-			config: iceConfig,
-		});
-		cd_peer.on("open", (id) => {
-			// console.log(id);
-			call(
-				cd_peer,
-				searchParams.get("id") + "admin-candidate",
-				cdVideoRef
-			);
-		});
+		return () => {
+			socket.disconnect();
+		};
 	}, []);
 
-	const call = (peer, idToCall, vRef) => {
-		// console.log("calling", idToCall);
+	useEffect(() => {
+		// setNames({
+		// 			examiner: exam?.cls?.teacher,
+		// 			roleplayer: exam?.cls?.roleplayer,
+		// 			candidate: exam?.student?.name,
+		// 			title: exam?.cls?.title,
+		// 		});
 
-		const call = peer.call(idToCall, myStream.current);
-		call?.on("stream", (remoteStream) => {
-			vRef.current.srcObject = remoteStream;
-			vRef.current.play();
-		});
-	};
-	const exmInfo = () => {
-		socket.emit("getExamInfo", searchParams.get("id"), (exam) => {
-			// console.log(exam);
-			setNames({
-				examiner: exam?.cls?.teacher,
-				roleplayer: exam?.cls?.roleplayer,
-				candidate: exam?.student?.name,
-				title: exam?.cls?.title,
-			});
-		});
-	};
+	}, []);
 
 	return (
 		<div>
@@ -112,27 +60,62 @@ function InspectExam() {
 						<div className="container">
 							{!examsEnd && !reload && (
 								<div className="align-items-center justify-content-center row video-container">
-									<NewPeerVideo
-										vRef={exVideoRef}
-										title={"Examiner"}
-										name={names.examiner}
-									/>
-									<NewPeerVideo
-										vRef={rpVideoRef}
-										title={"Roleplayer"}
-										name={names.roleplayer}
-									/>
-									<NewPeerVideo
-										vRef={cdVideoRef}
-										title={"Candidate"}
-										name={names.candidate}
-									/>
+									<div className="video peerVideo col-6 p-0">
+										<div
+											className="h-100 w-100"
+											id="examiner-video"
+											ref={exRef}
+										></div>
+
+										<h2>
+											{names?.examiner}
+											<span
+												style={{
+													fontSize: "15px",
+													marginLeft: "10px",
+												}}
+											>
+												(examiner)
+											</span>
+										</h2>
+									</div>
+									<div className="video peerVideo col-6 p-0">
+										<div
+											className="h-100 w-100"
+											id="examiner-video"
+											ref={rpRef}
+										></div>
+										<h2>
+											{names?.roleplayer}
+											<span
+												style={{
+													fontSize: "15px",
+													marginLeft: "10px",
+												}}
+											>
+												(roleplayer)
+											</span>
+										</h2>
+									</div>
+									<div className="video peerVideo col-6 p-0">
+										<div
+											className="h-100 w-100"
+											id="examiner-video"
+											ref={cdRef}
+										></div>
+										<h2>
+											{names?.candidate}
+											<span
+												style={{
+													fontSize: "15px",
+													marginLeft: "10px",
+												}}
+											>
+												(candidate)
+											</span>
+										</h2>
+									</div>
 								</div>
-							)}
-							{!examsEnd && names.title && (
-								<>
-									Title: <h3>{names.title}</h3>
-								</>
 							)}
 							{examsEnd && <h4>Exam Ended</h4>}
 						</div>
@@ -178,17 +161,3 @@ function InspectExam() {
 }
 
 export default InspectExam;
-
-const NewPeerVideo = ({ vRef, title, name }) => {
-	return (
-		<div className="video peerVideo col-6 p-0">
-			<video playsInline autoPlay ref={vRef} className="h-100 w-100" />
-			<h2>
-				{name}
-				<span style={{ fontSize: "15px", marginLeft: "10px" }}>
-					({title})
-				</span>
-			</h2>
-		</div>
-	);
-};
