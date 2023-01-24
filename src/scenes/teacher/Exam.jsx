@@ -19,12 +19,14 @@ import DraftsIcon from "@mui/icons-material/Drafts";
 import Typography from "@mui/material/Typography";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Countdown from "react-countdown";
-
+import MoodIcon from "@mui/icons-material/Mood";
+import Button from "@mui/material/Button";
 import { useSelector } from "react-redux";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import io from "socket.io-client";
 import CandidateInfo from "./start-exam/CandidateInfo";
 import Mark from "./start-exam/Mark";
+import BreakTimer from "./BreakTimer";
 
 let socket;
 
@@ -44,6 +46,11 @@ function ExamE() {
 	const [onGoing, setOngoing] = useState(false);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 
+	const [state, setState] = useState({
+		break: false,
+		delay: false,
+		allStationEnd: false,
+	});
 	const teacherId = useSelector((state) => state.user.id);
 
 	useEffect(() => {
@@ -97,6 +104,7 @@ function ExamE() {
 
 				if (mediaType === "video") {
 					if (user.uid?.split("_")[1] === "Candidate") {
+						cdRef.current.innerHTML = "";
 						user.videoTrack.play(cdRef.current);
 
 						socket.emit("rejoin", teacherId, async (data, err) => {
@@ -117,6 +125,7 @@ function ExamE() {
 							}
 						);
 					} else if (user.uid?.split("_")[1] === "Roleplayer") {
+						rpRef.current.innerHTML = "";
 						user.videoTrack.play(rpRef.current);
 					}
 				}
@@ -191,136 +200,181 @@ function ExamE() {
 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
-			<Box
-				component="div"
-				m="40px 40px "
-				width="90%"
-				p="0 0 0 20px"
-				align="center"
-			>
-				<div>
+			{!state?.delay && !state?.break && !state?.allStationEnd && (
+				<Box
+					component="div"
+					m="40px 40px "
+					width="90%"
+					p="0 0 0 20px"
+					align="center"
+				>
 					<div>
-						<div
-							className="container"
-							style={{
-								display: "block",
-							}}
-						>
-							<div className="video-container">
-								<Typography
-									variant="h4"
-									align="right"
-									pr="10px"
-									mb="5px"
-									style={{
-										opacity: 1,
-									}}
-								>
-									<>
-										{cd && remainingTIme && onGoing ? (
-											<>
-												Remainig Time :
-												<b pl="5px">
-													<Countdown
-														key={currentTime}
-														date={
-															currentTime +
-															remainingTIme *
-																60 *
-																1000
-														}
-														renderer={TimeRenderer}
-														onComplete={() => {
-															endStation();
-															console.log(
-																"countdown ends"
-															);
-														}}
-													></Countdown>
-												</b>
-												min
-											</>
-										) : (
-											"Not started "
-										)}
-									</>
-								</Typography>
-								{cls?.roleplayer && (
-									<div className="video rpVideo">
-										<div>
+						<div>
+							<div
+								className="container"
+								style={{
+									display: "block",
+								}}
+							>
+								<div className="video-container">
+									<Typography
+										variant="h4"
+										align="right"
+										pr="10px"
+										mb="5px"
+										style={{
+											opacity: 1,
+										}}
+									>
+										<>
+											{cd && remainingTIme && onGoing ? (
+												<>
+													Remainig Time :
+													<b pl="5px">
+														<Countdown
+															key={currentTime}
+															date={
+																currentTime +
+																remainingTIme *
+																	60 *
+																	1000
+															}
+															renderer={
+																TimeRenderer
+															}
+															onComplete={() => {
+																endStation();
+																setState({
+																	...state,
+																	allStationEnd: true,
+																});
+															}}
+														></Countdown>
+													</b>
+													min
+												</>
+											) : (
+												"Not started "
+											)}
+										</>
+									</Typography>
+									{cls?.roleplayer && (
+										<div className="video rpVideo">
+											<div>
+												<div
+													id="examiner-video"
+													ref={rpRef}
+												></div>
+
+												<h2>Rp</h2>
+											</div>
+										</div>
+									)}
+
+									<div
+										className="video myVideo"
+										style={{ zIndex: 9999 }}
+									>
+										<div className="h-100">
 											<div
 												id="examiner-video"
-												ref={rpRef}
+												ref={exRef}
 											></div>
-
-											<h2>Rp</h2>
+											<h2>You</h2>
+											<div
+												style={{
+													position: "absolute",
+													right: 0,
+													bottom: "10px",
+													display: "flex",
+													alignItems: "end",
+												}}
+											>
+												{mic ? (
+													<MicIcon
+														onClick={tm.current}
+													/>
+												) : (
+													<MicOffIcon
+														onClick={tm.current}
+													/>
+												)}
+											</div>
 										</div>
 									</div>
+									<div
+										ref={cdRef}
+										className="video otherVideo"
+										style={{
+											border: "5px solid #0e131e",
+											borderRadius: "10px",
+										}}
+									>
+										<h3 className="watingText">
+											Wating for Candidate
+										</h3>
+									</div>
+								</div>
+
+								{cd && onGoing && (
+									<CandidateInfo og={true} cdn={cd?.name} />
+								)}
+								{mSubmited && onGoing && (
+									<h3 className="text-success">
+										Mark Submited
+									</h3>
 								)}
 
-								<div
-									className="video myVideo"
-									style={{ zIndex: 9999 }}
-								>
-									<div className="h-100">
-										<div
-											id="examiner-video"
-											ref={exRef}
-										></div>
-										<h2>You</h2>
-										<div
-											style={{
-												position: "absolute",
-												right: 0,
-												bottom: "10px",
-												display: "flex",
-												alignItems: "end",
-											}}
-										>
-											{mic ? (
-												<MicIcon onClick={tm.current} />
-											) : (
-												<MicOffIcon
-													onClick={tm.current}
-												/>
-											)}
-										</div>
-									</div>
-								</div>
-								<div
-									ref={cdRef}
-									className="video otherVideo"
-									style={{
-										border: "5px solid #0e131e",
-										borderRadius: "10px",
-									}}
-								>
-									<h3 className="watingText">
-										Wating for Candidate
-									</h3>
-								</div>
+								{mark && cd && onGoing && (
+									<Mark
+										list={cls?.checklist}
+										sm={setMark}
+										ms={setMSubmited}
+										cId={cd.id}
+										eId={cls._id}
+									/>
+								)}
 							</div>
-
-							{cd && onGoing && (
-								<CandidateInfo og={true} cdn={cd?.name} />
-							)}
-							{mSubmited && onGoing && (
-								<h3 className="text-success">Mark Submited</h3>
-							)}
-
-							{mark && cd && onGoing && (
-								<Mark
-									list={cls?.checklist}
-									sm={setMark}
-									ms={setMSubmited}
-									cId={cd.id}
-									eId={cls._id}
-								/>
-							)}
 						</div>
 					</div>
+				</Box>
+			)}
+			{/* delay time  */}
+			{state?.delay && (
+				<h3 style={{ marginTop: "30px", textAlign: "center" }}>
+					Taking you to next station{" "}
+					<BreakTimer ct={Date.now()} rt={0.5} />
+				</h3>
+			)}
+
+			{/* break  time*/}
+			{state?.break && (
+				<h3 style={{ marginTop: "30px", textAlign: "center" }}>
+					Exam will continue after{" "}
+					<BreakTimer ct={Date.now()} rt={cls?.classDuration} />
+				</h3>
+			)}
+
+			{/* all station ended */}
+			{state?.allStationEnd && (
+				<div>
+					<div className="text-center">
+						<MoodIcon
+							style={{ fontSize: "200px" }}
+							mt="50px"
+							color="success"
+						/>
+						<Typography variant="h2" mb="20px">
+							No More Exams Left Today
+						</Typography>
+						<a href="/" style={{ textDecoration: "none" }}>
+							<Button variant="contained" size="large">
+								Back to dashboard
+							</Button>
+						</a>
+					</div>
 				</div>
-			</Box>
+			)}
 		</div>
 	);
 }

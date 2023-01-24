@@ -25,6 +25,9 @@ import { useSearchParams } from "react-router-dom";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import { AgoraVideoPlayer } from "agora-rtc-react";
 import io from "socket.io-client";
+import MoodIcon from "@mui/icons-material/Mood";
+import Button from "@mui/material/Button";
+import BreakTimer from "./BreakTimer";
 
 let socket;
 function ExamR() {
@@ -34,17 +37,33 @@ function ExamR() {
 	const tm = useRef(null);
 	const [mic, setMic] = useState(true);
 	const [cd, setCd] = useState(null);
+	const [cls, setCls] = useState({});
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [onGoing, setOngoing] = useState(false);
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
 	const rolplayerId = useSelector((state) => state.user.id);
 
+	const [state, setState] = useState({
+		break: false,
+		delay: false,
+		allStationEnd: false,
+	});
+
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 		socket.on("connect", () => {
 			socket.emit("setActive", { id: rolplayerId });
+			socket.emit("getClass", params.get("id"), (cls, notfound) => {
+				if (!notfound) {
+					setCls(cls);
+					console.log(cls);
+					// breaker(cls.classDuration);
+				} else {
+					window.location.href = "/";
+				}
+			});
 		});
 
 		return () => {
@@ -82,6 +101,7 @@ function ExamR() {
 
 				if (mediaType === "video") {
 					if (user.uid?.split("_")[1] === "Candidate") {
+						cdRef.current.innerHTML = "";
 						user.videoTrack.play(cdRef.current);
 						setOngoing(true);
 						socket.emit(
@@ -100,6 +120,7 @@ function ExamR() {
 							setCd(data);
 						});
 					} else if (user.uid?.split("_")[1] === "Examiner") {
+						exRef.current.innerHTML = "";
 						user.videoTrack.play(exRef.current);
 					}
 				}
@@ -173,130 +194,170 @@ function ExamR() {
 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
-			<Box
-				component="div"
-				m="40px 40px "
-				width="90%"
-				p="0 0 0 20px"
-				align="center"
-			>
-				<div>
+			{!state?.delay && !state?.break && !state?.allStationEnd && (
+				<Box
+					component="div"
+					m="40px 40px "
+					width="90%"
+					p="0 0 0 20px"
+					align="center"
+				>
 					<div>
-						<div
-							className="container"
-							style={{
-								display: "block",
-							}}
-						>
-							<div className="video-container">
-								<Typography
-									variant="h4"
-									align="right"
-									pr="10px"
-									mb="5px"
-									style={{
-										opacity: 1,
-									}}
-								>
-									<>
-										{cd && remainingTIme && onGoing ? (
-											<>
-												Remainig Time :
-												<b pl="5px">
-													<Countdown
-														key={Date.now()}
-														date={
-															Date.now() +
-															remainingTIme *
-																60 *
-																1000
-														}
-														renderer={TimeRenderer}
-														onComplete={() => {
-															// if (params.get("tl")) {
-															// 	searchParams.delete("tl");
-															// 	setSearchParams(searchParams);
-															// }
-															endStation();
-															console.log(
-																"countdown ends"
-															);
-														}}
-													></Countdown>
-												</b>
-												min
-											</>
-										) : (
-											"Not started "
-										)}
-									</>
-								</Typography>
-
-								<div className="video rpVideo">
-									<div>
-										<div
-											id="examiner-video"
-											ref={exRef}
-										></div>
-
-										<h2>Ex</h2>
-									</div>
-								</div>
-
-								<div
-									className="video myVideo"
-									style={{ zIndex: 9999 }}
-								>
-									<div className="h-100">
-										<div
-											id="examiner-video"
-											ref={rpRef}
-										></div>
-										<h2>You</h2>
-										<div
-											style={{
-												position: "absolute",
-												right: 0,
-												bottom: "10px",
-												display: "flex",
-												alignItems: "end",
-											}}
-										>
-											{mic ? (
-												<MicIcon onClick={tm.current} />
+						<div>
+							<div
+								className="container"
+								style={{
+									display: "block",
+								}}
+							>
+								<div className="video-container">
+									<Typography
+										variant="h4"
+										align="right"
+										pr="10px"
+										mb="5px"
+										style={{
+											opacity: 1,
+										}}
+									>
+										<>
+											{cd && remainingTIme && onGoing ? (
+												<>
+													Remainig Time :
+													<b pl="5px">
+														<Countdown
+															key={Date.now()}
+															date={
+																Date.now() +
+																remainingTIme *
+																	60 *
+																	1000
+															}
+															renderer={
+																TimeRenderer
+															}
+															onComplete={() => {
+																// if (params.get("tl")) {
+																// 	searchParams.delete("tl");
+																// 	setSearchParams(searchParams);
+																// }
+																endStation();
+																console.log(
+																	"countdown ends"
+																);
+															}}
+														></Countdown>
+													</b>
+													min
+												</>
 											) : (
-												<MicOffIcon
-													onClick={tm.current}
-												/>
+												"Not started "
 											)}
+										</>
+									</Typography>
+
+									<div className="video rpVideo">
+										<div>
+											<div
+												id="examiner-video"
+												ref={exRef}
+											></div>
+
+											<h2>Ex</h2>
 										</div>
 									</div>
+
+									<div
+										className="video myVideo"
+										style={{ zIndex: 9999 }}
+									>
+										<div className="h-100">
+											<div
+												id="examiner-video"
+												ref={rpRef}
+											></div>
+											<h2>You</h2>
+											<div
+												style={{
+													position: "absolute",
+													right: 0,
+													bottom: "10px",
+													display: "flex",
+													alignItems: "end",
+												}}
+											>
+												{mic ? (
+													<MicIcon
+														onClick={tm.current}
+													/>
+												) : (
+													<MicOffIcon
+														onClick={tm.current}
+													/>
+												)}
+											</div>
+										</div>
+									</div>
+									<div
+										ref={cdRef}
+										className="video otherVideo"
+										style={{
+											border: "5px solid #0e131e",
+											borderRadius: "10px",
+										}}
+									>
+										<h3 className="watingText">
+											Wating for Candidate
+										</h3>
+									</div>
 								</div>
-								<div
-									ref={cdRef}
-									className="video otherVideo"
-									style={{
-										border: "5px solid #0e131e",
-										borderRadius: "10px",
-									}}
-								>
-									<h3 className="watingText">
-										Wating for Candidate
-									</h3>
-								</div>
+								{cd && onGoing && (
+									<div>
+										<Typography variant="h4">
+											Currently Joined Candidate :{" "}
+											<b>{cd?.name}</b>
+										</Typography>
+									</div>
+								)}
 							</div>
-							{cd && onGoing && (
-								<div>
-									<Typography variant="h4">
-										Currently Joined Candidate :{" "}
-										<b>{cd?.name}</b>
-									</Typography>
-								</div>
-							)}
 						</div>
 					</div>
+				</Box>
+			)}
+			{/* delay time  */}
+			{state?.delay && (
+				<h3 style={{ marginTop: "30px", textAlign: "center" }}>
+					Taking you to next station{" "}
+					<BreakTimer ct={Date.now()} rt={0.5} />
+				</h3>
+			)}
+			{/* break  time*/}
+			{state?.break && (
+				<h3 style={{ marginTop: "30px", textAlign: "center" }}>
+					Exam will continue after{" "}
+					<BreakTimer ct={Date.now()} rt={cls?.classDuration} />
+				</h3>
+			)}
+			{/* all station ended */}
+			{state?.allStationEnd && (
+				<div>
+					<div className="text-center">
+						<MoodIcon
+							style={{ fontSize: "200px" }}
+							mt="50px"
+							color="success"
+						/>
+						<Typography variant="h2" mb="20px">
+							No More Exams Left Today
+						</Typography>
+						<a href="/" style={{ textDecoration: "none" }}>
+							<Button variant="contained" size="large">
+								Back to dashboard
+							</Button>
+						</a>
+					</div>
 				</div>
-			</Box>
+			)}
 		</div>
 	);
 }
