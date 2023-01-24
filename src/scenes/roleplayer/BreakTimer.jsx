@@ -1,4 +1,3 @@
-import Typography from "@mui/material/Typography";
 import Countdown from "react-countdown";
 
 function BreakTimer({ ct, rt }) {

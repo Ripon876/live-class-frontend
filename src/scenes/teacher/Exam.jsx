@@ -1,23 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import MicIcon from "@mui/icons-material/Mic";
-import MicOffIcon from "@mui/icons-material/MicOff";
-import NoteAltIcon from "@mui/icons-material/NoteAlt";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import IconButton from "@mui/material/IconButton";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Divider from "@mui/material/Divider";
-import InboxIcon from "@mui/icons-material/Inbox";
-import DraftsIcon from "@mui/icons-material/Drafts";
+import MicOffIcon from "@mui/icons-material/MicOff"; 
+ 
+  
 import Typography from "@mui/material/Typography";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Countdown from "react-countdown";
 import MoodIcon from "@mui/icons-material/Mood";
 import Button from "@mui/material/Button";
