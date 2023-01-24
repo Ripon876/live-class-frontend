@@ -14,6 +14,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import Countdown from "react-countdown";
 import { useSelector } from "react-redux";
 import AgoraRTC from "agora-rtc-sdk-ng";
@@ -23,6 +24,7 @@ import Button from "@mui/material/Button";
 import { useSearchParams } from "react-router-dom";
 import PDFViewer from "./start-class/PDFViewer";
 import BreakTimer from "./start-class/BreakTimer";
+import PdfPopUp from "./start-class/PdfPopUp";
 
 let socket;
 
@@ -36,12 +38,14 @@ function ExamC() {
 	const [showPdf, setShowPdf] = useState(false);
 	const [onGoing, setOngoing] = useState(false);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
+	const [breakTime, setBT] = useState(0);
 	const [state, setState] = useState({
 		nextStation: "",
 		break: false,
 		delay: false,
 		allStationEnd: false,
 	});
+	const [pdfPopup, setPDFPopup] = useState(false);
 
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [remainingTIme, setRemainingTime] = useState(0);
@@ -78,12 +82,28 @@ function ExamC() {
 				...state,
 				delay: true,
 			});
+			setPDFPopup((old) => false);
 			endStation();
 		});
 		socket.on("delayEnd", () => {
 			setState({
 				...state,
 				delay: false,
+			});
+		});
+		socket.on("breakStart", (bt) => {
+			setBT(bt);
+			setState({
+				...state,
+				break: true,
+			});
+			setPDFPopup((old) => false);
+			endStation();
+		});
+		socket.on("breakEnd", () => {
+			setState({
+				...state,
+				break: false,
 			});
 		});
 
@@ -103,6 +123,7 @@ function ExamC() {
 
 		socket.on("examsEnded", () => {
 			ls.current();
+			setPDFPopup((old) => false);
 			setState({
 				...state,
 				allStationEnd: true,
@@ -113,6 +134,7 @@ function ExamC() {
 			socket.disconnect();
 		};
 	}, []);
+
 	useEffect(() => {
 		if (document.querySelector(".opendMenuIcon")) {
 			document.querySelector(".opendMenuIcon").click();
@@ -228,17 +250,22 @@ function ExamC() {
 		await ls.current();
 		setOngoing(false);
 		setCls(null);
-		localStorage.removeItem("pdf");
+		setPDFPopup((old) => false);
 	};
 
 	useEffect(() => {
 		if (cls) {
-			setTimeout(
-				() => {
-					se.current();
-				},
-				cls?.pdf ? cls?.pdf?.visibleFor * 60 * 1000 + 1000 : 5000
-			);
+			setTimeout(() => {
+				se.current();
+			}, 5000);
+
+			if (cls?.pdf) {
+				setPDFPopup((old) => true);
+				setTimeout(() => {
+					setReaded(true);
+					setPDFPopup((old) => false);
+				}, cls.pdf.visibleFor * 60 * 1000);
+			}
 		}
 	}, [cls]);
 
@@ -304,6 +331,17 @@ function ExamC() {
 											<MicOffIcon onClick={tm.current} />
 										)}
 									</IconButton>
+									{cls?.pdf && (
+										<IconButton
+											aria-label="delete"
+											onClick={() =>
+												setPDFPopup(!pdfPopup)
+											}
+										>
+											<PictureAsPdfIcon />
+										</IconButton>
+									)}
+
 									<IconButton
 										aria-label="delete"
 										onClick={() => setNote(!note)}
@@ -354,60 +392,29 @@ function ExamC() {
 									<ListItem>
 										<ListItemText primary="Remaining Time" />
 										{onGoing && remainingTIme && (
-											<>
-												{cls?.pdf && readed && (
-													<ListItemText
-														primary={
-															<Countdown
-																key={
-																	currentTime
-																}
-																date={
-																	currentTime +
-																	remainingTIme *
-																		60 *
-																		1000
-																}
-																renderer={
-																	TimeRenderer
-																}
-															/>
+											<ListItemText
+												primary={
+													<Countdown
+														key={currentTime}
+														date={
+															currentTime +
+															remainingTIme *
+																60 *
+																1000
 														}
-														style={{
-															textAlign: "right",
+														renderer={TimeRenderer}
+														onComplete={() => {
+															endStation();
+															console.log(
+																"countdown ends"
+															);
 														}}
 													/>
-												)}
-												{!cls?.pdf && (
-													<ListItemText
-														primary={
-															<Countdown
-																key={
-																	currentTime
-																}
-																date={
-																	currentTime +
-																	remainingTIme *
-																		60 *
-																		1000
-																}
-																renderer={
-																	TimeRenderer
-																}
-																onComplete={() => {
-																	endStation();
-																	console.log(
-																		"countdown ends"
-																	);
-																}}
-															/>
-														}
-														style={{
-															textAlign: "right",
-														}}
-													/>
-												)}
-											</>
+												}
+												style={{
+													textAlign: "right",
+												}}
+											/>
 										)}
 									</ListItem>
 									<Divider />
@@ -424,11 +431,7 @@ function ExamC() {
 						</div>
 					</Grid>
 					<Grid item sm={8} md={8}>
-						<div
-							style={{
-								display: cls?.pdf && !readed ? "none" : "block",
-							}}
-						>
+						<div>
 							<div>
 								<Card
 									className="mb-2"
@@ -507,14 +510,10 @@ function ExamC() {
 
 						<div>
 							<div>
-								{cls?.pdf && (
-									<PDFViewer
+								{cls?.pdf && pdfPopup && (
+									<PdfPopUp
 										pdf={cls?.pdf?.file}
-										vf={cls?.pdf?.visibleFor}
-										ssp={setShowPdf}
-										srd={setReaded}
-										s={showPdf}
-										eId={params.get("id")}
+										setOp={setPDFPopup}
 									/>
 								)}
 							</div>
@@ -534,7 +533,7 @@ function ExamC() {
 			{state?.break && (
 				<h3 style={{ marginTop: "300px", textAlign: "center" }}>
 					Exam will continue after{" "}
-					<BreakTimer ct={Date.now()} rt={cls?.classDuration} />
+					<BreakTimer ct={Date.now()} rt={breakTime} />
 				</h3>
 			)}
 			{/* all station ended */}

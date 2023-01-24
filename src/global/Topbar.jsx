@@ -46,13 +46,13 @@ const Topbar = () => {
         </IconButton>
       </Box>
       <Box>
-        <IconButton onClick={colorMode.toggleColorMode} className='colorModeIcon'>
+        {/*<IconButton onClick={colorMode.toggleColorMode} className='colorModeIcon'>
           {theme.palette.mode === "dark" ? (
             <LightModeOutlinedIcon />
           ) : (
             <DarkModeOutlinedIcon />
           )}
-        </IconButton>
+        </IconButton>*/}
         <IconButton>
           <NotificationsOutlinedIcon />
         </IconButton>

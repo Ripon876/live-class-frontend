@@ -26,7 +26,7 @@ function ExamR() {
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
 	const rolplayerId = useSelector((state) => state.user.id);
-
+	const [breakTime, setBT] = useState(0);
 	const [state, setState] = useState({
 		break: false,
 		delay: false,
@@ -59,6 +59,21 @@ function ExamR() {
 			setState({
 				...state,
 				delay: false,
+			});
+		});
+
+		socket.on("breakStart", (bt) => {
+			setBT(bt);
+			setState({
+				...state,
+				break: true,
+			});
+			endStation();
+		});
+		socket.on("breakEnd", () => {
+			setState({
+				...state,
+				break: false,
 			});
 		});
 
@@ -333,7 +348,7 @@ function ExamR() {
 			{state?.break && (
 				<h3 style={{ marginTop: "300px", textAlign: "center" }}>
 					Exam will continue after{" "}
-					<BreakTimer ct={Date.now()} rt={cls?.classDuration} />
+					<BreakTimer ct={Date.now()} rt={breakTime} />
 				</h3>
 			)}
 			{/* all station ended */}
