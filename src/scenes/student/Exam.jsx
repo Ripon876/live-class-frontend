@@ -47,6 +47,12 @@ function ExamC() {
 	const ls = useRef(null);
 	const se = useRef(null);
 
+	// useEffect(() => {
+	// 	if (localStorage.getItem("pdf")) {
+	// 		setReaded(true);
+	// 	}
+	// }, []);
+
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
@@ -164,6 +170,7 @@ function ExamC() {
 		await ls.current();
 		setOngoing(false);
 		setCls(null);
+		localStorage.removeItem("pdf")
 	};
 
 	useEffect(() => {
@@ -442,6 +449,7 @@ function ExamC() {
 										ssp={setShowPdf}
 										srd={setReaded}
 										s={showPdf}
+										eId={params.get("id")}
 									/>
 								)}
 							</div>
