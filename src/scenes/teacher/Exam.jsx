@@ -57,6 +57,22 @@ function ExamE() {
 			});
 		});
 
+		socket.on("delayStart", () => {
+			console.log("= = = = = = = = = = = = = = = =");
+			console.log(" Delay Started ");
+			setState({
+				...state,
+				delay: true,
+			});
+			console.log("= = = = = = = = = = = = = = = =");
+		});
+
+		socket.on("delayEnd", () => {
+			console.log("= = = = = = = = = = = = = = = =");
+			console.log(" Delay Ended "); 
+			console.log("= = = = = = = = = = = = = = = =");
+		});
+
 		return () => {
 			socket.disconnect();
 		};
@@ -227,10 +243,6 @@ function ExamE() {
 															}
 															onComplete={() => {
 																endStation();
-																setState({
-																	...state,
-																	allStationEnd: true,
-																});
 															}}
 														></Countdown>
 													</b>
