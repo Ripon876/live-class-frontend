@@ -19,10 +19,12 @@ import DraftsIcon from "@mui/icons-material/Drafts";
 import Typography from "@mui/material/Typography";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Countdown from "react-countdown";
-import { Peer } from "peerjs";
+
 import { useSelector } from "react-redux";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import io from "socket.io-client";
+import CandidateInfo from "./start-exam/CandidateInfo";
+import Mark from "./start-exam/Mark";
 
 let socket;
 
@@ -33,9 +35,14 @@ function ExamE() {
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
 	const [cls, setCls] = useState({});
+	const [cd, setCd] = useState(null);
 	const [remainingTIme, setRemainingTime] = useState(0);
+	const [mark, setMark] = useState(true);
+	const [mSubmited, setMSubmited] = useState(false);
+	const [onGoing, setOngoing] = useState(false);
 
 	const teacherId = useSelector((state) => state.user.id);
+
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
@@ -46,7 +53,7 @@ function ExamE() {
 			socket.emit("getClass", params.get("id"), (cls, notfound) => {
 				if (!notfound) {
 					setCls(cls);
-					// console.log(cls);
+					console.log(cls);
 					// breaker(cls.classDuration);
 					setRemainingTime(cls.classDuration);
 				} else {
@@ -88,6 +95,23 @@ function ExamE() {
 				if (mediaType === "video") {
 					if (user.uid?.split("_")[1] === "Candidate") {
 						user.videoTrack.play(cdRef.current);
+						setOngoing(true);
+
+						socket.emit("rejoin", teacherId, async (data, err) => {
+							console.log(data, err);
+							if (data) {
+								setRemainingTime(data.rt);
+							}
+						});
+
+						socket.emit(
+							"newStationStarted",
+							params.get("id"),
+							(data) => {
+								console.log(data);
+								setCd(data);
+							}
+						);
 					} else if (user.uid?.split("_")[1] === "Roleplayer") {
 						user.videoTrack.play(rpRef.current);
 					}
@@ -101,6 +125,10 @@ function ExamE() {
 				console.log("user joined", user);
 			});
 			client.on("user-left", async (user) => {
+				if (user.uid?.split("_")[1] === "Candidate") {
+					endStation();
+				}
+
 				console.log("user left", user);
 			});
 		};
@@ -133,6 +161,13 @@ function ExamE() {
 		};
 	}, []);
 
+	const endStation = () => {
+		setCd(null);
+		setMark(true);
+		setMSubmited(false);
+		setOngoing(false);
+	};
+
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
 			<Box
@@ -160,35 +195,51 @@ function ExamE() {
 										opacity: 1,
 									}}
 								>
-									Remainig Time :
-									<b pl="5px">
-										<Countdown
-											key={Date.now()}
-											date={Date.now() + 5 * 60 * 1000}
-											renderer={TimeRenderer}
-											onComplete={() => {
-												// if (params.get("tl")) {
-												// 	searchParams.delete("tl");
-												// 	setSearchParams(searchParams);
-												// }
-
-												console.log("countdown ends");
-											}}
-										></Countdown>
-									</b>
-									min
+									<>
+										{cd && remainingTIme && onGoing ? (
+											<>
+												Remainig Time :
+												<b pl="5px">
+													<Countdown
+														key={Date.now()}
+														date={
+															Date.now() +
+															remainingTIme *
+																60 *
+																1000
+														}
+														renderer={TimeRenderer}
+														onComplete={() => {
+															// if (params.get("tl")) {
+															// 	searchParams.delete("tl");
+															// 	setSearchParams(searchParams);
+															// }
+															endStation();
+															console.log(
+																"countdown ends"
+															);
+														}}
+													></Countdown>
+												</b>
+												min
+											</>
+										) : (
+											"Not started "
+										)}
+									</>
 								</Typography>
+								{cls?.roleplayer && (
+									<div className="video rpVideo">
+										<div>
+											<div
+												id="examiner-video"
+												ref={rpRef}
+											></div>
 
-								<div className="video rpVideo">
-									<div>
-										<div
-											id="examiner-video"
-											ref={rpRef}
-										></div>
-
-										<h2>Rp</h2>
+											<h2>Rp</h2>
+										</div>
 									</div>
-								</div>
+								)}
 
 								<div
 									className="video myVideo"
@@ -228,6 +279,23 @@ function ExamE() {
 									</h3>
 								</div>
 							</div>
+
+							{cd && onGoing && (
+								<CandidateInfo og={true} cdn={cd?.name} />
+							)}
+							{mSubmited && onGoing && (
+								<h3 className="text-success">Mark Submited</h3>
+							)}
+
+							{mark && cd && onGoing && (
+								<Mark
+									list={cls?.checklist}
+									sm={setMark}
+									ms={setMSubmited}
+									cId={cd.id}
+									eId={cls._id}
+								/>
+							)}
 						</div>
 					</div>
 				</div>

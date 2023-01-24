@@ -23,16 +23,44 @@ import { Peer } from "peerjs";
 import { useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import AgoraRTC from "agora-rtc-sdk-ng";
+import io from "socket.io-client";
+
+let socket;
 
 function ExamC() {
+	const stdId = useSelector((state) => state.user.id);
 	const [mic, setMic] = useState(true);
 	const [note, setNote] = useState(false);
 	const [cls, setCls] = useState({});
 	const [readed, setReaded] = useState(false);
+	const [onGoing, setOngoing] = useState(false);
+	const [remainingTIme, setRemainingTime] = useState(0);
+	const queryString = window.location.search;
+	const params = new URLSearchParams(queryString);
 	const cd = useRef(null);
 	const ex = useRef(null);
 	const rpRef = useRef(null);
 
+	useEffect(() => {
+		socket = io.connect(process.env.REACT_APP_SERVER_URL);
+
+		socket.on("connect", () => {
+			// console.log("socket connected");
+			socket.emit("setActive", { id: stdId });
+
+			socket.emit("getClass", params.get("id"), (cls, notfound) => {
+				if (!notfound) {
+					setCls(cls);
+				} else {
+					window.location.href = "/";
+				}
+			});
+		});
+
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
 	useEffect(() => {
 		if (document.querySelector(".opendMenuIcon")) {
 			document.querySelector(".opendMenuIcon").click();
@@ -44,9 +72,8 @@ function ExamC() {
 		let token = null;
 
 		let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
-		const queryString = window.location.search;
-		const urlParams = new URLSearchParams(queryString);
-		let roomId = urlParams.get("id");
+
+		let roomId = params.get("id");
 		if (!roomId) {
 			roomId = "main";
 		}
@@ -65,6 +92,13 @@ function ExamC() {
 				if (mediaType === "video") {
 					if (user.uid?.split("_")[1] === "Examiner") {
 						user.videoTrack.play(ex.current);
+						setOngoing(true);
+						socket.emit("rejoin", stdId, async (data, err) => {
+							console.log(data, err);
+							if (data) {
+								setRemainingTime(data.rt);
+							}
+						});
 					} else if (user.uid?.split("_")[1] === "Roleplayer") {
 						user.videoTrack.play(rpRef.current);
 					}
@@ -210,19 +244,23 @@ function ExamC() {
 									<Divider />
 									<ListItem>
 										<ListItemText primary="Remaining Time" />
-
-										<ListItemText
-											primary={
-												<Countdown
-													key={Date.now()}
-													date={
-														Date.now() + 300 * 1000
-													}
-													renderer={TimeRenderer}
-												/>
-											}
-											style={{ textAlign: "right" }}
-										/>
+										{onGoing && remainingTIme && (
+											<ListItemText
+												primary={
+													<Countdown
+														key={Date.now()}
+														date={
+															Date.now() +
+															remainingTIme *
+																60 *
+																1000
+														}
+														renderer={TimeRenderer}
+													/>
+												}
+												style={{ textAlign: "right" }}
+											/>
+										)}
 									</ListItem>
 									<Divider />
 									<ListItem>

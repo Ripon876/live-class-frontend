@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 
-function CandidateInfo({ og, c }) {
+function CandidateInfo({ og, cdn }) {
 	return (
 		<div>
 			<Typography
@@ -9,7 +9,7 @@ function CandidateInfo({ og, c }) {
 					opacity: og ? "1" : 0,
 				}}
 			>
-				Currently Joined Student : <b>{c?.name}</b>
+				Currently Joined Candidate : <b>{cdn}</b>
 			</Typography>
 		</div>
 	);

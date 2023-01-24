@@ -24,11 +24,31 @@ import { useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import { AgoraVideoPlayer } from "agora-rtc-react";
+import io from "socket.io-client";
 
+let socket;
 function ExamR() {
 	const exRef = useRef(null);
 	const cdRef = useRef(null);
 	const rpRef = useRef(null);
+	const [cd, setCd] = useState(null);
+	const [remainingTIme, setRemainingTime] = useState(0);
+	const [onGoing, setOngoing] = useState(false);
+	const queryString = window.location.search;
+	const params = new URLSearchParams(queryString);
+	const rolplayerId = useSelector((state) => state.user.id);
+
+	useEffect(() => {
+		socket = io.connect(process.env.REACT_APP_SERVER_URL);
+
+		socket.on("connect", () => {
+			socket.emit("setActive", { id: rolplayerId });
+		});
+
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
 
 	useEffect(() => {
 		const APP_ID = "0d85c587d13f40b39258dd698cd77421";
@@ -36,9 +56,7 @@ function ExamR() {
 		let token = null;
 		let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 
-		const queryString = window.location.search;
-		const urlParams = new URLSearchParams(queryString);
-		let roomId = urlParams.get("id");
+		let roomId = params.get("id");
 
 		if (!roomId) {
 			window.location.href = "/";
@@ -63,6 +81,22 @@ function ExamR() {
 				if (mediaType === "video") {
 					if (user.uid?.split("_")[1] === "Candidate") {
 						user.videoTrack.play(cdRef.current);
+						setOngoing(true);
+						socket.emit(
+							"rejoin",
+							rolplayerId,
+							async (data, err) => {
+								console.log(data, err);
+								if (data) {
+									setRemainingTime(data.rt);
+								}
+							}
+						);
+
+						socket.emit("getCd", params.get("id"), (data) => {
+							console.log(data);
+							setCd(data);
+						});
 					} else {
 						user.videoTrack.play(exRef.current);
 					}
@@ -108,6 +142,11 @@ function ExamR() {
 		};
 	}, []);
 
+	const endStation = () => {
+		setCd(null);
+		setOngoing(false);
+	};
+
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
 			<Box
@@ -135,23 +174,38 @@ function ExamR() {
 										opacity: 1,
 									}}
 								>
-									Remainig Time :
-									<b pl="5px">
-										<Countdown
-											key={Date.now()}
-											date={Date.now() + 5 * 60 * 1000}
-											renderer={TimeRenderer}
-											onComplete={() => {
-												// if (params.get("tl")) {
-												// 	searchParams.delete("tl");
-												// 	setSearchParams(searchParams);
-												// }
-
-												console.log("countdown ends");
-											}}
-										></Countdown>
-									</b>
-									min
+									<>
+										{cd && remainingTIme && onGoing ? (
+											<>
+												Remainig Time :
+												<b pl="5px">
+													<Countdown
+														key={Date.now()}
+														date={
+															Date.now() +
+															remainingTIme *
+																60 *
+																1000
+														}
+														renderer={TimeRenderer}
+														onComplete={() => {
+															// if (params.get("tl")) {
+															// 	searchParams.delete("tl");
+															// 	setSearchParams(searchParams);
+															// }
+															endStation();
+															console.log(
+																"countdown ends"
+															);
+														}}
+													></Countdown>
+												</b>
+												min
+											</>
+										) : (
+											"Not started "
+										)}
+									</>
 								</Typography>
 
 								<div className="video rpVideo">
@@ -203,6 +257,14 @@ function ExamR() {
 									</h3>
 								</div>
 							</div>
+							{cd && onGoing && (
+								<div>
+									<Typography variant="h4">
+										Currently Joined Candidate :{" "}
+										<b>{cd?.name}</b>
+									</Typography>
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
