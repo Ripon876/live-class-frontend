@@ -32,8 +32,10 @@ function ExamE() {
 	const exRef = useRef(null);
 	const cdRef = useRef(null);
 	const rpRef = useRef(null);
+	const tm = useRef(null);
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
+	const [mic, setMic] = useState(true);
 	const [cls, setCls] = useState({});
 	const [cd, setCd] = useState(null);
 	const [remainingTIme, setRemainingTime] = useState(0);
@@ -151,7 +153,16 @@ function ExamE() {
 			client.leave();
 			await client.unpublish([localTracks[0], localTracks[1]]);
 		};
-
+		let toggleMic = async () => {
+			setMic((old) => !old);
+			console.log("setting mic");
+			if (localTracks[0].muted) {
+				await localTracks[0].setMuted(false);
+			} else {
+				await localTracks[0].setMuted(true);
+			}
+		};
+		tm.current = toggleMic;
 		setTimeout(() => {
 			joinStream();
 		}, 5000);
@@ -258,9 +269,13 @@ function ExamE() {
 												alignItems: "end",
 											}}
 										>
-											<MicIcon
-												sx={{ cursor: "pointer" }}
-											/>
+											{mic ? (
+												<MicIcon onClick={tm.current} />
+											) : (
+												<MicOffIcon
+													onClick={tm.current}
+												/>
+											)}
 										</div>
 									</div>
 								</div>

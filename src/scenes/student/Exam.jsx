@@ -46,6 +46,7 @@ function ExamC() {
 	const rpRef = useRef(null);
 	const ls = useRef(null);
 	const se = useRef(null);
+	const tm = useRef(null);
 
 	// useEffect(() => {
 	// 	if (localStorage.getItem("pdf")) {
@@ -155,7 +156,19 @@ function ExamC() {
 			client.leave();
 			await client.unpublish([localTracks[0], localTracks[1]]);
 		};
+
+		let toggleMic = async () => {
+			setMic((old) => !old);
+			console.log("setting mic");
+			if (localTracks[0].muted) {
+				await localTracks[0].setMuted(false);
+			} else {
+				await localTracks[0].setMuted(true);
+			}
+		};
+
 		ls.current = leaveStream;
+		tm.current = toggleMic;
 
 		se.current = joinStream;
 
@@ -170,7 +183,7 @@ function ExamC() {
 		await ls.current();
 		setOngoing(false);
 		setCls(null);
-		localStorage.removeItem("pdf")
+		localStorage.removeItem("pdf");
 	};
 
 	useEffect(() => {
@@ -231,7 +244,11 @@ function ExamC() {
 									aria-label="Disabled elevation buttons"
 								>
 									<IconButton aria-label="delete">
-										{mic ? <MicIcon /> : <MicOffIcon />}
+										{mic ? (
+											<MicIcon onClick={tm.current} />
+										) : (
+											<MicOffIcon onClick={tm.current} />
+										)}
 									</IconButton>
 									<IconButton
 										aria-label="delete"

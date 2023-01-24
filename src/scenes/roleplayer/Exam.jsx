@@ -31,6 +31,8 @@ function ExamR() {
 	const exRef = useRef(null);
 	const cdRef = useRef(null);
 	const rpRef = useRef(null);
+	const tm = useRef(null);
+	const [mic, setMic] = useState(true);
 	const [cd, setCd] = useState(null);
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [onGoing, setOngoing] = useState(false);
@@ -130,7 +132,16 @@ function ExamR() {
 			client.leave();
 			await client.unpublish([localTracks[0], localTracks[1]]);
 		};
-
+		let toggleMic = async () => {
+			setMic((old) => !old);
+			console.log("setting mic");
+			if (localTracks[0].muted) {
+				await localTracks[0].setMuted(false);
+			} else {
+				await localTracks[0].setMuted(true);
+			}
+		};
+		tm.current = toggleMic;
 		setTimeout(() => {
 			joinStream();
 		}, 5000);
@@ -238,9 +249,13 @@ function ExamR() {
 												alignItems: "end",
 											}}
 										>
-											<MicIcon
-												sx={{ cursor: "pointer" }}
-											/>
+											{mic ? (
+												<MicIcon onClick={tm.current} />
+											) : (
+												<MicOffIcon
+													onClick={tm.current}
+												/>
+											)}
 										</div>
 									</div>
 								</div>
