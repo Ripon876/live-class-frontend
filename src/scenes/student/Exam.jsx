@@ -9,7 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem"; 
+import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
@@ -94,8 +94,6 @@ function ExamC() {
 		}
 		let localTracks = [];
 		let remoteUsers = {};
-
-		let localScreenTracks;
 
 		let joinRoomInit = async (rId) => {
 			await client.join(APP_ID, rId, token, uid);

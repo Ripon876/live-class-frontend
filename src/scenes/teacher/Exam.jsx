@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Box from "@mui/material/Box";
 import MicIcon from "@mui/icons-material/Mic";
-import MicOffIcon from "@mui/icons-material/MicOff"; 
- 
-  
+import MicOffIcon from "@mui/icons-material/MicOff";
 import Typography from "@mui/material/Typography";
 import Countdown from "react-countdown";
 import MoodIcon from "@mui/icons-material/Mood";
@@ -76,8 +74,6 @@ function ExamE() {
 		}
 		let localTracks = [];
 		let remoteUsers = {};
-
-		let localScreenTracks;
 
 		let joinRoomInit = async (rId) => {
 			await client.join(APP_ID, rId, token, uid);

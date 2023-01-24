@@ -1,14 +1,11 @@
 import { useState, useEffect, useRef } from "react";
- 
 import Box from "@mui/material/Box";
 import MicIcon from "@mui/icons-material/Mic";
-import MicOffIcon from "@mui/icons-material/MicOff";  
- 
- 
-import Typography from "@mui/material/Typography"; 
+import MicOffIcon from "@mui/icons-material/MicOff";
+import Typography from "@mui/material/Typography";
 import Countdown from "react-countdown";
-import { useSelector } from "react-redux"; 
-import AgoraRTC from "agora-rtc-sdk-ng"; 
+import { useSelector } from "react-redux";
+import AgoraRTC from "agora-rtc-sdk-ng";
 import io from "socket.io-client";
 import MoodIcon from "@mui/icons-material/Mood";
 import Button from "@mui/material/Button";
@@ -73,8 +70,6 @@ function ExamR() {
 		}
 		let localTracks = [];
 		let remoteUsers = {};
-
-		let localScreenTracks;
 
 		let joinRoomInit = async (rId) => {
 			await client.join(APP_ID, rId, token, uid);
