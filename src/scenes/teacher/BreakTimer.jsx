@@ -1,6 +1,6 @@
 import Countdown from "react-countdown";
 
-function BreakTimer({ ct, rt }) {
+function BreakTimer({ ct, rt, ss }) {
 	return (
 		<>
 			:{" "}
@@ -9,6 +9,9 @@ function BreakTimer({ ct, rt }) {
 					key={ct}
 					date={ct + rt * 60 * 1000}
 					renderer={TimeRenderer}
+					onComplete={() => {
+						 ss();
+					}}
 				/>
 			</b>
 			min
