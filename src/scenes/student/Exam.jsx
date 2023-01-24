@@ -24,6 +24,7 @@ import { useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import io from "socket.io-client";
+import PDFViewer from "./start-class/PDFViewer";
 
 let socket;
 
@@ -31,15 +32,20 @@ function ExamC() {
 	const stdId = useSelector((state) => state.user.id);
 	const [mic, setMic] = useState(true);
 	const [note, setNote] = useState(false);
-	const [cls, setCls] = useState({});
+	const [cls, setCls] = useState(null);
 	const [readed, setReaded] = useState(false);
+	const [showPdf, setShowPdf] = useState(false);
 	const [onGoing, setOngoing] = useState(false);
+	const [currentTime, setCurrentgTime] = useState(Date.now());
+
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
 	const cd = useRef(null);
 	const ex = useRef(null);
 	const rpRef = useRef(null);
+	const ls = useRef(null);
+	const se = useRef(null);
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
@@ -92,10 +98,24 @@ function ExamC() {
 				if (mediaType === "video") {
 					if (user.uid?.split("_")[1] === "Examiner") {
 						user.videoTrack.play(ex.current);
-						setOngoing(true);
+
+						socket.emit(
+							"getClass",
+							params.get("id"),
+							(cls, notfound) => {
+								if (!notfound) {
+									setCls(cls);
+								} else {
+									window.location.href = "/";
+								}
+							}
+						);
+
 						socket.emit("rejoin", stdId, async (data, err) => {
 							console.log(data, err);
 							if (data) {
+								setOngoing(true);
+								setCurrentgTime(Date.now());
 								setRemainingTime(data.rt);
 							}
 						});
@@ -129,15 +149,9 @@ function ExamC() {
 			client.leave();
 			await client.unpublish([localTracks[0], localTracks[1]]);
 		};
+		ls.current = leaveStream;
 
-		// setTimeout(async () => {
-		// 	await leaveStream();
-		// 	console.log("closing");
-		// }, 40000);
-
-		setTimeout(() => {
-			joinStream();
-		}, 5000);
+		se.current = joinStream;
 
 		joinRoomInit(roomId);
 
@@ -145,6 +159,23 @@ function ExamC() {
 			await leaveStream();
 		};
 	}, []);
+
+	const endStation = async () => {
+		await ls.current();
+		setOngoing(false);
+		setCls(null);
+	};
+
+	useEffect(() => {
+		if (cls) {
+			setTimeout(
+				() => {
+					se.current();
+				},
+				cls?.pdf ? cls?.pdf?.visibleFor * 60 * 1000 + 1000 : 5000
+			);
+		}
+	}, [cls]);
 
 	return (
 		<div
@@ -216,7 +247,7 @@ function ExamC() {
 												component="div"
 												className="m-0"
 											>
-												EXAM 1
+												{cls?.title}
 											</Typography>
 										</ListItemText>
 									</ListItem>
@@ -245,21 +276,66 @@ function ExamC() {
 									<ListItem>
 										<ListItemText primary="Remaining Time" />
 										{onGoing && remainingTIme && (
-											<ListItemText
-												primary={
-													<Countdown
-														key={Date.now()}
-														date={
-															Date.now() +
-															remainingTIme *
-																60 *
-																1000
+											<>
+												{cls?.pdf && readed && (
+													<ListItemText
+														primary={
+															<Countdown
+																key={
+																	currentTime
+																}
+																date={
+																	currentTime +
+																	remainingTIme *
+																		60 *
+																		1000
+																}
+																renderer={
+																	TimeRenderer
+																}
+																onComplete={() => {
+																	endStation();
+																	console.log(
+																		"countdown ends"
+																	);
+																}}
+															/>
 														}
-														renderer={TimeRenderer}
+														style={{
+															textAlign: "right",
+														}}
 													/>
-												}
-												style={{ textAlign: "right" }}
-											/>
+												)}
+												{!cls?.pdf && (
+													<ListItemText
+														primary={
+															<Countdown
+																key={
+																	currentTime
+																}
+																date={
+																	currentTime +
+																	remainingTIme *
+																		60 *
+																		1000
+																}
+																renderer={
+																	TimeRenderer
+																}
+																onComplete={() => {
+																	endStation();
+																	console.log(
+																		"countdown ends"
+																	);
+																}}
+															/>
+														}
+														style={{
+															textAlign: "right",
+														}}
+													/>
+												)}
+											</>
 										)}
 									</ListItem>
 									<Divider />
@@ -276,43 +352,23 @@ function ExamC() {
 						</div>
 					</Grid>
 					<Grid item sm={8} md={8}>
-						<div>
-							<Card className="mb-2" style={{ cursor: "normal" }}>
-								<div className={`video cd-video large-video `}>
-									<div className="h-100 w-100">
-										<div
-											className="w-100 h-100 bg-black"
-											ref={ex}
-										></div>
-									</div>
-								</div>
-								<CardContent className="p-2 ps-4">
-									<Typography
-										variant="body2"
-										color="text.secondary"
-									>
-										Examiner
-									</Typography>
-								</CardContent>
-							</Card>
-						</div>
-
-						<div className="mt-3 d-flex">
+						<div
+							style={{
+								display: cls?.pdf && !readed ? "none" : "block",
+							}}
+						>
 							<div>
 								<Card
 									className="mb-2"
-									style={{
-										cursor: "pointer",
-										maxWidth: "250px",
-									}}
+									style={{ cursor: "normal" }}
 								>
 									<div
-										className={`video cd-video  small-video`}
+										className={`video cd-video large-video `}
 									>
 										<div className="h-100 w-100">
 											<div
 												className="w-100 h-100 bg-black"
-												ref={rpRef}
+												ref={ex}
 											></div>
 										</div>
 									</div>
@@ -321,24 +377,73 @@ function ExamC() {
 											variant="body2"
 											color="text.secondary"
 										>
-											Roleplayer
+											Examiner
 										</Typography>
 									</CardContent>
 								</Card>
 							</div>
-							<div
-								style={{ display: note ? "block" : "none" }}
-								className="ms-5 w-75"
-							>
-								<div className="form-group">
-									<label htmlFor="note">Note</label>
-									<textarea
-										placeholder="Write note"
-										className="form-control"
-										rows="6"
-										id="note"
-									></textarea>
+
+							<div className="mt-3 d-flex">
+								{cls?.roleplayer && (
+									<div className="me-4">
+										<Card
+											className="mb-2"
+											style={{
+												cursor: "pointer",
+												maxWidth: "250px",
+											}}
+										>
+											<div
+												className={`video cd-video  small-video`}
+											>
+												<div className="h-100 w-100">
+													<div
+														className="w-100 h-100 bg-black"
+														ref={rpRef}
+													></div>
+												</div>
+											</div>
+											<CardContent className="p-2 ps-4">
+												<Typography
+													variant="body2"
+													color="text.secondary"
+												>
+													Roleplayer
+												</Typography>
+											</CardContent>
+										</Card>
+									</div>
+								)}
+								<div
+									style={{
+										display: note ? "block" : "none",
+									}}
+									className="w-100"
+								>
+									<div className="form-group">
+										<label htmlFor="note">Note</label>
+										<textarea
+											placeholder="Write note"
+											className="form-control"
+											rows="6"
+											id="note"
+										></textarea>
+									</div>
 								</div>
+							</div>
+						</div>
+
+						<div>
+							<div>
+								{cls?.pdf && (
+									<PDFViewer
+										pdf={cls?.pdf?.file}
+										vf={cls?.pdf?.visibleFor}
+										ssp={setShowPdf}
+										srd={setReaded}
+										s={showPdf}
+									/>
+								)}
 							</div>
 						</div>
 					</Grid>

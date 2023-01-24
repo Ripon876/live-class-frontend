@@ -40,6 +40,7 @@ function ExamE() {
 	const [mark, setMark] = useState(true);
 	const [mSubmited, setMSubmited] = useState(false);
 	const [onGoing, setOngoing] = useState(false);
+	const [currentTime, setCurrentgTime] = useState(Date.now());
 
 	const teacherId = useSelector((state) => state.user.id);
 
@@ -95,11 +96,12 @@ function ExamE() {
 				if (mediaType === "video") {
 					if (user.uid?.split("_")[1] === "Candidate") {
 						user.videoTrack.play(cdRef.current);
-						setOngoing(true);
 
 						socket.emit("rejoin", teacherId, async (data, err) => {
 							console.log(data, err);
 							if (data) {
+								setOngoing(true);
+								setCurrentgTime(Date.now());
 								setRemainingTime(data.rt);
 							}
 						});
@@ -201,19 +203,15 @@ function ExamE() {
 												Remainig Time :
 												<b pl="5px">
 													<Countdown
-														key={Date.now()}
+														key={currentTime}
 														date={
-															Date.now() +
+															currentTime +
 															remainingTIme *
 																60 *
 																1000
 														}
 														renderer={TimeRenderer}
 														onComplete={() => {
-															// if (params.get("tl")) {
-															// 	searchParams.delete("tl");
-															// 	setSearchParams(searchParams);
-															// }
 															endStation();
 															console.log(
 																"countdown ends"

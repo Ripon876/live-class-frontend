@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import Timer from "./Timer";
 
-function PDFViewer({ pdf, vf, ssp ,s}) {
+function PDFViewer({ pdf, vf, ssp ,s,srd}) {
 	useEffect(() => {
 		setTimeout(() => {
 			ssp(false);
+			srd(true);
 		}, vf * 60 * 1000);
 	}, []);
 
