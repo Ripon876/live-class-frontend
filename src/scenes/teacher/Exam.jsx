@@ -131,6 +131,14 @@ function ExamE() {
 			client.on("user-left", async (user) => {
 				if (user.uid?.split("_")[1] === "Candidate") {
 					endStation();
+					cdRef.current.innerHTML = `<h3 classname="watingText" 
+					style="position: absolute; 
+					    top: 50%;
+    					left: 50%;
+    					transform: translate(-50%, -50%);
+						">Wating for Candidate</h3>`;
+				} else if (user.uid?.split("_")[1] === "Roleplayer") {
+					rpRef.current.innerHTML = "";
 				}
 
 				console.log("user left", user);
@@ -139,7 +147,7 @@ function ExamE() {
 
 		let joinStream = async () => {
 			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
-
+			exRef.current.innerHTML = "";
 			localTracks[1].play(exRef.current);
 
 			await client.publish([localTracks[0], localTracks[1]]);

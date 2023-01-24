@@ -139,11 +139,17 @@ function ExamC() {
 			});
 			client.on("user-left", async (user) => {
 				console.log("user left", user);
+				if (user.uid?.split("_")[1] === "Examiner") {
+					ex.current.innerHTML = "";
+				} else if (user.uid?.split("_")[1] === "Roleplayer") {
+					rpRef.current.innerHTML = "";
+				}
 			});
 		};
 
 		let joinStream = async () => {
 			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
+			cd.current.innerHTML = "";
 			localTracks[1].play(cd.current);
 			await client.publish([localTracks[0], localTracks[1]]);
 		};

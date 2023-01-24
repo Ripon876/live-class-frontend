@@ -99,7 +99,7 @@ function ExamR() {
 							console.log(data);
 							setCd(data);
 						});
-					} else {
+					} else if (user.uid?.split("_")[1] === "Examiner") {
 						user.videoTrack.play(exRef.current);
 					}
 				}
@@ -112,12 +112,25 @@ function ExamR() {
 				console.log("user joined", user);
 			});
 			client.on("user-left", async (user) => {
+				if (user.uid?.split("_")[1] === "Examiner") {
+					exRef.current.innerHTML = "";
+				} else if (user.uid?.split("_")[1] === "Candidate") {
+					cdRef.current.innerHTML = `<h3 classname="watingText" 
+					style="position: absolute; 
+					    top: 50%;
+    					left: 50%;
+    					transform: translate(-50%, -50%);
+						">Wating for Candidate</h3>`;
+					endStation();
+				}
+
 				console.log("user left", user);
 			});
 		};
 
 		let joinStream = async () => {
 			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
+			rpRef.current.innerHTML = "";
 
 			localTracks[1].play(rpRef.current);
 
