@@ -1,5 +1,4 @@
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 
 function ExamDetail({ exam }) {

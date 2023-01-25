@@ -9,12 +9,11 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 
 function TodaysClassesOfTeacher() {
-	const [cookies, setCookie] = useCookies([]);
+	const [cookies] = useCookies([]);
 	const [classes, setClasses] = useState([]);
 
 	useEffect(() => {

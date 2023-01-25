@@ -7,7 +7,7 @@ import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import CircleIcon from "@mui/icons-material/Circle";
-import { makeTotal, SubmitMark } from "./helpers";
+import { SubmitMark } from "./helpers";
 
 function Mark({ list, cId, eId, sm, ms }) {
 	const [checkList, setCheckList] = useState([]);
