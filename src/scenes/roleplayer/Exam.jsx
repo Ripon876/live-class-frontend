@@ -162,7 +162,7 @@ function ExamR() {
 					    top: 50%;
     					left: 50%;
     					transform: translate(-50%, -50%);
-						">Wating for Candidate</h3>`;
+						">Waiting for Candidate</h3>`;
 					endStation();
 				}
 

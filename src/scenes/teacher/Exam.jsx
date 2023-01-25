@@ -73,7 +73,7 @@ function ExamE() {
 		});
 
 		socket.on("breakStart", (bt) => {
-			setBT(bt);
+			setBT((old) => bt);
 			setState({
 				...state,
 				break: true,
@@ -169,7 +169,7 @@ function ExamE() {
 					    top: 50%;
     					left: 50%;
     					transform: translate(-50%, -50%);
-						">Wating for Candidate</h3>`;
+						">Waiting for Candidate</h3>`;
 				} else if (user.uid?.split("_")[1] === "Roleplayer") {
 					rpRef.current.innerHTML = "";
 				}
@@ -266,7 +266,7 @@ function ExamE() {
 									<>
 										{cd && remainingTIme && onGoing ? (
 											<>
-												Remainig Time :
+												Remaining Time :
 												<b pl="5px">
 													<Countdown
 														key={currentTime}
@@ -346,7 +346,9 @@ function ExamE() {
 								<CandidateInfo og={true} cdn={cd?.name} />
 							)}
 							{mSubmited && onGoing && (
-								<h3 className="text-success">Mark Submited</h3>
+								<h3 className="text-success">
+									Result Submited
+								</h3>
 							)}
 
 							{mark && cd && onGoing && (
