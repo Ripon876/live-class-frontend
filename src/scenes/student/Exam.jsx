@@ -28,7 +28,7 @@ import PdfPopUp from "./start-class/PdfPopUp";
 import "./style.css";
 
 let socket;
-
+let uid;
 function ExamC() {
 	const stdId = useSelector((state) => state.user.id);
 	const [std, setStd] = useState(null);
@@ -90,6 +90,7 @@ function ExamC() {
 			endStation();
 		});
 		socket.on("delayEnd", () => {
+			uid = String(Math.floor(Math.random() * 50000) + "_Candidate");
 			setState({
 				...state,
 				delay: false,
@@ -105,6 +106,7 @@ function ExamC() {
 			endStation();
 		});
 		socket.on("breakEnd", () => {
+			uid = String(Math.floor(Math.random() * 50000) + "_Candidate");
 			setState({
 				...state,
 				break: false,
@@ -146,7 +148,7 @@ function ExamC() {
 
 		const APP_ID = "0d85c587d13f40b39258dd698cd77421";
 
-		let uid = String(Math.floor(Math.random() * 10000) + "_Candidate");
+		uid = String(Math.floor(Math.random() * 50000) + "_Candidate");
 		let token = null;
 
 		let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
@@ -160,6 +162,11 @@ function ExamC() {
 
 		let joinRoomInit = async (rId) => {
 			await client.join(APP_ID, rId, token, uid);
+
+			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
+			cd.current.innerHTML = "";
+			localTracks[1].play(cd.current);
+			await client.publish([localTracks[0], localTracks[1]]);
 
 			client.on("user-published", async (user, mediaType) => {
 				console.log("new user joined", user);
@@ -205,10 +212,7 @@ function ExamC() {
 		};
 
 		let joinStream = async () => {
-			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
-			cd.current.innerHTML = "";
-			localTracks[1].play(cd.current);
-			await client.publish([localTracks[0], localTracks[1]]);
+			// await client.publish([localTracks[0], localTracks[1]]);
 		};
 
 		let leaveStream = async () => {

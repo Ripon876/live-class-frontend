@@ -14,7 +14,7 @@ import Mark from "./start-exam/Mark";
 import BreakTimer from "./BreakTimer";
 
 let socket;
-
+let uid;
 function ExamE() {
 	const exRef = useRef(null);
 	const cdRef = useRef(null);
@@ -66,6 +66,7 @@ function ExamE() {
 		});
 
 		socket.on("delayEnd", () => {
+			uid = String(Math.floor(Math.random() * 50000) + "_Examiner");
 			setState({
 				...state,
 				delay: false,
@@ -81,6 +82,7 @@ function ExamE() {
 			endStation();
 		});
 		socket.on("breakEnd", () => {
+			uid = String(Math.floor(Math.random() * 50000) + "_Examiner");
 			setState({
 				...state,
 				break: false,
@@ -112,7 +114,7 @@ function ExamE() {
 			document.querySelector(".opendMenuIcon").click();
 		}
 		const APP_ID = "0d85c587d13f40b39258dd698cd77421";
-		let uid = String(Math.floor(Math.random() * 10000) + "_Examiner");
+		uid = String(Math.floor(Math.random() * 50000) + "_Examiner");
 		let token = null;
 		let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 		let roomId = params.get("id");
@@ -125,6 +127,10 @@ function ExamE() {
 
 		let joinRoomInit = async (rId) => {
 			await client.join(APP_ID, rId, token, uid);
+			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
+			exRef.current.innerHTML = "";
+			localTracks[1].play(exRef.current);
+			await client.publish([localTracks[0], localTracks[1]]);
 
 			client.on("user-published", async (user, mediaType) => {
 				console.log("new user joined", user);
@@ -186,11 +192,7 @@ function ExamE() {
 		};
 
 		let joinStream = async () => {
-			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
-			exRef.current.innerHTML = "";
-			localTracks[1].play(exRef.current);
-
-			await client.publish([localTracks[0], localTracks[1]]);
+			// await client.publish([localTracks[0], localTracks[1]]);
 		};
 
 		let leaveStream = async () => {
