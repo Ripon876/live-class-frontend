@@ -93,6 +93,13 @@ function ExamE() {
 				...state,
 				allStationEnd: true,
 			});
+
+			console.log("= = = = = = = = = = = =");
+			console.log("= = = = = = = = = = = =");
+			console.log("exams Ended");
+			console.log("= = = = = = = = = = = =");
+			console.log("= = = = = = = = = = = =");
+			return;
 		});
 
 		return () => {
@@ -188,11 +195,11 @@ function ExamE() {
 
 		let leaveStream = async () => {
 			for (let i = 0; localTracks.length > i; i++) {
-				localTracks[i].stop();
-				localTracks[i].close();
+				await localTracks[i].stop();
+				await localTracks[i].close();
 			}
-			client.leave();
 			await client.unpublish([localTracks[0], localTracks[1]]);
+			await client.leave();
 		};
 		let toggleMic = async () => {
 			setMic((old) => !old);

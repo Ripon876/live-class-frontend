@@ -25,6 +25,7 @@ import { useSearchParams } from "react-router-dom";
 import PDFViewer from "./start-class/PDFViewer";
 import BreakTimer from "./start-class/BreakTimer";
 import PdfPopUp from "./start-class/PdfPopUp";
+import "./style.css";
 
 let socket;
 
@@ -46,14 +47,17 @@ function ExamC() {
 		allStationEnd: false,
 	});
 	const [pdfPopup, setPDFPopup] = useState(false);
-
+	const [exrp, setExRp] = useState(["Examiner", "Roleplayer"]);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
 	const cd = useRef(null);
-	const ex = useRef(null);
+	const exRef = useRef(null);
+	const exVC = useRef(null);
 	const rpRef = useRef(null);
+	const rpVC = useRef(null);
+	const rpVideoContainer = useRef(null);
 	const ls = useRef(null);
 	const se = useRef(null);
 	const tm = useRef(null);
@@ -146,7 +150,7 @@ function ExamC() {
 		let token = null;
 
 		let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
-
+		// AgoraRTC.setLogLevel(4);
 		let roomId = params.get("id");
 		if (!roomId) {
 			roomId = "main";
@@ -163,16 +167,8 @@ function ExamC() {
 				await client.subscribe(user, mediaType);
 				if (mediaType === "video") {
 					if (user.uid?.split("_")[1] === "Examiner") {
-						ex.current.innerHTML = "";
-						user.videoTrack.play(ex.current);
-
-						// socket.emit("getClass", rId, (cls, notfound) => {
-						// 	if (!notfound) {
-						// 		setCls(cls);
-						// 	} else {
-						// 		window.location.href = "/";
-						// 	}
-						// });
+						exRef.current.innerHTML = "";
+						user.videoTrack.play(exRef.current);
 
 						socket.emit("rejoin", stdId, async (data, err) => {
 							console.log(data, err);
@@ -201,7 +197,7 @@ function ExamC() {
 			client.on("user-left", async (user) => {
 				console.log("user left", user);
 				if (user.uid?.split("_")[1] === "Examiner") {
-					ex.current.innerHTML = "";
+					exRef.current.innerHTML = "";
 				} else if (user.uid?.split("_")[1] === "Roleplayer") {
 					rpRef.current.innerHTML = "";
 				}
@@ -217,11 +213,11 @@ function ExamC() {
 
 		let leaveStream = async () => {
 			for (let i = 0; localTracks.length > i; i++) {
-				localTracks[i].stop();
-				localTracks[i].close();
+				await localTracks[i].stop();
+				await localTracks[i].close();
 			}
-			client.leave();
 			await client.unpublish([localTracks[0], localTracks[1]]);
+			await client.leave();
 		};
 
 		let toggleMic = async () => {
@@ -246,15 +242,17 @@ function ExamC() {
 		};
 	}, []);
 
-	const endStation = async () => {
-		await ls.current();
-		setOngoing(false);
-		setCls(null);
-		setPDFPopup((old) => false);
-	};
-
 	useEffect(() => {
 		if (cls) {
+			if (cls?.roleplayer) {
+				for (let elem of rpVideoContainer.current.children) {
+					elem.addEventListener("click", (e) => {
+						console.log("changing video");
+						swapVideo();
+					});
+				}
+			}
+
 			setTimeout(() => {
 				se.current();
 			}, 5000);
@@ -268,6 +266,22 @@ function ExamC() {
 			}
 		}
 	}, [cls]);
+
+	const endStation = async () => {
+		await ls.current();
+		setOngoing(false);
+		setCls(null);
+		setPDFPopup((old) => false);
+	};
+
+	const swapVideo = () => {
+		setExRp((old) => [...old.reverse()]);
+
+		let rpV = rpVC.current.children[0];
+		let exV = exVC.current.children[0];
+		rpVC.current.replaceChildren(exV);
+		exVC.current.replaceChildren(rpV);
+	};
 
 	return (
 		<div
@@ -440,10 +454,10 @@ function ExamC() {
 									<div
 										className={`video cd-video large-video `}
 									>
-										<div className="h-100 w-100">
+										<div className="h-100 w-100" ref={exVC}>
 											<div
 												className="w-100 h-100 bg-black"
-												ref={ex}
+												ref={exRef}
 											></div>
 										</div>
 									</div>
@@ -452,7 +466,7 @@ function ExamC() {
 											variant="body2"
 											color="text.secondary"
 										>
-											Examiner
+											{exrp[0]}
 										</Typography>
 									</CardContent>
 								</Card>
@@ -460,33 +474,41 @@ function ExamC() {
 
 							<div className="mt-3 d-flex">
 								{cls?.roleplayer && (
-									<div className="me-4">
-										<Card
-											className="mb-2"
-											style={{
-												cursor: "pointer",
-												maxWidth: "250px",
-											}}
-										>
-											<div
-												className={`video cd-video  small-video`}
+									<div
+										className="d-flex"
+										ref={rpVideoContainer}
+									>
+										<div className="me-4">
+											<Card
+												className="mb-2"
+												style={{
+													cursor: "pointer",
+													maxWidth: "250px",
+												}}
 											>
-												<div className="h-100 w-100">
-													<div
-														className="w-100 h-100 bg-black"
-														ref={rpRef}
-													></div>
-												</div>
-											</div>
-											<CardContent className="p-2 ps-4">
-												<Typography
-													variant="body2"
-													color="text.secondary"
+												<div
+													className={`video cd-video  small-video`}
 												>
-													Roleplayer
-												</Typography>
-											</CardContent>
-										</Card>
+													<div
+														className="h-100 w-100"
+														ref={rpVC}
+													>
+														<div
+															className="w-100 h-100 bg-black"
+															ref={rpRef}
+														></div>
+													</div>
+												</div>
+												<CardContent className="p-2 ps-4">
+													<Typography
+														variant="body2"
+														color="text.secondary"
+													>
+														{exrp[1]}
+													</Typography>
+												</CardContent>
+											</Card>
+										</div>
 									</div>
 								)}
 								<div

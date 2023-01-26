@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import RemainingTime from "./RemainingTime";
 import Requirements from "./Requirements";
+import Test from "./Test";
 import { useSelector } from "react-redux";
 
 const Dashboard = () => {
@@ -29,6 +30,8 @@ const Dashboard = () => {
       {Object.values(requirements).every((item) => item) && (
         <>{userType !== "admin" && <RemainingTime />}</>
       )}
+
+      {/*<Test />*/}
     </Box>
   );
 };
