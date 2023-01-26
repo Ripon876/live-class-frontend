@@ -28,12 +28,7 @@ function Result() {
 	const [result, setResult] = useState(0);
 
 	useEffect(() => {
-		if (document.querySelector(".opendMenuIcon")) {
-			document.querySelector(".opendMenuIcon").click();
-		}
-		if (theme.palette.mode === "dark") {
-			document.querySelector(".colorModeIcon").click();
-		}
+		 
 
 		axios
 			.get(process.env.REACT_APP_SERVER_URL + "/student/get-result", {
