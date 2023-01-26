@@ -375,7 +375,7 @@ function ExamE() {
 			{/* delay time  */}
 			{state?.delay && (
 				<h3 style={{ marginTop: "300px", textAlign: "center" }}>
-					Taking you to next station{" "}
+					Waiting for next candidate{" "}
 					<BreakTimer ct={Date.now()} rt={0.5} delay ss={hideDelay} />
 				</h3>
 			)}
