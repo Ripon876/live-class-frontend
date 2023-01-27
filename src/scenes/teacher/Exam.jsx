@@ -125,13 +125,13 @@ function ExamE() {
 		let localTracks = [];
 		let remoteUsers = {};
 
-		let joinRoomInit = async (rId) => {
-			await client.join(APP_ID, rId, token, uid);
+		(async () => {
 			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
 			exRef.current.innerHTML = "";
 			localTracks[1].play(exRef.current);
-			await client.publish([localTracks[0], localTracks[1]]);
+		})();
 
+		let joinRoomInit = async (rId) => {
 			client.on("user-published", async (user, mediaType) => {
 				console.log("new user joined", user);
 
@@ -189,10 +189,14 @@ function ExamE() {
 
 				console.log("user left", user);
 			});
-		};
 
-		let joinStream = async () => {
-			// await client.publish([localTracks[0], localTracks[1]]);
+			let join = await client.join(APP_ID, rId, token, uid);
+
+			if (join) {
+				setTimeout(async () => {
+					await client.publish([localTracks[0], localTracks[1]]);
+				}, 500);
+			}
 		};
 
 		let leaveStream = async () => {
@@ -214,9 +218,6 @@ function ExamE() {
 		};
 		ls.current = leaveStream;
 		tm.current = toggleMic;
-		setTimeout(() => {
-			joinStream();
-		}, 5000);
 
 		joinRoomInit(roomId);
 

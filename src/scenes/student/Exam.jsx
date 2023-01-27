@@ -161,12 +161,9 @@ function ExamC() {
 		let remoteUsers = {};
 
 		let joinRoomInit = async (rId) => {
-			await client.join(APP_ID, rId, token, uid);
-
 			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
 			cd.current.innerHTML = "";
 			localTracks[1].play(cd.current);
-			await client.publish([localTracks[0], localTracks[1]]);
 
 			client.on("user-published", async (user, mediaType) => {
 				console.log("new user joined", user);
@@ -209,10 +206,18 @@ function ExamC() {
 					rpRef.current.innerHTML = "";
 				}
 			});
-		};
 
-		let joinStream = async () => {
-			// await client.publish([localTracks[0], localTracks[1]]);
+			let join = await client.join(APP_ID, rId, token, uid);
+
+			console.log(" = = = = = = = = ");
+			console.log(join);
+
+			console.log(" = = = = = = = = ");
+			if (join) {
+				setTimeout(async () => {
+					await client.publish([localTracks[0], localTracks[1]]);
+				}, 600);
+			}
 		};
 
 		let leaveStream = async () => {
@@ -237,7 +242,6 @@ function ExamC() {
 		ls.current = leaveStream;
 		tm.current = toggleMic;
 
-		se.current = joinStream;
 		joinStation.current = joinRoomInit;
 		joinRoomInit(roomId);
 
@@ -256,10 +260,6 @@ function ExamC() {
 					});
 				}
 			}
-
-			setTimeout(() => {
-				se.current();
-			}, 5000);
 
 			if (cls?.pdf) {
 				setPDFPopup((old) => true);
