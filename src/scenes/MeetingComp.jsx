@@ -1,10 +1,11 @@
 import { JitsiMeeting } from "@jitsi/react-sdk";
 
-const MeetingComp = ({ id, title, name }) => {
+const MeetingComp = ({ id, title, name, apiRef, sct }) => {
 	return (
 		<JitsiMeeting
 			configOverwrite={{
 				startWithAudioMuted: true,
+				startWithVideoMuted: true,
 				hiddenPremeetingButtons: ["microphone"],
 				prejoinPageEnabled: false,
 				logoImageUrl: "",
@@ -20,6 +21,9 @@ const MeetingComp = ({ id, title, name }) => {
 				disableSelfView: true,
 				hideParticipantsStats: true,
 				subject: title,
+				giphy: {
+					enabled: false,
+				},
 			}}
 			spinner={Sp}
 			interfaceConfigOverwrite={{
@@ -45,6 +49,16 @@ const MeetingComp = ({ id, title, name }) => {
 			}}
 			userInfo={{
 				displayName: name,
+			}}
+			onApiReady={(externalApi) => {
+				console.log("api ready");
+
+				if (apiRef) {
+					apiRef.current = externalApi;
+				}
+				if (sct) {
+					// sct(Date.now());
+				}
 			}}
 			// getIFrameRef={(node) => (node.style.width = "400px"  )}
 			key={"34543df"}

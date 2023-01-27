@@ -55,6 +55,6 @@ html,
   transform: translateY(-60%);
 }
 
-.examiner-v #jitsiMeeting-0 {
+#jitsiMeeting-0 {
   height: 600px;
 }

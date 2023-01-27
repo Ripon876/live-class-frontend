@@ -52,7 +52,6 @@ function ExamC() {
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
 
-
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
