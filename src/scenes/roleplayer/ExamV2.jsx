@@ -1,6 +1,8 @@
 import React from "react";
 import { JitsiMeeting } from "@jitsi/react-sdk";
 
+const Sp = () => <h4>Connecting to station</h4>;
+
 function ExamV2R() {
 	return (
 		<div className="examiner-v">
@@ -9,9 +11,21 @@ function ExamV2R() {
 					startWithAudioMuted: true,
 					hiddenPremeetingButtons: ["microphone"],
 					prejoinPageEnabled: false,
-					logoImageUrl: "/logo-form.png",
-					defaultLogoUrl: "/logo-form.png",
+					logoImageUrl: "",
+					DEFAULT_LOGO_URL: "",
+					defaultLocalDisplayName: "me",
+					readOnlyName: true,
+					enableInsecureRoomNameWarning: false,
+					disableInviteFunctions: true,
+					remoteVideoMenu: {
+						disabled: true,
+					},
+					hideRecordingLabel: false,
+					disableSelfView: true,
+					hideParticipantsStats: true,
+					subject: "Station Number",
 				}}
+				spinner={Sp}
 				interfaceConfigOverwrite={{
 					DEFAULT_BACKGROUND: "#3b98ff",
 					noSsl: true,
@@ -20,11 +34,11 @@ function ExamV2R() {
 					SHOW_BRAND_WATERMARK: false,
 					SHOW_WATERMARK_FOR_GUESTS: false,
 					SHOW_POWERED_BY: false,
-					DEFAULT_WELCOME_PAGE_LOGO_URL: "",
+					SHOW_CHROME_EXTENSION_BANNER: false,
 					TOOLBAR_BUTTONS: [
 						"microphone",
 						"camera",
-						"closedcaptions",
+						// "closedcaptions",
 						"desktop",
 						"fullscreen",
 						// "settings",

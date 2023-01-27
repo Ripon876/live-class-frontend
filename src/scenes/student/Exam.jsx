@@ -32,7 +32,6 @@ let uid;
 function ExamC() {
 	const stdId = useSelector((state) => state.user.id);
 	const [std, setStd] = useState(null);
-	const [mic, setMic] = useState(true);
 	const [note, setNote] = useState(false);
 	const [cls, setCls] = useState(null);
 	const [readed, setReaded] = useState(false);
@@ -52,16 +51,7 @@ function ExamC() {
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
-	const cd = useRef(null);
-	const exRef = useRef(null);
-	const exVC = useRef(null);
-	const rpRef = useRef(null);
-	const rpVC = useRef(null);
-	const rpVideoContainer = useRef(null);
-	const ls = useRef(null);
-	const se = useRef(null);
-	const tm = useRef(null);
-	const joinStation = useRef(null);
+
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
@@ -119,8 +109,6 @@ function ExamC() {
 			socket.emit("getClass", id, (cls, notfound) => {
 				if (!notfound) {
 					setCls(cls);
-
-					joinStation.current(id);
 				} else {
 					window.location.href = "/";
 				}
@@ -128,7 +116,6 @@ function ExamC() {
 		});
 
 		socket.on("examsEnded", () => {
-			ls.current();
 			setPDFPopup((old) => false);
 			setState({
 				...state,
@@ -145,122 +132,10 @@ function ExamC() {
 		if (document.querySelector(".opendMenuIcon")) {
 			document.querySelector(".opendMenuIcon").click();
 		}
-
-		const APP_ID = "0d85c587d13f40b39258dd698cd77421";
-
-		uid = String(Math.floor(Math.random() * 50000) + "_Candidate");
-		let token = null;
-
-		let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
-		// AgoraRTC.setLogLevel(4);
-		let roomId = params.get("id");
-		if (!roomId) {
-			roomId = "main";
-		}
-		let localTracks = [];
-		let remoteUsers = {};
-
-		let joinRoomInit = async (rId) => {
-			localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
-			cd.current.innerHTML = "";
-			localTracks[1].play(cd.current);
-
-			client.on("user-published", async (user, mediaType) => {
-				console.log("new user joined", user);
-				remoteUsers[user.uid] = user;
-				await client.subscribe(user, mediaType);
-				if (mediaType === "video") {
-					if (user.uid?.split("_")[1] === "Examiner") {
-						exRef.current.innerHTML = "";
-						user.videoTrack.play(exRef.current);
-
-						socket.emit("rejoin", stdId, async (data, err) => {
-							console.log(data, err);
-							if (data) {
-								setOngoing(true);
-								setCurrentgTime(Date.now());
-								setRemainingTime(data.rt);
-							}
-						});
-					} else if (user.uid?.split("_")[1] === "Roleplayer") {
-						console.log(" = = = = = = = =  = = = =");
-						console.log(" roleplayer joining ");
-						console.log(" = = = = = = = =  = = = =");
-
-						rpRef.current.innerHTML = "";
-						user.videoTrack.play(rpRef.current);
-					}
-				}
-				if (mediaType === "audio") {
-					user.audioTrack.play();
-				}
-			});
-			client.on("user-joined", async (user) => {
-				console.log("user joined", user);
-			});
-			client.on("user-left", async (user) => {
-				console.log("user left", user);
-				if (user.uid?.split("_")[1] === "Examiner") {
-					exRef.current.innerHTML = "";
-				} else if (user.uid?.split("_")[1] === "Roleplayer") {
-					rpRef.current.innerHTML = "";
-				}
-			});
-
-			let join = await client.join(APP_ID, rId, token, uid);
-
-			console.log(" = = = = = = = = ");
-			console.log(join);
-
-			console.log(" = = = = = = = = ");
-			if (join) {
-				setTimeout(async () => {
-					await client.publish([localTracks[0], localTracks[1]]);
-				}, 600);
-			}
-		};
-
-		let leaveStream = async () => {
-			for (let i = 0; localTracks.length > i; i++) {
-				await localTracks[i].stop();
-				await localTracks[i].close();
-			}
-			await client.unpublish([localTracks[0], localTracks[1]]);
-			await client.leave();
-		};
-
-		let toggleMic = async () => {
-			setMic((old) => !old);
-			console.log("setting mic");
-			if (localTracks[0].muted) {
-				await localTracks[0].setMuted(false);
-			} else {
-				await localTracks[0].setMuted(true);
-			}
-		};
-
-		ls.current = leaveStream;
-		tm.current = toggleMic;
-
-		joinStation.current = joinRoomInit;
-		joinRoomInit(roomId);
-
-		return async () => {
-			await leaveStream();
-		};
 	}, []);
 
 	useEffect(() => {
 		if (cls) {
-			if (cls?.roleplayer) {
-				for (let elem of rpVideoContainer.current.children) {
-					elem.addEventListener("click", (e) => {
-						console.log("changing video");
-						swapVideo();
-					});
-				}
-			}
-
 			if (cls?.pdf) {
 				setPDFPopup((old) => true);
 				setTimeout(() => {
@@ -272,19 +147,7 @@ function ExamC() {
 	}, [cls]);
 
 	const endStation = async () => {
-		await ls.current();
-		setOngoing(false);
-		setCls(null);
 		setPDFPopup((old) => false);
-	};
-
-	const swapVideo = () => {
-		setExRp((old) => [...old.reverse()]);
-
-		let rpV = rpVC.current.children[0];
-		let exV = exVC.current.children[0];
-		rpVC.current.replaceChildren(exV);
-		exVC.current.replaceChildren(rpV);
 	};
 
 	return (
