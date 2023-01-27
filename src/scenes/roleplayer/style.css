@@ -13,7 +13,7 @@
 	width: 20%;
 	height: 20%;
 	background: #10162321;
-	border: 5px solid #0e131e;
+	border: 3px solid #41464b !important;
 	border-top-left-radius: 10px;
 }
 .myVideo video {
@@ -38,7 +38,7 @@
 	width: 20%;
 	height: 20%;
 	background: #10162321;
-	border: 5px solid #0e131e;
+	border: 3px solid #41464b !important;
 	border-top-left-radius: 10px;
 }
 
@@ -66,7 +66,7 @@
 	height: 100%;
 	object-fit: cover;
 	background: #0e131ea3;
-	border: 5px solid #0e131e;
+	border: 3px solid #41464b !important;
 	border-radius: 10px;
 }
 .caller {

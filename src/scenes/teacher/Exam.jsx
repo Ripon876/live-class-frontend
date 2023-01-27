@@ -311,7 +311,11 @@ function ExamE() {
 
 								<div
 									className="video myVideo"
-									style={{ zIndex: 9999 }}
+									style={{
+										zIndex: 9999,
+										border: "3px solid #41464b !important",
+										borderRadius: "5px",
+									}}
 								>
 									<div className="h-100">
 										<div
@@ -342,8 +346,8 @@ function ExamE() {
 									ref={cdRef}
 									className="video otherVideo"
 									style={{
-										border: "5px solid #0e131e",
-										borderRadius: "10px",
+										border: "3px solid #41464b !important",
+										borderRadius: "5px",
 									}}
 								>
 									<h3 className="watingText">
