@@ -132,7 +132,7 @@ function Login() {
 								>
 									Login
 								</button>
-								<p className="mb-0">
+								{/*<p className="mb-0">
 									Don't have an account ?
 									<Link
 										to="/register"
@@ -140,7 +140,7 @@ function Login() {
 									>
 										Register now
 									</Link>
-								</p>
+								</p>*/}
 							</div>
 						</form>
 					</div>
