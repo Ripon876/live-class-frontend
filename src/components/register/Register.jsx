@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
@@ -6,22 +6,20 @@ import "./Register.css";
 
 function Register() {
 	const [formData, setFormData] = useState({
-		name: '',
+		name: "",
 		email: "",
 		password: "",
 	});
 	const [errMsg, setErrMsg] = useState("");
 	const [sucMsg, setSucMsg] = useState("");
 	const navigate = useNavigate();
-const [cookies, setCookie] = useCookies([]);
+	const [cookies, setCookie] = useCookies([]);
 
 	useEffect(() => {
 		if (cookies.token) {
 			navigate("/");
 		}
 	}, []);
-
-
 
 	const handleChange = (e) => {
 		let value = e.target.value;
@@ -42,9 +40,9 @@ const [cookies, setCookie] = useCookies([]);
 			})
 			.then((data) => {
 				setSucMsg("Account Registered Successfully");
-				setTimeout(()=> {
-					navigate('/login');
-				},1500);
+				setTimeout(() => {
+					navigate("/login");
+				}, 1500);
 			})
 			.catch((err) => {
 				setErrMsg(err.response.data.message);
@@ -56,6 +54,27 @@ const [cookies, setCookie] = useCookies([]);
 			<div className="container">
 				<div className="registerForm">
 					<div className="border formContainer p-4 rounded-2 shadow-sm">
+						<div className="formHeader">
+							<div className="row">
+								<div className="col-4">
+									<img
+										src="./logo-form.png"
+										alt=""
+										className="img-fluid"
+									/>
+								</div>
+								<div className="col-8">
+									<h5 className="text-start fw-bold">
+										Welcome to RFA Tutors
+									</h5>
+									<p className="mb-0 text-secondary">
+										Your practice partner for your exams
+									</p>
+								</div>
+							</div>
+							<hr />
+						</div>
+
 						{sucMsg && !errMsg && (
 							<div className="alert alert-success" role="alert">
 								{sucMsg}

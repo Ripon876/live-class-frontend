@@ -64,6 +64,27 @@ function Login() {
 			<div className="container">
 				<div className="loginForm">
 					<div className="border formContainer p-4 rounded-2 shadow-sm">
+						<div className="formHeader">
+							<div className="row">
+								<div className="col-4">
+									<img
+										src="./logo-form.png"
+										alt=""
+										className="img-fluid"
+									/>
+								</div>
+								<div className="col-8">
+									<h5 className="text-start fw-bold">
+										Welcome to RFA Tutors
+									</h5>
+									<p className="mb-0 text-secondary">
+										Your practice partner for your exams
+									</p>
+								</div>
+							</div>
+							<hr />
+						</div>
+
 						{sucMsg && !errMsg && (
 							<div className="alert alert-success" role="alert">
 								{sucMsg}. Taking you to the dashboard
