@@ -42,3 +42,19 @@ html,
 .myVideo div {
   height: 100% !important;
 }
+
+.watermark .leftwatermark {
+  display: none !important;
+}
+
+.examiner-v {
+  margin: auto;
+  width: 80%;
+  position: relative;
+  top: 50%;
+  transform: translateY(-60%);
+}
+
+.examiner-v #jitsiMeeting-0 {
+  height: 600px;
+}
