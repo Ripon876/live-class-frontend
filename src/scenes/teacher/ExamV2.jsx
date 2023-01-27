@@ -1,57 +1,10 @@
 import React from "react";
-import { JitsiMeeting } from "@jitsi/react-sdk";
+import MeetingComp from "../MeetingComp";
 
-const Sp = () => <h4>Connecting to station</h4>;
 function ExamV2E() {
 	return (
 		<div className="examiner-v">
-			<JitsiMeeting
-				configOverwrite={{
-					startWithAudioMuted: true,
-					hiddenPremeetingButtons: ["microphone"],
-					prejoinPageEnabled: false,
-					logoImageUrl: "",
-					DEFAULT_LOGO_URL: "",
-					defaultLocalDisplayName: "me",
-					readOnlyName: true,
-					enableInsecureRoomNameWarning: false,
-					disableInviteFunctions: true,
-					remoteVideoMenu: {
-						disabled: true,
-					},
-					hideRecordingLabel: false,
-					disableSelfView: true,
-					hideParticipantsStats: true,
-					subject: "Station Number",
-				}}
-				spinner={Sp}
-				interfaceConfigOverwrite={{
-					DEFAULT_BACKGROUND: "#3b98ff",
-					noSsl: true,
-					SHOW_JITSI_WATERMARK: false,
-					HIDE_DEEP_LINKING_LOGO: false,
-					SHOW_BRAND_WATERMARK: false,
-					SHOW_WATERMARK_FOR_GUESTS: false,
-					SHOW_POWERED_BY: false,
-					SHOW_CHROME_EXTENSION_BANNER: false,
-					TOOLBAR_BUTTONS: [
-						"microphone",
-						"camera",
-						// "closedcaptions",
-						"desktop",
-						"fullscreen",
-						// "settings",
-						"raisehand",
-						// "videoquality",
-					],
-				}}
-				userInfo={{
-					displayName: "Examiner",
-				}}
-				// getIFrameRef={(node) => (node.style.width = "400px"  )}
-				key={"34543df"}
-				roomName={"Station" + 1}
-			/>
+			<MeetingComp id={10} title="First Station" name="Examiner" />
 		</div>
 	);
 }
