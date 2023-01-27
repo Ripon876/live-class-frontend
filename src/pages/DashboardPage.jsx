@@ -21,17 +21,6 @@ function DashboardPage() {
 							<Topbar />
 							<Outlet />
 							{userType !== "admin" && <JoinExam />}
-							<div>
-								<img
-									src="./logo.png"
-									className="img-fluid me-2 mt-1 p-1 position-absolute sticky-bottom"
-									style={{
-										right: "5px",
-										bottom: "5px",
-										maxWidth: "170px",
-									}}
-								/>
-							</div>
 						</main>
 					</div>
 				</ProSidebarProvider>
