@@ -99,7 +99,7 @@ function ExamV2C() {
 		});
 		socket.on("breakStart", (bt) => {
 			setCls((old) => null);
-			setBT(bt);
+			setBT((old) => bt);
 			setState({
 				...state,
 				break: true,
@@ -138,6 +138,18 @@ function ExamV2C() {
 			socket.disconnect();
 		};
 	}, []);
+
+	useEffect(() => {
+		if (cls) {
+			if (cls?.pdf) {
+				setPDFPopup((old) => true);
+				setTimeout(() => {
+					setReaded(true);
+					setPDFPopup((old) => false);
+				}, cls.pdf.visibleFor * 60 * 1000);
+			}
+		}
+	}, [cls]);
 
 	return (
 		<>
@@ -318,13 +330,8 @@ function ExamV2C() {
 												sct={setCurrentgTime}
 												ao={{
 													type: "student",
-													cd: {
-														name: std?.name,
-													},
-													ex: {
-														name: cls?.teacher
-															?.name,
-													},
+													cd: std?.name,
+													ex: cls?.teacher?.name,
 												}}
 											/>
 										)}
