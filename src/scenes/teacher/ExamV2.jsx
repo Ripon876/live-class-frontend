@@ -9,6 +9,9 @@ import BreakTimer from "./BreakTimer";
 import MoodIcon from "@mui/icons-material/Mood";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import CandidateInfo from "./start-exam/CandidateInfo";
+import Mark from "./start-exam/Mark";
+import axios from "axios";
 
 let socket;
 function ExamV2E() {
@@ -34,7 +37,6 @@ function ExamV2E() {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 		socket.on("connect", () => {
-			// console.log("socket connected");
 			socket.emit("setActive", { id: teacher.id });
 
 			socket.emit("getClass", params.get("id"), (cls, notfound) => {
@@ -44,13 +46,14 @@ function ExamV2E() {
 					}
 					setCls(cls);
 					setRemainingTime(cls.classDuration);
+
+					getCD();
 				} else {
 					window.location.href = "/";
 				}
 			});
 
 			socket.emit("rejoin", teacher.id, async (data, err) => {
-				
 				if (data) {
 					setOngoing(true);
 					setCurrentgTime(Date.now());
@@ -64,17 +67,23 @@ function ExamV2E() {
 				...state,
 				delay: true,
 			});
+			setCd((old) => null);
+			setMark((old) => true);
+			setMSubmited((old) => false);
 		});
 
 		socket.on("delayEnd", () => {
-			// uid = String(Math.floor(Math.random() * 50000) + "_Examiner");
 			setState({
 				...state,
 				delay: false,
 			});
+			getCD();
 		});
 
 		socket.on("breakStart", (bt) => {
+			setMSubmited((old) => false);
+			setMark((old) => true);
+			setCd((old) => null);
 			setBT((old) => bt);
 			setState({
 				...state,
@@ -82,30 +91,40 @@ function ExamV2E() {
 			});
 		});
 		socket.on("breakEnd", () => {
-			// uid = String(Math.floor(Math.random() * 50000) + "_Examiner");
 			setState({
 				...state,
 				break: false,
 			});
+			getCD();
 		});
 
 		socket.on("examsEnded", () => {
+			setCd((old) => null);
 			setState({
 				...state,
 				allStationEnd: true,
 			});
 
-			console.log("= = = = = = = = = = = =");
-			console.log("= = = = = = = = = = = =");
-			console.log("exams Ended");
-			console.log("= = = = = = = = = = = =");
-			console.log("= = = = = = = = = = = =");
+
 		});
 
 		return () => {
 			socket.disconnect();
 		};
 	}, []);
+
+	const getCD = () => {
+		setTimeout(() => {
+			axios
+				.post(process.env.REACT_APP_SERVER_URL + "/getCD", {
+					id: params.get("id"),
+				})
+				.then((data) => {
+					setCd((old) => data.data.cd);
+					console.log("received cd", data.data.cd);
+				});
+		}, 1000);
+	};
 
 	return (
 		<div
@@ -138,6 +157,27 @@ function ExamV2E() {
 								title={cls?.title}
 								name={teacher.name}
 							/>
+							{cd && (
+								<div>
+									<CandidateInfo og={true} cdn={cd.cd.name} />
+
+									{mSubmited && (
+										<h3 className="text-success">
+											Result Submited
+										</h3>
+									)}
+
+									{mark && (
+										<Mark
+											list={cls?.checklist}
+											sm={setMark}
+											ms={setMSubmited}
+											cId={cd.cd._id}
+											eId={cls?._id}
+										/>
+									)}
+								</div>
+							)}
 						</Grid>
 					</Grid>
 				)}

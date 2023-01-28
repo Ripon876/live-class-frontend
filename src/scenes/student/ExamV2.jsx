@@ -74,7 +74,36 @@ function ExamV2C() {
 					window.location.href = "/";
 				}
 			});
+
+			socket.on("examIdCd", (id) => {
+				setRoomId((old) => id);
+				setSearchParams({ id: id });
+
+				socket.emit("getClass", id, (cls, notfound) => {
+					if (!notfound) {
+						setCls(cls);
+					} else {
+						window.location.href = "/";
+					}
+				});
+			});
+
+			// socket.on("stId", (obj) => {
+			// 	if (obj.std == std.id) {
+			// 		setRoomId((old) => obj.st);
+			// 		setSearchParams({ id: obj.st });
+
+			// 		socket.emit("getClass", obj.st, (cls, notfound) => {
+			// 			if (!notfound) {
+			// 				setCls(cls);
+			// 			} else {
+			// 				window.location.href = "/";
+			// 			}
+			// 		});
+			// 	}
+			// });
 		});
+
 		socket.on("examsEnded", () => {
 			setPDFPopup((old) => false);
 			setState({
@@ -113,19 +142,6 @@ function ExamV2C() {
 			});
 		});
 
-		socket.on("examIdCd", (id) => {
-			setRoomId((old) => id);
-			setSearchParams({ id: id });
-
-			socket.emit("getClass", id, (cls, notfound) => {
-				if (!notfound) {
-					setCls(cls);
-				} else {
-					window.location.href = "/";
-				}
-			});
-		});
-
 		socket.on("examsEnded", () => {
 			setPDFPopup((old) => false);
 			setState({
@@ -160,55 +176,56 @@ function ExamV2C() {
 					overflowX: "hidden",
 				}}
 			>
-				<Box
-					sx={{ flexGrow: 1 }}
-					className="px-3 mt-5 pt-5"
-					sx={{
-						display:
-							!state?.delay &&
-							!state?.break &&
-							!state?.allStationEnd
-								? "block"
-								: "none",
-					}}
-				>
-					<Grid
-						container
-						spacing={3}
-						className="justify-content-center"
+				{!state?.delay && !state?.break && !state?.allStationEnd && (
+					<Box
+						sx={{ flexGrow: 1 }}
+						className="px-3 mt-5 pt-5"
+						// sx={{
+						// 	display:
+						// 		!state?.delay &&
+						// 		!state?.break &&
+						// 		!state?.allStationEnd
+						// 			? "block"
+						// 			: "none",
+						// }}
 					>
-						<Grid item sm={4} md={3}>
-							<div>
-								<Card
-									className="mb-2"
-									style={{ cursor: "normal" }}
-								>
-									<CardContent className="p-2 ps-4">
-										<Typography
-											gutterBottom
-											variant="h3"
-											component="div"
-											className="m-0"
-										>
-											{std?.name}
-										</Typography>
-
-										<Typography
-											variant="body2"
-											color="text.secondary"
-										>
-											Candidate
-										</Typography>
-									</CardContent>
-								</Card>
-
-								<Card className="mb-2">
-									<ButtonGroup
-										className="justify-content-around w-100 py-1"
-										variant="contained"
-										aria-label="Disabled elevation buttons"
+						<Grid
+							container
+							spacing={3}
+							className="justify-content-center"
+						>
+							<Grid item sm={4} md={3}>
+								<div>
+									<Card
+										className="mb-2"
+										style={{ cursor: "normal" }}
 									>
-										{/*<IconButton aria-label="delete">
+										<CardContent className="p-2 ps-4">
+											<Typography
+												gutterBottom
+												variant="h3"
+												component="div"
+												className="m-0"
+											>
+												{std?.name}
+											</Typography>
+
+											<Typography
+												variant="body2"
+												color="text.secondary"
+											>
+												Candidate
+											</Typography>
+										</CardContent>
+									</Card>
+
+									<Card className="mb-2">
+										<ButtonGroup
+											className="justify-content-around w-100 py-1"
+											variant="contained"
+											aria-label="Disabled elevation buttons"
+										>
+											{/*<IconButton aria-label="delete">
 											{mic ? (
 												<MicIcon onClick={toggleMic} />
 											) : (
@@ -217,54 +234,87 @@ function ExamV2C() {
 												/>
 											)}
 										</IconButton>*/}
-										{cls?.pdf && (
+											{cls?.pdf && (
+												<IconButton
+													aria-label="delete"
+													onClick={() =>
+														setPDFPopup(!pdfPopup)
+													}
+												>
+													<PictureAsPdfIcon />
+												</IconButton>
+											)}
+
 											<IconButton
 												aria-label="delete"
-												onClick={() =>
-													setPDFPopup(!pdfPopup)
-												}
+												onClick={() => setNote(!note)}
 											>
-												<PictureAsPdfIcon />
+												<NoteAltIcon />
 											</IconButton>
-										)}
-
-										<IconButton
-											aria-label="delete"
-											onClick={() => setNote(!note)}
+										</ButtonGroup>
+									</Card>
+									<Card className="mb-3">
+										<List
+											component="nav"
+											aria-label="secondary mailbox folder"
 										>
-											<NoteAltIcon />
-										</IconButton>
-									</ButtonGroup>
-								</Card>
-								<Card className="mb-3">
-									<List
-										component="nav"
-										aria-label="secondary mailbox folder"
-									>
-										<ListItem>
-											<ListItemText>
-												<Typography
-													gutterBottom
-													variant="h3"
-													component="div"
-													className="m-0"
-												>
-													{cls?.title}
-												</Typography>
-											</ListItemText>
-										</ListItem>
-										{cls?.pdf && (
-											<>
-												<Divider />
-												<ListItem>
-													<ListItemText
-														primary="Reading Time"
-														secondary={`${cls?.pdf?.visibleFor} minute`}
-													/>
-													{readed && (
+											<ListItem>
+												<ListItemText>
+													<Typography
+														gutterBottom
+														variant="h3"
+														component="div"
+														className="m-0"
+													>
+														{cls?.title}
+													</Typography>
+												</ListItemText>
+											</ListItem>
+											{cls?.pdf && (
+												<>
+													<Divider />
+													<ListItem>
+														<ListItemText
+															primary="Reading Time"
+															secondary={`${cls?.pdf?.visibleFor} minute`}
+														/>
+														{readed && (
+															<ListItemText
+																primary={
+																	<CheckCircleIcon color="success" />
+																}
+																style={{
+																	textAlign:
+																		"right",
+																}}
+															/>
+														)}
+													</ListItem>
+												</>
+											)}
+											<Divider />
+											<ListItem>
+												<ListItemText primary="Remaining Time" />
+
+												{currentTime &&
+													!onGoing &&
+													!remainingTIme && (
 														<ListItemText
 															primary={
-																<CheckCircleIcon color="success" />
+																<Countdown
+																	key={
+																		currentTime
+																	}
+																	date={
+																		currentTime +
+																		4 *
+																			60 *
+																			1000
+																	}
+																	renderer={
+																		TimeRenderer
+																	}
+																/>
 															}
 															style={{
 																textAlign:
@@ -272,106 +322,83 @@ function ExamV2C() {
 															}}
 														/>
 													)}
-												</ListItem>
-											</>
-										)}
-										<Divider />
-										<ListItem>
-											<ListItemText primary="Remaining Time" />
-
-											{currentTime &&
-												!onGoing &&
-												!remainingTIme && (
-													<ListItemText
-														primary={
-															<Countdown
-																key={
-																	currentTime
-																}
-																date={
-																	currentTime +
-																	4 *
-																		60 *
-																		1000
-																}
-																renderer={
-																	TimeRenderer
-																}
-															/>
-														}
-														style={{
-															textAlign: "right",
-														}}
-													/>
-												)}
-										</ListItem>
-										<Divider />
-										<ListItem>
-											<ListItemText
-												secondary="There is 1 examiner"
-												secondaryTypographyProps={{
-													fontSize: "20px",
-												}}
-											/>
-										</ListItem>
-									</List>
-								</Card>
-							</div>
-						</Grid>
-						<Grid item sm={8} md={8}>
-							<div>
+											</ListItem>
+											<Divider />
+											<ListItem>
+												<ListItemText
+													secondary="There is 1 examiner"
+													secondaryTypographyProps={{
+														fontSize: "20px",
+													}}
+												/>
+											</ListItem>
+										</List>
+									</Card>
+								</div>
+							</Grid>
+							<Grid item sm={8} md={8}>
 								<div>
 									<div>
-										{!state?.allStationEnd && cls && (
-											<MeetingComp
-												id={roomId}
-												title={cls?.title}
-												name={std?.name}
-												sct={setCurrentgTime}
-												ao={{
-													type: "student",
-													cd: std?.name,
-													ex: cls?.teacher?.name,
-												}}
-											/>
-										)}
+										<div>
+											{!state?.allStationEnd && cls && (
+												<MeetingComp
+													id={roomId}
+													title={cls?.title}
+													name={std?.name}
+													sct={setCurrentgTime}
+													ao={{
+														exam: cls?._id,
+														type: "student",
+														cd: {
+															name: std?.name,
+															_id: std?.id,
+														},
+														ex: cls?.teacher,
+													}}
+												/>
+											)}
+										</div>
 									</div>
-								</div>
 
-								<div className="mt-3 d-flex">
-									<div
-										style={{
-											display: note ? "block" : "none",
-										}}
-										className="w-100"
-									>
-										<div className="form-group">
-											<label htmlFor="note">Note</label>
-											<textarea
-												placeholder="Write note"
-												className="form-control"
-												rows="6"
-												id="note"
-											></textarea>
+									<div className="mt-3 d-flex">
+										<div
+											style={{
+												display: note
+													? "block"
+													: "none",
+											}}
+											className="w-100"
+										>
+											<div className="form-group">
+												<label htmlFor="note">
+													Note
+												</label>
+												<textarea
+													placeholder="Write note"
+													className="form-control"
+													rows="6"
+													id="note"
+												></textarea>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
 
-							<div>
 								<div>
-									{cls?.pdf && pdfPopup && (
-										<PdfPopUp
-											pdf={cls?.pdf?.file}
-											setOp={setPDFPopup}
-										/>
-									)}
+									<div>
+										{cls?.pdf && pdfPopup && (
+											<PdfPopUp
+												pdf={cls?.pdf?.file}
+												setOp={setPDFPopup}
+											/>
+										)}
+									</div>
 								</div>
-							</div>
+							</Grid>
 						</Grid>
-					</Grid>
-				</Box>
-				<StatetMsgs state={state} role="cd" />
+					</Box>
+				)}
+				<StatetMsgs state={state} breakTime={breakTime} role="cd" />
 			</div>
 		</>
 	);
