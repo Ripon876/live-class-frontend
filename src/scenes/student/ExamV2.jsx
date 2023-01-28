@@ -27,9 +27,12 @@ import StatetMsgs from "../StatetMsgs";
 import PdfPopUp from "./start-class/PdfPopUp";
 import BreakTimer from "./start-class/BreakTimer";
 
+let socket;
 function ExamV2C() {
-	const stdId = useSelector((state) => state.user.id);
-	const [std, setStd] = useState(null);
+	const queryString = window.location.search;
+	const params = new URLSearchParams(queryString);
+	const std = useSelector((state) => state.user);
+	// const [std, setStd] = useState(null);
 	const [note, setNote] = useState(false);
 	const [mic, setMic] = useState(false);
 	const [cls, setCls] = useState(null);
@@ -44,12 +47,11 @@ function ExamV2C() {
 		delay: false,
 		allStationEnd: false,
 	});
+	const [roomId, setRoomId] = useState(params.get("id"));
 	const [pdfPopup, setPDFPopup] = useState(false);
 	const [exrp, setExRp] = useState(["Examiner", "Roleplayer"]);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [remainingTIme, setRemainingTime] = useState(0);
-	const queryString = window.location.search;
-	const params = new URLSearchParams(queryString);
 
 	const apiRef = useRef(null);
 
@@ -59,14 +61,84 @@ function ExamV2C() {
 		}
 	}, []);
 
-	const toggleMic = () => {
-		console.log("toggling", apiRef.current);
-		apiRef.current?.executeCommand("toggleAudio");
-	};
-
 	useEffect(() => {
-		console.log(apiRef);
-	}, [apiRef]);
+		socket = io.connect(process.env.REACT_APP_SERVER_URL);
+
+		socket.on("connect", () => {
+			socket.emit("setActive", { id: std.id });
+
+			socket.emit("getClass", params.get("id"), (cls, notfound) => {
+				if (!notfound) {
+					setCls(cls);
+				} else {
+					window.location.href = "/";
+				}
+			});
+		});
+		socket.on("examsEnded", () => {
+			setPDFPopup((old) => false);
+			setState({
+				...state,
+				allStationEnd: true,
+			});
+		});
+
+		socket.on("delayStart", () => {
+			setCls((old) => null);
+			setState({
+				...state,
+				delay: true,
+			});
+			setPDFPopup((old) => false);
+		});
+		socket.on("delayEnd", () => {
+			setState({
+				...state,
+				delay: false,
+			});
+		});
+		socket.on("breakStart", (bt) => {
+			setCls((old) => null);
+			setBT(bt);
+			setState({
+				...state,
+				break: true,
+			});
+			setPDFPopup((old) => false);
+		});
+		socket.on("breakEnd", () => {
+			setState({
+				...state,
+				break: false,
+			});
+		});
+
+		socket.on("examIdCd", (id) => {
+			setRoomId((old) => id);
+			setSearchParams({ id: id });
+
+			socket.emit("getClass", id, (cls, notfound) => {
+				if (!notfound) {
+					setCls(cls);
+				} else {
+					window.location.href = "/";
+				}
+			});
+		});
+
+		socket.on("examsEnded", () => {
+			setPDFPopup((old) => false);
+			setState({
+				...state,
+				allStationEnd: true,
+			});
+		});
+
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
+
 	return (
 		<>
 			<div
@@ -106,7 +178,7 @@ function ExamV2C() {
 											component="div"
 											className="m-0"
 										>
-											sdfasd
+											{std?.name}
 										</Typography>
 
 										<Typography
@@ -124,7 +196,7 @@ function ExamV2C() {
 										variant="contained"
 										aria-label="Disabled elevation buttons"
 									>
-										<IconButton aria-label="delete">
+										{/*<IconButton aria-label="delete">
 											{mic ? (
 												<MicIcon onClick={toggleMic} />
 											) : (
@@ -132,7 +204,7 @@ function ExamV2C() {
 													onClick={toggleMic}
 												/>
 											)}
-										</IconButton>
+										</IconButton>*/}
 										{cls?.pdf && (
 											<IconButton
 												aria-label="delete"
@@ -195,27 +267,31 @@ function ExamV2C() {
 										<ListItem>
 											<ListItemText primary="Remaining Time" />
 
-											{currentTime && !onGoing && !remainingTIme && (
-												<ListItemText
-													primary={
-														<Countdown
-															key={currentTime}
-															date={
-																currentTime +
-																4 *
-																	60 *
-																	1000
-															}
-															renderer={
-																TimeRenderer
-															}
-														/>
-													}
-													style={{
-														textAlign: "right",
-													}}
-												/>
-											)}
+											{currentTime &&
+												!onGoing &&
+												!remainingTIme && (
+													<ListItemText
+														primary={
+															<Countdown
+																key={
+																	currentTime
+																}
+																date={
+																	currentTime +
+																	4 *
+																		60 *
+																		1000
+																}
+																renderer={
+																	TimeRenderer
+																}
+															/>
+														}
+														style={{
+															textAlign: "right",
+														}}
+													/>
+												)}
 										</ListItem>
 										<Divider />
 										<ListItem>
@@ -234,12 +310,24 @@ function ExamV2C() {
 							<div>
 								<div>
 									<div>
-										<MeetingComp
-											id={10}
-											title="First Station"
-											name="Candidate"
-											sct={setCurrentgTime}
-										/>
+										{!state?.allStationEnd && cls && (
+											<MeetingComp
+												id={roomId}
+												title={cls?.title}
+												name={std?.name}
+												sct={setCurrentgTime}
+												ao={{
+													type: "student",
+													cd: {
+														name: std?.name,
+													},
+													ex: {
+														name: cls?.teacher
+															?.name,
+													},
+												}}
+											/>
+										)}
 									</div>
 								</div>
 

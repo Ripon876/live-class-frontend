@@ -50,9 +50,9 @@ html,
 .examiner-v {
   margin: auto;
   width: 80%;
-  position: relative;
+  /*  position: relative;
   top: 50%;
-  transform: translateY(-60%);
+  transform: translateY(-60%);*/
 }
 
 #jitsiMeeting-0 {

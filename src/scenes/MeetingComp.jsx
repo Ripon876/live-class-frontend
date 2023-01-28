@@ -1,6 +1,30 @@
+import { useEffect } from "react";
 import { JitsiMeeting } from "@jitsi/react-sdk";
+import axios from "axios";
 
-const MeetingComp = ({ id, title, name, apiRef, sct }) => {
+const MeetingComp = ({ id, title, name, apiRef, sct, ao }) => {
+	useEffect(() => {
+		if (ao) {
+			axios
+				.post(process.env.REACT_APP_SERVER_URL + "/markOnline", ao)
+				.then((data) => {
+					console.log("marked as online");
+				});
+		}
+
+		return () => {
+			if (ao) {
+				axios
+					.post(
+						process.env.REACT_APP_SERVER_URL + "/unmarkOnline",
+						ao
+					)
+					.then((data) => {
+						console.log("marked as online");
+					});
+			}
+		};
+	}, []);
 	return (
 		<JitsiMeeting
 			configOverwrite={{
@@ -43,7 +67,7 @@ const MeetingComp = ({ id, title, name, apiRef, sct }) => {
 					"desktop",
 					"fullscreen",
 					// "settings",
-					"raisehand",
+					// "raisehand",
 					// "videoquality",
 				],
 			}}
@@ -53,14 +77,14 @@ const MeetingComp = ({ id, title, name, apiRef, sct }) => {
 			onApiReady={(externalApi) => {
 				console.log("api ready");
 
-				if (apiRef) {
-					apiRef.current = externalApi;
-				}
-				if (sct) {
-					// sct(Date.now());
-				}
+				// if (apiRef) {
+				// 	apiRef.current = externalApi;
+				// }
+				// if (sct) {
+				// 	// sct(Date.now());
+				// }
 			}}
-			// getIFrameRef={(node) => (node.style.width = "400px"  )}
+			getIFrameRef={(node) => (node.style.height = "600px")}
 			key={"34543df"}
 			roomName={"Station" + id}
 		/>

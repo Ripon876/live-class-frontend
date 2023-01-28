@@ -34,6 +34,13 @@ function JoinExam() {
 				.catch((err) => console.log("err :", err));
 		});
 
+		// axios
+		// 	.get(process.env.REACT_APP_SERVER_URL + "/get-rooms/" + user.id)
+		// 	.then((data) => {
+		// 		let rooms = JSON.stringify(data.data.rooms);
+		// 		localStorage.setItem("rooms", rooms);
+		// 	});
+
 		// console.log("component loaded");
 
 		return () => {
@@ -45,3 +52,10 @@ function JoinExam() {
 }
 
 export default JoinExam;
+
+// {
+//     "roomId": "63d46efac23becb0990f6884",
+//     "time": "Sat, 28 Jan 2023 02:00:00 GMT",
+//     "durarion": 2,
+//     "delay": false
+// }
