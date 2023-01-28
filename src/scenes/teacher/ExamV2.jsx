@@ -50,7 +50,7 @@ function ExamV2E() {
 			});
 
 			socket.emit("rejoin", teacher.id, async (data, err) => {
-				console.log(data, err);
+				
 				if (data) {
 					setOngoing(true);
 					setCurrentgTime(Date.now());
