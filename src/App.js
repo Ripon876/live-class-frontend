@@ -17,7 +17,7 @@ import ExamDetails from "./scenes/admin/ExamDetails";
 
 // teacher
 import TodaysClassesOfTeacher from "./scenes/teacher/TodaysClassesOfTeacher";
-import ExamE from "./scenes/teacher/Exam";
+
 import ExamV2E from "./scenes/teacher/ExamV2";
 // student
 import TodaysClassesOfStudent from "./scenes/student/TodaysClassesOfStudent";
@@ -25,7 +25,7 @@ import ExamV2C from "./scenes/student/ExamV2";
 import Result from "./scenes/student/result/Result";
 // roleplayer
 import TodaysClassesOfRoleplayer from "./scenes/roleplayer/TodaysClassesOfRoleplayer";
-import ExamR from "./scenes/roleplayer/Exam";
+
 import ExamV2R from "./scenes/roleplayer/ExamV2";
 
 // new files v
@@ -89,7 +89,7 @@ function App() {
                 )
               }
             /> */}
-        {/*    <Route
+            {/*    <Route
               path="live-class"
               element={
                 userType === "teacher" ? (
