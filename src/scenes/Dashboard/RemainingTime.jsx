@@ -13,7 +13,15 @@ function RemainingTime() {
 				setStartingTime(
 					Date.parse(new Date(data.data.st).toString()) - Date.now()
 				);
-
+				// if (
+				// 	!Date.parse(new Date(data.data.st).toString()) - Date.now()
+				// ) {
+				// 	console.log(
+				// 		Date.parse(new Date(data.data.st).toString()) -
+				// 			Date.now()
+				// 	);
+				// 	setStartingTime((old) => false);
+				// }
 				// (new Date('Fri Jan 13 2023 15:32:50')).toUTCString()
 				// 'Fri, 13 Jan 2023 09:32:50 GMT'
 				// (new Date('Fri, 13 Jan 2023 09:32:50 GMT')).toString()
@@ -37,7 +45,7 @@ function RemainingTime() {
 				mb="20px"
 				sx={{ color: "#66bb6a", fontSize: "50px", fontWeight: "bold" }}
 			>
-				{startingTime && (
+				{startingTime > 0 ? (
 					<Countdown
 						key={Date.now()}
 						date={Date.now() + startingTime}
@@ -45,6 +53,18 @@ function RemainingTime() {
 					>
 						<Completionist msg={msg} />
 					</Countdown>
+				) : (
+					<>
+						{msg ? (
+							<Typography variant="h4" mb="10px">
+								{msg}
+							</Typography>
+						) : (
+							<Typography variant="h4" mb="10px">
+								There are some problems to show remaining time
+							</Typography>
+						)}
+					</>
 				)}
 			</Typography>
 		</div>
@@ -54,7 +74,7 @@ function RemainingTime() {
 export default RemainingTime;
 
 const Completionist = ({ msg }) => (
-	<span> {msg ? msg : "Exam will start shortly"} </span>
+	<span> {msg ? msg : "Exams started"} </span>
 );
 
 const renderer = ({ hours, minutes, seconds, completed }) => {

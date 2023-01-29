@@ -14,9 +14,6 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import io from "socket.io-client";
-let socket;
-let pTime;
 
 function TodaysClassesOfStudent() {
 	const [cookies, setCookie] = useCookies([]);
@@ -27,35 +24,6 @@ function TodaysClassesOfStudent() {
 	const stdId = useSelector((state) => state.user.id);
 
 	useEffect(() => {
-		pTime = performance.now();
-		socket = io.connect(process.env.REACT_APP_SERVER_URL);
-
-		socket.emit("getStudentExamState", stdId, (sts) => {
-			socket.emit("getClsId", stdId, (data, notstarted, finished) => {
-				if (notstarted) {
-					setNS(notstarted);
-				}
-				if (finished) {
-					setF(finished);
-				}
-			});
-		});
-
-		socket.emit("rejoin", stdId, async (data, err) => {
-			console.log(data, err);
-			if (data) {
-				setSS(data);
-			}
-		});
-
-		// {
-		//     "canJoin": true,
-		//     "rt": "0.88",
-		//     "id": "63cd4b85f4a9a57f9c408191",
-		//     "break": false,
-		//     "delay": false
-		// }
-
 		axios
 			.get(process.env.REACT_APP_SERVER_URL + "/student/get-classes", {
 				headers: { Authorization: `Bearer ${cookies.token}` },
@@ -124,42 +92,6 @@ function TodaysClassesOfStudent() {
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<Box
-					component="div"
-					mt="50px"
-					sx={{ display: "flex", justifyContent: "center" }}
-				>
-					{studentsStates?.canJoin ? (
-						<>
-							{studentsStates?.rt > 0 ? (
-								<Button
-									size="large"
-									variant="filled"
-									sx={{
-										boxShadow: 3,
-										pt: "10px",
-										pb: "10px",
-									}}
-									onClick={() => {
-										window.location.href = `/live-class?id=${studentsStates.id}`;
-									}}
-								>
-									<Typography variant="h3">Rejoin</Typography>
-								</Button>
-							) : (
-								<p>You can't join Now</p>
-							)}
-						</>
-					) : (
-						<>
-							{ns && <p>Exams Not Started Yet</p>}
-							{f && <p>All Exams Ended</p>}
-							{studentsStates?.break && (
-								<p>You can join after break</p>
-							)}
-						</>
-					)}
-				</Box>
 			</Box>
 		</div>
 	);
