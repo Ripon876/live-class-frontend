@@ -26,6 +26,7 @@ const MeetingComp = ({ id, title, name, apiRef, sct, ao }) => {
 		};
 	}, []);
 	return (
+		<div className="jitsiContainer">
 		<JitsiMeeting
 			configOverwrite={{
 				startWithAudioMuted: true,
@@ -88,6 +89,7 @@ const MeetingComp = ({ id, title, name, apiRef, sct, ao }) => {
 			key={"34543df"}
 			roomName={"Station" + id}
 		/>
+		</div>
 	);
 };
 

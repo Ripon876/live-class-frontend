@@ -58,3 +58,21 @@ html,
 #jitsiMeeting-0 {
   height: 600px;
 }
+
+.jitsiContainer {
+  position: relative;
+}
+
+.jitsiContainer::after {
+  content: "";
+  width: 140px;
+  height: 70px;
+  background-color: #10101000;
+  backdrop-filter: blur(10px);
+  position: absolute;
+  top: 10px;
+  background-image: url(https://rfatutors-osler.app/logo-form.png);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
