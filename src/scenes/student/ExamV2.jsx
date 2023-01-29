@@ -70,6 +70,8 @@ function ExamV2C() {
 			socket.emit("getClass", params.get("id"), (cls, notfound) => {
 				if (!notfound) {
 					setCls(cls);
+					setRemainingTime(cls.classDuration);
+					setCurrentgTime((old) => Date.now());
 				} else {
 					window.location.href = "/";
 				}
@@ -82,26 +84,12 @@ function ExamV2C() {
 				socket.emit("getClass", id, (cls, notfound) => {
 					if (!notfound) {
 						setCls(cls);
+						setCurrentgTime((old) => Date.now());
 					} else {
 						window.location.href = "/";
 					}
 				});
 			});
-
-			// socket.on("stId", (obj) => {
-			// 	if (obj.std == std.id) {
-			// 		setRoomId((old) => obj.st);
-			// 		setSearchParams({ id: obj.st });
-
-			// 		socket.emit("getClass", obj.st, (cls, notfound) => {
-			// 			if (!notfound) {
-			// 				setCls(cls);
-			// 			} else {
-			// 				window.location.href = "/";
-			// 			}
-			// 		});
-			// 	}
-			// });
 		});
 
 		socket.on("examsEnded", () => {
@@ -297,8 +285,7 @@ function ExamV2C() {
 												<ListItemText primary="Remaining Time" />
 
 												{currentTime &&
-													!onGoing &&
-													!remainingTIme && (
+													remainingTIme && (
 														<ListItemText
 															primary={
 																<Countdown
@@ -307,7 +294,7 @@ function ExamV2C() {
 																	}
 																	date={
 																		currentTime +
-																		4 *
+																		remainingTIme *
 																			60 *
 																			1000
 																	}
