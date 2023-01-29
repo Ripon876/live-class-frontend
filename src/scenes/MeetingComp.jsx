@@ -65,7 +65,7 @@ const MeetingComp = ({ id, title, name, apiRef, sct, ao }) => {
 					"microphone",
 					"camera",
 					// "closedcaptions",
-					"desktop",
+					// "desktop",
 					"fullscreen",
 					// "settings",
 					// "raisehand",
