@@ -28,6 +28,7 @@ import PdfPopUp from "./start-class/PdfPopUp";
 import BreakTimer from "./start-class/BreakTimer";
 
 let socket;
+let ed;
 function ExamV2C() {
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
@@ -67,11 +68,11 @@ function ExamV2C() {
 		socket.on("connect", () => {
 			socket.emit("setActive", { id: std.id });
 
-			socket.emit("getClass", params.get("id"), (cls, notfound) => {
+			socket.emit("getClass", params.get("id"), (exam, notfound) => {
 				if (!notfound) {
-					setCls(cls);
-					setRemainingTime(cls.classDuration);
-					setCurrentgTime((old) => Date.now());
+					setCls(exam);
+					ed = exam.classDuration;
+					getTime();
 				} else {
 					window.location.href = "/";
 				}
@@ -81,10 +82,10 @@ function ExamV2C() {
 				setRoomId((old) => id);
 				setSearchParams({ id: id });
 
-				socket.emit("getClass", id, (cls, notfound) => {
+				socket.emit("getClass", id, (exam, notfound) => {
 					if (!notfound) {
-						setCls(cls);
-						setCurrentgTime((old) => Date.now());
+						setCls(exam);
+						getTime(true);
 					} else {
 						window.location.href = "/";
 					}
@@ -154,6 +155,20 @@ function ExamV2C() {
 			}
 		}
 	}, [cls]);
+
+	const getTime = (old) => {
+		if (old) {
+			setRemainingTime(ed);
+			setCurrentgTime((old) => Date.now());
+		} else {
+			socket.emit("rejoin", std.id, async (data, err) => {
+				if (data) {
+					setRemainingTime(data.rt);
+					setCurrentgTime((old) => Date.now());
+				}
+			});
+		}
+	};
 
 	return (
 		<>
