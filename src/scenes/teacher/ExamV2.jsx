@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import CandidateInfo from "./start-exam/CandidateInfo";
 import Mark from "./start-exam/Mark";
 import axios from "axios";
+import Countdown from "react-countdown";
 
 let socket;
 function ExamV2E() {
@@ -77,6 +78,7 @@ function ExamV2E() {
 				...state,
 				delay: false,
 			});
+			setCurrentgTime((old) => Date.now());
 			getCD();
 		});
 
@@ -95,6 +97,7 @@ function ExamV2E() {
 				...state,
 				break: false,
 			});
+			setCurrentgTime((old) => Date.now());
 			getCD();
 		});
 
@@ -104,10 +107,10 @@ function ExamV2E() {
 				...state,
 				allStationEnd: true,
 			});
-
-
 		});
-
+		if (document.querySelector(".opendMenuIcon")) {
+			document.querySelector(".opendMenuIcon").click();
+		}
 		return () => {
 			socket.disconnect();
 		};
@@ -136,7 +139,7 @@ function ExamV2E() {
 		>
 			<Box
 				sx={{ flexGrow: 1 }}
-				className="px-3 mt-5 pt-5"
+				className="px-3 pt-5"
 				sx={{
 					display:
 						!state?.delay && !state?.break && !state?.allStationEnd
@@ -151,6 +154,38 @@ function ExamV2E() {
 						className="justify-content-center"
 					>
 						<Grid item sm={10} md={10}>
+							<Typography
+								variant="h4"
+								align="right"
+								pr="10px"
+								mb="5px"
+								style={{
+									opacity: 1,
+								}}
+							>
+								<>
+									{cd && remainingTIme ? (
+										<>
+											Remaining Time :
+											<b pl="5px">
+												<Countdown
+													key={currentTime}
+													date={
+														currentTime +
+														remainingTIme *
+															60 *
+															1000
+													}
+													renderer={TimeRenderer}
+												></Countdown>
+											</b>
+											min
+										</>
+									) : (
+										"Not started "
+									)}
+								</>
+							</Typography>
 							<MeetingComp
 								id={params.get("id")}
 								key="dsfdsewr4ew"
@@ -223,3 +258,11 @@ function ExamV2E() {
 }
 
 export default ExamV2E;
+function TimeRenderer({ minutes, seconds }) {
+	return (
+		<span>
+			{minutes < 10 ? "0" + minutes : minutes}:
+			{seconds < 10 ? "0" + seconds : seconds}
+		</span>
+	);
+}
