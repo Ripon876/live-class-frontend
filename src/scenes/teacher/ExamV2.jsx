@@ -15,16 +15,17 @@ import axios from "axios";
 import Countdown from "react-countdown";
 
 let socket;
+let ed;
 function ExamV2E() {
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
 	const [roomId, setRoomId] = useState(params.get("id") || "");
 	const [cls, setCls] = useState({});
+
 	const [cd, setCd] = useState(null);
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [mark, setMark] = useState(true);
 	const [mSubmited, setMSubmited] = useState(false);
-	const [onGoing, setOngoing] = useState(false);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 	const [breakTime, setBT] = useState(0);
 	const [state, setState] = useState({
@@ -40,25 +41,20 @@ function ExamV2E() {
 		socket.on("connect", () => {
 			socket.emit("setActive", { id: teacher.id });
 
-			socket.emit("getClass", params.get("id"), (cls, notfound) => {
+			socket.emit("getClass", params.get("id"), (exam, notfound) => {
 				if (!notfound) {
-					if (cls?.pdf) {
-						delete cls.pdf;
+					if (exam?.pdf) {
+						delete exam.pdf;
 					}
-					setCls(cls);
-					setRemainingTime(cls.classDuration);
-
-					getCD();
+					ed = exam.classDuration;
+					setCls(exam);
+					socket.emit("rejoin", teacher.id, async (data, err) => {
+						if (data) {
+							getCD(data.rt);
+						}
+					});
 				} else {
 					window.location.href = "/";
-				}
-			});
-
-			socket.emit("rejoin", teacher.id, async (data, err) => {
-				if (data) {
-					setOngoing(true);
-					setCurrentgTime(Date.now());
-					setRemainingTime(data.rt);
 				}
 			});
 		});
@@ -78,7 +74,6 @@ function ExamV2E() {
 				...state,
 				delay: false,
 			});
-			setCurrentgTime((old) => Date.now());
 			getCD();
 		});
 
@@ -97,7 +92,6 @@ function ExamV2E() {
 				...state,
 				break: false,
 			});
-			setCurrentgTime((old) => Date.now());
 			getCD();
 		});
 
@@ -116,7 +110,14 @@ function ExamV2E() {
 		};
 	}, []);
 
-	const getCD = () => {
+	const getCD = (time) => {
+		if (!time) {
+			setRemainingTime((old) => ed);
+		} else {
+			setRemainingTime((old) => time);
+		}
+
+		setCurrentgTime((old) => Date.now());
 		setTimeout(() => {
 			axios
 				.post(process.env.REACT_APP_SERVER_URL + "/getCD", {
@@ -159,12 +160,9 @@ function ExamV2E() {
 								align="right"
 								pr="10px"
 								mb="5px"
-								style={{
-									opacity: 1,
-								}}
 							>
 								<>
-									{cd && remainingTIme ? (
+									{remainingTIme ? (
 										<>
 											Remaining Time :
 											<b pl="5px">

@@ -9,8 +9,11 @@ import BreakTimer from "./BreakTimer";
 import MoodIcon from "@mui/icons-material/Mood";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import axios from "axios";
+import Countdown from "react-countdown";
 
 let socket;
+let ed;
 function ExamV2R() {
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
@@ -20,7 +23,6 @@ function ExamV2R() {
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [mark, setMark] = useState(true);
 	const [mSubmited, setMSubmited] = useState(false);
-	const [onGoing, setOngoing] = useState(false);
 	const [currentTime, setCurrentgTime] = useState(Date.now());
 	const [breakTime, setBT] = useState(0);
 	const [state, setState] = useState({
@@ -34,27 +36,23 @@ function ExamV2R() {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 		socket.on("connect", () => {
-			// console.log("socket connected");
 			socket.emit("setActive", { id: roleplayer.id });
 
-			socket.emit("getClass", params.get("id"), (cls, notfound) => {
+			socket.emit("getClass", params.get("id"), (exam, notfound) => {
 				if (!notfound) {
-					if (cls?.pdf) {
-						delete cls.pdf;
+					if (exam?.pdf) {
+						delete exam.pdf;
 					}
-					setCls(cls);
-					setRemainingTime(cls.classDuration);
+					ed = exam.classDuration;
+					setCls(exam);
+					socket.emit("rejoin", roleplayer.id, async (data, err) => {
+						console.log(data, err);
+						if (data) {
+							getCD(data.rt);
+						}
+					});
 				} else {
 					window.location.href = "/";
-				}
-			});
-
-			socket.emit("rejoin", roleplayer.id, async (data, err) => {
-				console.log(data, err);
-				if (data) {
-					setOngoing(true);
-					setCurrentgTime(Date.now());
-					setRemainingTime(data.rt);
 				}
 			});
 		});
@@ -68,11 +66,11 @@ function ExamV2R() {
 		});
 
 		socket.on("delayEnd", () => {
-			// uid = String(Math.floor(Math.random() * 50000) + "_Examiner");
 			setState({
 				...state,
 				delay: false,
 			});
+			getCD();
 		});
 
 		socket.on("breakStart", (bt) => {
@@ -84,11 +82,11 @@ function ExamV2R() {
 			});
 		});
 		socket.on("breakEnd", () => {
-			// uid = String(Math.floor(Math.random() * 50000) + "_Examiner");
 			setState({
 				...state,
 				break: false,
 			});
+			getCD();
 		});
 
 		socket.on("examsEnded", () => {
@@ -96,18 +94,34 @@ function ExamV2R() {
 				...state,
 				allStationEnd: true,
 			});
-
-			console.log("= = = = = = = = = = = =");
-			console.log("= = = = = = = = = = = =");
-			console.log("exams Ended");
-			console.log("= = = = = = = = = = = =");
-			console.log("= = = = = = = = = = = =");
 		});
-
+		if (document.querySelector(".opendMenuIcon")) {
+			document.querySelector(".opendMenuIcon").click();
+		}
 		return () => {
 			socket.disconnect();
 		};
 	}, []);
+
+	const getCD = (time) => {
+		if (!time) {
+			setRemainingTime((old) => ed);
+		} else {
+			setRemainingTime((old) => time);
+		}
+
+		setCurrentgTime((old) => Date.now());
+		setTimeout(() => {
+			axios
+				.post(process.env.REACT_APP_SERVER_URL + "/getCD", {
+					id: params.get("id"),
+				})
+				.then((data) => {
+					setCd((old) => data.data.cd);
+					console.log("received cd", data.data.cd);
+				});
+		}, 1000);
+	};
 
 	return (
 		<div
@@ -135,12 +149,53 @@ function ExamV2R() {
 					>
 						<Grid item sm={10} md={10}>
 							{cls && (
-								<MeetingComp
-									id={params.get("id")}
-									key="dsfdsewr4ew"
-									title={cls?.title}
-									name={roleplayer.name}
-								/>
+								<>
+									<Typography
+										variant="h4"
+										align="right"
+										pr="10px"
+										mb="5px"
+									>
+										<>
+											{remainingTIme ? (
+												<>
+													Remaining Time :
+													<b pl="5px">
+														<Countdown
+															key={currentTime}
+															date={
+																currentTime +
+																remainingTIme *
+																	60 *
+																	1000
+															}
+															renderer={
+																TimeRenderer
+															}
+														></Countdown>
+													</b>
+													min
+												</>
+											) : (
+												"Not started "
+											)}
+										</>
+									</Typography>
+									<MeetingComp
+										id={params.get("id")}
+										key="dsfdsewr4ew"
+										title={cls?.title}
+										name={roleplayer.name}
+									/>
+									{cd && (
+										<div>
+											<Typography variant="h4">
+												Currently Joined Candidate :{" "}
+												<b>{cd.cd.name}</b>
+											</Typography>
+										</div>
+									)}
+								</>
 							)}
 						</Grid>
 					</Grid>
@@ -187,3 +242,12 @@ function ExamV2R() {
 }
 
 export default ExamV2R;
+
+function TimeRenderer({ minutes, seconds }) {
+	return (
+		<span>
+			{minutes < 10 ? "0" + minutes : minutes}:
+			{seconds < 10 ? "0" + seconds : seconds}
+		</span>
+	);
+}
