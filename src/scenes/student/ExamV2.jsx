@@ -22,7 +22,6 @@ import io from "socket.io-client";
 import MoodIcon from "@mui/icons-material/Mood";
 import Button from "@mui/material/Button";
 import { useSearchParams } from "react-router-dom";
-import PDFViewer from "./start-class/PDFViewer";
 import StatetMsgs from "../StatetMsgs";
 import PdfPopUp from "./start-class/PdfPopUp";
 import BreakTimer from "./start-class/BreakTimer";

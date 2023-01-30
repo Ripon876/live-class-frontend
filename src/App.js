@@ -38,7 +38,7 @@ import NotRequireAuth from "./auth/NotRequireAuth";
 
 // components for live class
  
-import StartClassAsStudent from "./scenes/student/start-class/StartClassAsStudent";
+ 
 import JoinExam from "./scenes/roleplayer/JoinExam";
 
 function App() {
