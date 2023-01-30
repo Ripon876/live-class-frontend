@@ -37,7 +37,7 @@ import RequireAuth from "./auth/RequireAuth";
 import NotRequireAuth from "./auth/NotRequireAuth";
 
 // components for live class
-import StartClassAsTeacher from "./scenes/teacher/StartClassAsTeacher";
+ 
 import StartClassAsStudent from "./scenes/student/start-class/StartClassAsStudent";
 import JoinExam from "./scenes/roleplayer/JoinExam";
 
