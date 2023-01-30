@@ -10,6 +10,7 @@ import Button from "@mui/material/Button";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
 function ExamStates({ states }) {
+	// { type: 'student', cd: { name: 's2' }, ex: { name: 'Ex 1' } }
 	return (
 		<TableContainer component={Paper}>
 			<Table sx={{ minWidth: "90%" }} aria-label="simple table">
@@ -34,12 +35,8 @@ function ExamStates({ states }) {
 							<TableCell component="th" scope="row">
 								{i + 1}
 							</TableCell>
-							<TableCell align="right">
-								{state.student.name}
-							</TableCell>
-							<TableCell align="right">
-								{state.cls.teacher}
-							</TableCell>
+							<TableCell align="right">{state.cd.name}</TableCell>
+							<TableCell align="right">{state.ex.name}</TableCell>
 							<TableCell align="right">
 								<Button
 									size="small"
@@ -49,7 +46,7 @@ function ExamStates({ states }) {
 										pb: "10px",
 									}}
 									onClick={() => {
-										window.location.href = `/inspect-exam?id=${state.cls._id}`;
+										window.location.href = `/inspect-exam?id=${state.exam}`;
 									}}
 									variant="filled"
 									startIcon={<RemoveRedEyeIcon />}

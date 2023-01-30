@@ -8,6 +8,8 @@ import HistoryIcon from "@mui/icons-material/History";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import CachedIcon from "@mui/icons-material/Cached";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import Badge from "@mui/material/Badge";
 import { useCookies } from "react-cookie";
 import io from "socket.io-client";
 import AddExam from "./AddExam";
@@ -48,7 +50,7 @@ function HostClass() {
 	const [examiners, setExaminers] = useState([]);
 	const [roleplayers, setRoleplayers] = useState([]);
 	const [value, setValue] = useState(null);
-	const [studentsStates, setSS] = useState([]);
+	const [examsStates, setES] = useState([]);
 	const [canStart, setCanStart] = useState(false);
 	const [canRenew, setCanRenew] = useState(false);
 	const [spin, setSpin] = useState(false);
@@ -57,28 +59,52 @@ function HostClass() {
 		type: "success",
 		msg: "",
 	});
-
+	const [esState, setESS] = useState({
+		show: false,
+		type: "success",
+		text: "",
+	});
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
 		socket.emit("getExamsStates", (sts) => {
-			setSS(Object.values(sts));
-			// console.log(Object.values(sts));
-			if (Object.values(sts).length !== 0) {
+			setES(sts);
+
+			if (sts.length !== 0) {
 				setSpin(true);
 			}
 		});
 
-		socket.on("studentsStates", (states) => {
-			setSS(Object.values(states));
+		socket.on("examsStates", (states) => {
+			setES(states);
 			getExams(setExams, setCanStart);
 		});
 
+		socket.on("delayStart", () => {
+			setESS({
+				show: true,
+				type: "success",
+				text: "Delay",
+			});
+		});
+		socket.on("delayEnd", () => {
+			setESS({
+				...esState,
+				show: false,
+			});
+		});
 		socket.on("breakStart", () => {
-			console.log("break Started");
+			setESS({
+				show: true,
+				type: "success",
+				text: "Break",
+			});
 		});
 		socket.on("breakEnd", () => {
-			console.log("break End");
+			setESS({
+				...esState,
+				show: false,
+			});
 		});
 		socket.on("examsStarted", () => {
 			console.log("exams Started");
@@ -86,7 +112,7 @@ function HostClass() {
 		socket.on("examsEnded", () => {
 			console.log("exams Ended");
 
-			setSS([]);
+			setES([]);
 			setAlert({
 				show: true,
 				type: "success",
@@ -96,9 +122,6 @@ function HostClass() {
 
 			setSpin(false);
 			checkExams(exams, setCanStart);
-		});
-		socket.on("examsState", (states) => {
-			console.log(states);
 		});
 
 		getExams(setExams, setCanStart);
@@ -161,7 +184,7 @@ function HostClass() {
 	const clearStates = () => {
 		setSpin(false);
 		socket.emit("clearStates", (sts) => {
-			setSS(Object.values(sts));
+			setES(sts);
 		});
 	};
 
@@ -262,6 +285,15 @@ function HostClass() {
 					<Typography variant="h4" className="mb-3 mt-4">
 						Joined Students
 						{spin && <CachedIcon className="ms-2 spin" />}
+						{esState.show && (
+							<Badge
+								color={esState.type}
+								sx={{ marginLeft: "10px" }}
+								badgeContent={esState.text}
+							>
+								<AccessTimeIcon />
+							</Badge>
+						)}
 					</Typography>
 					<div style={{ cursor: spin ? "not-allowed" : "pointer" }}>
 						<Button
@@ -277,7 +309,7 @@ function HostClass() {
 						</Button>
 					</div>
 				</Box>
-				<ExamStates states={studentsStates} />
+				<ExamStates states={examsStates} />
 			</Box>
 		</div>
 	);
