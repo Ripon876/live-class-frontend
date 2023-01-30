@@ -46,7 +46,10 @@ function ExamStates({ states }) {
 										pb: "10px",
 									}}
 									onClick={() => {
-										window.location.href = `/inspect-exam?id=${state.exam}`;
+										window.open(
+											`/inspect-exam?id=${state.exam}`,
+											"_blank"
+										);
 									}}
 									variant="filled"
 									startIcon={<RemoveRedEyeIcon />}

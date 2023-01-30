@@ -1,154 +1,130 @@
 import React, { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import io from "socket.io-client";
 import { useSelector } from "react-redux";
- 
+import MeetingComp from "../MeetingComp";
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 let socket;
 
 function InspectExam() {
 	const adminId = useSelector((state) => state.user.id);
-
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
-	const [names, setNames] = useState({
-		examiner: "",
-		roleplayer: "",
-		candidate: "",
-		subject: "",
+	const [alert, setAlert] = useState({
+		show: false,
+		type: "success",
+		msg: "",
 	});
-	const [examsEnd, setExamsEnd] = useState(false);
-	const [reload, setReload] = useState(false);
-
-	const exRef = useRef(null);
-	const cdRef = useRef(null);
-	const rpRef = useRef(null);
 
 	useEffect(() => {
 		socket = io.connect(process.env.REACT_APP_SERVER_URL);
 
-		socket.on("allClsTaken", () => {
-			setExamsEnd(true);
-			setReload(false);
+		socket.on("examsEnded", () => {
+			setAlert({
+				show: true,
+				type: "success",
+				msg: "All exams ended. Taking you back to states",
+			});
+			setTimeout(() => {
+				window.close();
+			}, 3000);
 		});
-		socket.on("cdChanging", () => {
-			setReload(true);
+
+		socket.on("delayStart", () => {
+			setAlert({
+				show: true,
+				type: "success",
+				msg: "Delay started. Taking you back to states",
+			});
+			setTimeout(() => {
+				window.close();
+			}, 3000);
 		});
+		socket.on("breakStart", () => {
+			setAlert({
+				show: true,
+				type: "success",
+				msg: "Break started. Taking you back to states",
+			});
+			setTimeout(() => {
+				window.close();
+			}, 3000);
+		});
+
 		return () => {
 			socket.disconnect();
 		};
 	}, []);
 
 	return (
-		<div>
-			<div style={{ overflowY: "auto", maxHeight: "90%" }}>
-				<Box component="div" width="90%" p="0 0 0 20px" align="center">
+		<div
+			style={{
+				height: "90%",
+				overflowY: "auto",
+				overflowX: "hidden",
+			}}
+		>
+			<Snackbar
+				open={alert.show}
+				autoHideDuration={6000}
+				onClose={() => {
+					setAlert({
+						msg: "",
+						type: "success",
+						show: false,
+					});
+				}}
+			>
+				<Alert severity={alert.type} sx={{ mb: 2 }}>
+					{alert.msg}
+				</Alert>
+			</Snackbar>
+			<Box sx={{ flexGrow: 1 }} className="px-3 pt-5" align="center">
+				<div>
+					<Grid
+						container
+						spacing={3}
+						className="justify-content-center"
+					>
+						<Grid item sm={10} md={10}>
+							<Typography
+								variant="h4"
+								align="right"
+								pr="10px"
+								mb="5px"
+							></Typography>
+							<MeetingComp
+								id={params.get("id")}
+								key="dsf34dsewr4ew"
+								title={""}
+								name={"Admin"}
+							/>
+						</Grid>
+					</Grid>
+
 					<div>
-						<div className="container">
-							{!examsEnd && !reload && (
-								<div className="align-items-center justify-content-center row video-container">
-									<Card
-										className="m-2 p-0"
-										style={{
-											cursor: "pointer",
-											maxWidth: "300px",
-											maxHeight: "300px",
-										}}
-									>
-										<div className="video cd-video">
-											<div className="h-100 w-100">
-												<div
-													className="w-100 h-100 bg-black"
-													ref={exRef}
-												></div>
-											</div>
-										</div>
-										<CardContent className="p-2 ps-4">
-											<Typography
-												variant="body2"
-												color="text.secondary"
-											>
-												Examiner
-											</Typography>
-										</CardContent>
-									</Card>
-
-									<Card
-										className="m-2 p-0"
-										style={{
-											cursor: "pointer",
-											maxWidth: "300px",
-											maxHeight: "300px",
-										}}
-									>
-										<div className="video cd-video">
-											<div className="h-100 w-100">
-												<div
-													className="w-100 h-100 bg-black"
-													ref={rpRef}
-												></div>
-											</div>
-										</div>
-										<CardContent className="p-2 ps-4">
-											<Typography
-												variant="body2"
-												color="text.secondary"
-											>
-												Roleplayer
-											</Typography>
-										</CardContent>
-									</Card>
-									<Card
-										className="m-2 p-0"
-										style={{
-											cursor: "pointer",
-											maxWidth: "300px",
-											maxHeight: "300px",
-										}}
-									>
-										<div className="video cd-video">
-											<div className="h-100 w-100">
-												<div
-													className="w-100 h-100 bg-black"
-													ref={cdRef}
-												></div>
-											</div>
-										</div>
-										<CardContent className="p-2 ps-4">
-											<Typography
-												variant="body2"
-												color="text.secondary"
-											>
-												Candidate
-											</Typography>
-										</CardContent>
-									</Card>
-								</div>
-							)}
-							{examsEnd && <h4>Exam Ended</h4>}
-						</div>
-
-						<div>
-							<Button
-								variant="filled"
-								sx={{
-									mt: 1,
-									ml: 2,
-									boxShadow: 3,
-								}}
-								onClick={() => {
-									window.location.href = `/host_exam`;
-								}}
-							>
-								Back to states
-							</Button>
-						</div>
+						<Button
+							variant="filled"
+							sx={{
+								mt: 1,
+								ml: 2,
+								boxShadow: 3,
+							}}
+							onClick={() => {
+								window.location.href = `/host_exam`;
+							}}
+						>
+							Back to states
+						</Button>
 					</div>
-				</Box>
-			</div>
+				</div>
+			</Box>
 		</div>
 	);
 }
