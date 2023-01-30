@@ -283,7 +283,7 @@ function HostClass() {
 					sx={{ display: "flex", justifyContent: "space-between" }}
 				>
 					<Typography variant="h4" className="mb-3 mt-4">
-						Joined Students
+						Joined Candidates
 						{spin && <CachedIcon className="ms-2 spin" />}
 						{esState.show && (
 							<Badge
