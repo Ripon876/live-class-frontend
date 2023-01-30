@@ -93,7 +93,7 @@ function StartExams({ cs, sp, oc }) {
 				startIcon={<PlayArrowIcon />}
 				onClick={confirmStart}
 			>
-				Start Today's Exams 222
+				Start Today's Exams
 			</Button>
 		</div>
 	);
