@@ -3,7 +3,6 @@ import { Box, Typhography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import { tokens } from "../../theme";
-import { mockData } from "../../data/mockdata";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
@@ -14,7 +13,7 @@ import Button from "@mui/material/Button";
 const Instructors = ({ instructors, rE }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  console.log(instructors);
+
   if (!instructors) {
     instructors = [];
   }
@@ -57,7 +56,6 @@ const Instructors = ({ instructors, rE }) => {
   return (
     <Box m="20px">
       <Box m="40px 0 0 0" height="70vh">
-        {/*<DataGrid rows={mockData} columns={columns} />*/}
         <DataGrid rows={instructors} columns={columns} />
       </Box>
     </Box>

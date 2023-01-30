@@ -148,7 +148,7 @@ function MangeExaminers() {
 					</Alert>
 				</Snackbar>
 
-				<Typography variant="h3" mb="20px" mt={0}>
+				<Typography variant="h3"  mb={0}>
 					Add new examiner
 				</Typography>
 

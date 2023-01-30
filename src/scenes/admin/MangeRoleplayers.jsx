@@ -6,21 +6,24 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import Header from "../../components/Header";
+import Instructors from "./Instructors";
 import "./style.css";
 
 function MangeRoleplayers() {
 	const [alert, setAlert] = useState({
 		show: false,
-		type: "",
+		type: "success",
 		msg: "",
 	});
 	const initialFormData = {
 		name: "",
 		email: "",
-		password: ""
+		password: "",
 	};
 	const [formData, setFormData] = useState(initialFormData);
 	const [roleplayers, setRolePlayers] = useState([]);
@@ -41,7 +44,7 @@ function MangeRoleplayers() {
 				type: "error",
 				msg: "enter all info proparly",
 			});
-			closeAlert();
+
 			return;
 		}
 
@@ -61,7 +64,6 @@ function MangeRoleplayers() {
 					type: "success",
 					msg: data.data.message,
 				});
-				closeAlert();
 			})
 			.catch((err) => {
 				console.log("err : ", err);
@@ -70,7 +72,6 @@ function MangeRoleplayers() {
 					type: "error",
 					msg: err.response.data.message,
 				});
-				closeAlert();
 			});
 	};
 	const handleChange = (e) => {
@@ -80,23 +81,14 @@ function MangeRoleplayers() {
 			[e.target.name]: e.target.value,
 		});
 	};
-	const closeAlert = () => {
-		setTimeout(() => {
-			setAlert({
-				show: false,
-				type: "",
-				msg: "",
-			});
-		}, 3500);
-	};
 
-	const removeRoleplayer = () => {
+	const removeRoleplayer = (id) => {
 		axios
 			.delete(
 				process.env.REACT_APP_SERVER_URL + "/admin/remove-instructor",
 				{
 					data: {
-						id: instructor,
+						id: id,
 					},
 				}
 			)
@@ -107,7 +99,6 @@ function MangeRoleplayers() {
 					type: "success",
 					msg: data.data.message,
 				});
-				closeAlert();
 			})
 			.catch((err) => {
 				console.log("err : ", err);
@@ -116,37 +107,48 @@ function MangeRoleplayers() {
 					type: "error",
 					msg: err.data.message,
 				});
-				closeAlert();
 			});
 	};
 
 	const getRoleplayers = () => {
 		axios
 			.get(process.env.REACT_APP_SERVER_URL + "/admin/get-roleplayers")
-			.then((data) => setRolePlayers([...data.data.roles]))
+			.then((data) => {
+				data.data.roles.map((user, i) => (user.id = i + 1));
+				setRolePlayers([...data.data.roles]);
+			})
 			.catch((err) => console.log("err :", err));
 	};
 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
+			<Header title="Roleplayers" subtitle="Manage Roleplayers" />
+			<Snackbar
+				open={alert.show}
+				autoHideDuration={6000}
+				onClose={() => {
+					setAlert({
+						msg: "",
+						type: "",
+						show: false,
+					});
+				}}
+			>
+				<Alert severity={alert.type} sx={{ mb: 2 }}>
+					{alert.msg}
+				</Alert>
+			</Snackbar>
 			<Box
 				component="form"
 				sx={{
 					"& .MuiTextField-root": { m: 2 },
 				}}
 				m="50px"
+				mt={2}
 				noValidate
 				autoComplete="off"
 			>
-				{alert.show && (
-					<Alert severity={alert.type} sx={{ mb: 2 }}>
-						{alert.msg}
-					</Alert>
-				)}
-
-				<Typography variant="h3" mb="20px">
-					Add new roleplayer
-				</Typography>
+				<Typography variant="h3" mb={0}>Add new roleplayer</Typography>
 
 				<div>
 					<TextField
@@ -211,56 +213,7 @@ function MangeRoleplayers() {
 					Add
 				</Button>
 			</Box>
-			<Box
-				component="form"
-				sx={{
-					"& .MuiTextField-root": { m: 2 },
-				}}
-				m="50px"
-				noValidate
-				autoComplete="off"
-			>
-				<Typography variant="h3" mb="20px">
-					Remove roleplayer
-				</Typography>
-
-				<div>
-					<TextField
-						id="filled-select-currency"
-						select
-						label="Select roleplayer"
-						name="teacher"
-						defaultValue="Jhone Doe"
-						variant="filled"
-						// value={instructor}
-						required
-						sx={{
-							minWidth: "300px",
-						}}
-						onChange={(e) => {
-							setInstructor(e.target.value);
-						}}
-					>
-						{roleplayers.map((teacher) => (
-							<MenuItem value={teacher._id}>
-								{teacher.name}
-							</MenuItem>
-						))}
-					</TextField>
-				</div>
-				<Button
-					variant="filled"
-					sx={{
-						mt: 1,
-						ml: 2,
-						boxShadow: 3,
-					}}
-					startIcon={<DeleteIcon />}
-					onClick={removeRoleplayer}
-				>
-					Remove
-				</Button>
-			</Box>
+			<Instructors instructors={roleplayers} rE={removeRoleplayer} />
 		</div>
 	);
 }
