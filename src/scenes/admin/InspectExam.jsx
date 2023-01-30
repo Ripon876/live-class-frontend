@@ -104,6 +104,7 @@ function InspectExam() {
 								key="dsf34dsewr4ew"
 								title={""}
 								name={"Admin"}
+								admin
 							/>
 						</Grid>
 					</Grid>

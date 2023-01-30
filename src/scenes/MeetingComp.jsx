@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { JitsiMeeting } from "@jitsi/react-sdk";
 import axios from "axios";
 
-const MeetingComp = ({ id, title, name, apiRef, sct, ao }) => {
+const MeetingComp = ({ id, title, name, apiRef, sct, ao, admin }) => {
 	useEffect(() => {
 		if (ao) {
 			axios
@@ -29,8 +29,8 @@ const MeetingComp = ({ id, title, name, apiRef, sct, ao }) => {
 		<div className="jitsiContainer">
 			<JitsiMeeting
 				configOverwrite={{
-					startWithAudioMuted: true,
-					startWithVideoMuted: true,
+					startWithAudioMuted: admin ? true : false,
+					startWithVideoMuted: admin ? true : false,
 					hiddenPremeetingButtons: ["microphone"],
 					prejoinPageEnabled: false,
 					logoImageUrl: "",
@@ -54,6 +54,9 @@ const MeetingComp = ({ id, title, name, apiRef, sct, ao }) => {
 					},
 					hideConferenceTimer: true,
 					hideParticipantsStats: true,
+					logging: {
+						defaultLogLevel: "error",
+					},
 				}}
 				spinner={Sp}
 				interfaceConfigOverwrite={{
@@ -69,7 +72,7 @@ const MeetingComp = ({ id, title, name, apiRef, sct, ao }) => {
 					DEFAULT_WELCOME_PAGE_LOGO_URL: "",
 					TOOLBAR_BUTTONS: [
 						"microphone",
-						"camera",
+						// "camera",
 						// "closedcaptions",
 						// "desktop",
 						"fullscreen",
