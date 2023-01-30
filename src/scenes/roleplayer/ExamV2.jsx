@@ -190,8 +190,7 @@ function ExamV2R() {
 									{cd && (
 										<div>
 											<Typography variant="h4">
-												Currently Joined Candidate :{" "}
-												<b>{cd.cd.name}</b>
+												Candidate : <b>{cd.cd.name}</b>
 											</Typography>
 										</div>
 									)}
