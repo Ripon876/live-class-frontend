@@ -17,15 +17,15 @@ import ExamDetails from "./scenes/admin/ExamDetails";
 
 // teacher
 import TodaysClassesOfTeacher from "./scenes/teacher/TodaysClassesOfTeacher";
-
 import ExamV2E from "./scenes/teacher/ExamV2";
+
 // student
 import TodaysClassesOfStudent from "./scenes/student/TodaysClassesOfStudent";
 import ExamV2C from "./scenes/student/ExamV2";
 import Result from "./scenes/student/result/Result";
+
 // roleplayer
 import TodaysClassesOfRoleplayer from "./scenes/roleplayer/TodaysClassesOfRoleplayer";
-
 import ExamV2R from "./scenes/roleplayer/ExamV2";
 
 // new files v
@@ -36,10 +36,6 @@ import Login from "./components/login/Login";
 import RequireAuth from "./auth/RequireAuth";
 import NotRequireAuth from "./auth/NotRequireAuth";
 
-// components for live class
- 
- 
-import JoinExam from "./scenes/roleplayer/JoinExam";
 
 function App() {
   const userType = useSelector((state) => state.user.type);

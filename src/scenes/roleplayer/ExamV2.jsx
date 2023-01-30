@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import MeetingComp from "../MeetingComp";
-import StatetMsgs from "../MeetingComp";
 import io from "socket.io-client";
 import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
