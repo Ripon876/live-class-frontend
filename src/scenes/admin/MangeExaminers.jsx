@@ -43,7 +43,7 @@ function MangeExaminers() {
 				type: "error",
 				msg: "enter all info proparly",
 			});
-			closeAlert();
+
 			return;
 		}
 
@@ -63,7 +63,6 @@ function MangeExaminers() {
 					type: "success",
 					msg: data.data.message,
 				});
-				closeAlert();
 			})
 			.catch((err) => {
 				console.log("err : ", err);
@@ -72,7 +71,6 @@ function MangeExaminers() {
 					type: "error",
 					msg: err.response.data.message,
 				});
-				closeAlert();
 			});
 	};
 	const handleChange = (e) => {
@@ -81,15 +79,6 @@ function MangeExaminers() {
 			...formData,
 			[e.target.name]: e.target.value,
 		});
-	};
-	const closeAlert = () => {
-		setTimeout(() => {
-			setAlert({
-				show: false,
-				type: "",
-				msg: "",
-			});
-		}, 3500);
 	};
 
 	const removeInstructor = (id) => {
@@ -109,7 +98,6 @@ function MangeExaminers() {
 					type: "success",
 					msg: data.data.message,
 				});
-				closeAlert();
 			})
 			.catch((err) => {
 				console.log("err : ", err);
@@ -118,7 +106,6 @@ function MangeExaminers() {
 					type: "error",
 					msg: err.data.message,
 				});
-				closeAlert();
 			});
 	};
 
@@ -228,6 +215,7 @@ function MangeExaminers() {
 					Add
 				</Button>
 			</Box>
+
 			<Instructors instructors={teachers} rE={removeInstructor} />
 		</div>
 	);

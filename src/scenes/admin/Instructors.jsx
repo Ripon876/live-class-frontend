@@ -14,7 +14,10 @@ import Button from "@mui/material/Button";
 const Instructors = ({ instructors, rE }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
+  console.log(instructors);
+  if (!instructors) {
+    instructors = [];
+  }
   const columns = [
     { field: "id", headerName: "ID" },
     {

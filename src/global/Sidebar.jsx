@@ -92,7 +92,10 @@ const AppSidebar = () => {
               {userType === "student" && "Candidate"}
               {userType === "roleplayer" && "Roleplayer"}
             </Typography>*/}
-            <img src="./logo-header.png" className="img-fluid w-75 me-2 mt-1 p-1" />
+            <img
+              src="./logo-header.png"
+              className="img-fluid w-75 me-2 mt-1 p-1"
+            />
           </Box>
         )}
 
@@ -114,24 +117,18 @@ const AppSidebar = () => {
                 to="/students"
                 setSelected={setSelected}
                 selected={selected}
-                icon={<SchoolOutlinedIcon />}
+                icon={<ManageAccountsIcon />}
               />
+
               <Item
                 title="Examiners"
-                to="/instructors"
-                setSelected={setSelected}
-                selected={selected}
-                icon={<PersonOutlinedIcon />}
-              />
-              <Item
-                title="Manage Examiners"
                 to="/manage_examiners"
                 setSelected={setSelected}
                 selected={selected}
                 icon={<ManageAccountsIcon />}
               />
               <Item
-                title="Manage Roleplayers"
+                title="Roleplayers"
                 to="/manage_roleplayers"
                 setSelected={setSelected}
                 selected={selected}
@@ -164,7 +161,6 @@ const AppSidebar = () => {
             />
           )}
         </Menu>
-       
       </Sidebar>
     </Box>
   );
