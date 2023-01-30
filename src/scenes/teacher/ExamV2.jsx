@@ -13,15 +13,16 @@ import CandidateInfo from "./start-exam/CandidateInfo";
 import Mark from "./start-exam/Mark";
 import axios from "axios";
 import Countdown from "react-countdown";
-
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 let socket;
 let ed;
+let og;
 function ExamV2E() {
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
 	const [roomId, setRoomId] = useState(params.get("id") || "");
 	const [cls, setCls] = useState({});
-
 	const [cd, setCd] = useState(null);
 	const [remainingTIme, setRemainingTime] = useState(0);
 	const [mark, setMark] = useState(true);
@@ -33,6 +34,12 @@ function ExamV2E() {
 		delay: false,
 		allStationEnd: false,
 	});
+	const [alert, setAlert] = useState({
+		show: false,
+		type: "success",
+		msg: "",
+	});
+
 	const teacher = useSelector((state) => state.user);
 
 	useEffect(() => {
@@ -64,6 +71,7 @@ function ExamV2E() {
 				...state,
 				delay: true,
 			});
+			og = false;
 			setCd((old) => null);
 			setMark((old) => true);
 			setMSubmited((old) => false);
@@ -82,6 +90,7 @@ function ExamV2E() {
 			setMark((old) => true);
 			setCd((old) => null);
 			setBT((old) => bt);
+			og = false;
 			setState({
 				...state,
 				break: true,
@@ -97,11 +106,36 @@ function ExamV2E() {
 
 		socket.on("examsEnded", () => {
 			setCd((old) => null);
+			og = false;
 			setState({
 				...state,
 				allStationEnd: true,
 			});
 		});
+
+		socket.on("stdInfo", (stdInfo) => {
+			if (og) {
+				setCd((old) => stdInfo);
+				setAlert({
+					show: true,
+					type: "success",
+					msg: "Candidate connected",
+				});
+			}
+		});
+		socket.on("candidateDisconnected", () => {
+			console.log("= = = = = = = = = = = = = = = =");
+			console.log(" Candidate disconnected");
+			console.log("= = = = = = = = = = = = = = = =");
+			if (og) {
+				setAlert({
+					show: true,
+					type: "error",
+					msg: "Candidate disconnected",
+				});
+			}
+		});
+
 		if (document.querySelector(".opendMenuIcon")) {
 			document.querySelector(".opendMenuIcon").click();
 		}
@@ -118,6 +152,7 @@ function ExamV2E() {
 		}
 
 		setCurrentgTime((old) => Date.now());
+
 		setTimeout(() => {
 			axios
 				.post(process.env.REACT_APP_SERVER_URL + "/getCD", {
@@ -125,6 +160,7 @@ function ExamV2E() {
 				})
 				.then((data) => {
 					setCd((old) => data.data.cd);
+					og = true;
 					console.log("received cd", data.data.cd);
 				});
 		}, 1000);
@@ -138,6 +174,21 @@ function ExamV2E() {
 				overflowX: "hidden",
 			}}
 		>
+			<Snackbar
+				open={alert.show}
+				autoHideDuration={6000}
+				onClose={() => {
+					setAlert({
+						msg: "",
+						type: "success",
+						show: false,
+					});
+				}}
+			>
+				<Alert severity={alert.type} sx={{ mb: 2 }}>
+					{alert.msg}
+				</Alert>
+			</Snackbar>
 			<Box
 				sx={{ flexGrow: 1 }}
 				className="px-3 pt-5"
