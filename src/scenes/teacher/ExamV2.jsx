@@ -124,9 +124,6 @@ function ExamV2E() {
 			}
 		});
 		socket.on("candidateDisconnected", () => {
-			console.log("= = = = = = = = = = = = = = = =");
-			console.log(" Candidate disconnected");
-			console.log("= = = = = = = = = = = = = = = =");
 			if (og) {
 				setAlert({
 					show: true,

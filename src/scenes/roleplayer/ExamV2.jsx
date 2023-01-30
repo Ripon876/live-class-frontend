@@ -11,9 +11,11 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
 import Countdown from "react-countdown";
-
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 let socket;
 let ed;
+let og;
 function ExamV2R() {
 	const queryString = window.location.search;
 	const params = new URLSearchParams(queryString);
@@ -29,6 +31,11 @@ function ExamV2R() {
 		break: false,
 		delay: false,
 		allStationEnd: false,
+	});
+	const [alert, setAlert] = useState({
+		show: false,
+		type: "success",
+		msg: "",
 	});
 	const roleplayer = useSelector((state) => state.user);
 
@@ -59,6 +66,7 @@ function ExamV2R() {
 
 		socket.on("delayStart", () => {
 			setCls((old) => null);
+			og = false;
 			setState({
 				...state,
 				delay: true,
@@ -76,6 +84,7 @@ function ExamV2R() {
 		socket.on("breakStart", (bt) => {
 			setCls((old) => null);
 			setBT((old) => bt);
+			og = false;
 			setState({
 				...state,
 				break: true,
@@ -90,11 +99,33 @@ function ExamV2R() {
 		});
 
 		socket.on("examsEnded", () => {
+			og = false;
 			setState({
 				...state,
 				allStationEnd: true,
 			});
 		});
+
+		socket.on("stdInfo", (stdInfo) => {
+			if (og) {
+				setCd((old) => stdInfo);
+				setAlert({
+					show: true,
+					type: "success",
+					msg: "Candidate connected",
+				});
+			}
+		});
+		socket.on("candidateDisconnected", () => {
+			if (og) {
+				setAlert({
+					show: true,
+					type: "error",
+					msg: "Candidate disconnected",
+				});
+			}
+		});
+
 		if (document.querySelector(".opendMenuIcon")) {
 			document.querySelector(".opendMenuIcon").click();
 		}
@@ -118,6 +149,7 @@ function ExamV2R() {
 				})
 				.then((data) => {
 					setCd((old) => data.data.cd);
+					og = true;
 					console.log("received cd", data.data.cd);
 				});
 		}, 1000);
@@ -131,6 +163,21 @@ function ExamV2R() {
 				overflowX: "hidden",
 			}}
 		>
+			<Snackbar
+				open={alert.show}
+				autoHideDuration={6000}
+				onClose={() => {
+					setAlert({
+						msg: "",
+						type: "success",
+						show: false,
+					});
+				}}
+			>
+				<Alert severity={alert.type} sx={{ mb: 2 }}>
+					{alert.msg}
+				</Alert>
+			</Snackbar>
 			<Box
 				sx={{ flexGrow: 1 }}
 				className="px-3 mt-5 pt-5"

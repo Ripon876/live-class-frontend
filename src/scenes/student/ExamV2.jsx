@@ -356,6 +356,7 @@ function ExamV2C() {
 															_id: std?.id,
 														},
 														ex: cls?.teacher,
+														rp: cls?.roleplayer,
 													}}
 												/>
 											)}
