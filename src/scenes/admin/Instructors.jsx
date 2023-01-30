@@ -8,21 +8,12 @@ import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettin
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Header from "../../components/Header";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Button from "@mui/material/Button";
 
-const Instructors = () => {
+const Instructors = ({ instructors, rE }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [instructors, setInstructors] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get(process.env.REACT_APP_SERVER_URL + "/admin/get-teachers")
-      .then((data) => {
-        data.data.teachers.map((user, i) => (user.id = i + 1));
-        setInstructors([...data.data.teachers]);
-      })
-      .catch((err) => console.log("err :", err));
-  }, []);
 
   const columns = [
     { field: "id", headerName: "ID" },
@@ -33,27 +24,35 @@ const Instructors = () => {
       cellClassName: "name-column--cell",
     },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-    },
-    {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
       field: "email",
       headerName: "Email",
       flex: 1,
     },
+    {
+      field: "actioin",
+      headerName: "Action",
+      flex: 0.5,
+      cellClassName: "me-5  pe-5",
+      renderCell: (params) => {
+        return (
+          <Button
+            variant="filled"
+            size="small"
+            sx={{
+              boxShadow: 3,
+            }}
+            onClick={() => {
+              rE(params.row._id);
+            }}
+          >
+            Remove
+          </Button>
+        );
+      },
+    },
   ];
   return (
     <Box m="20px">
-      <Header title="Examiners" subtitle="Manage The Examiners" />
-
       <Box m="40px 0 0 0" height="70vh">
         {/*<DataGrid rows={mockData} columns={columns} />*/}
         <DataGrid rows={instructors} columns={columns} />

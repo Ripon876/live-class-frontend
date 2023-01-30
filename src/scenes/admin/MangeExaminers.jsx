@@ -6,17 +6,21 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
+import Header from "../../components/Header";
 import { useCookies } from "react-cookie";
 import "./style.css";
+import Instructors from "./Instructors";
 
 function MangeExaminers() {
 	const [alert, setAlert] = useState({
 		show: false,
-		type: "",
+		type: "success",
 		msg: "",
 	});
+
 	const initialFormData = {
 		name: "",
 		email: "",
@@ -31,8 +35,7 @@ function MangeExaminers() {
 		getExaminers();
 	}, []);
 
-	const handleSubmit = () => { 
-
+	const handleSubmit = () => {
 		let emptyfield = Object.values(formData).some((item) => item === "");
 		if (emptyfield) {
 			setAlert({
@@ -89,13 +92,13 @@ function MangeExaminers() {
 		}, 3500);
 	};
 
-	const removeInstructor = () => {
+	const removeInstructor = (id) => {
 		axios
 			.delete(
 				process.env.REACT_APP_SERVER_URL + "/admin/remove-instructor",
 				{
 					data: {
-						id: instructor,
+						id: id,
 					},
 				}
 			)
@@ -122,28 +125,43 @@ function MangeExaminers() {
 	const getExaminers = () => {
 		axios
 			.get(process.env.REACT_APP_SERVER_URL + "/admin/get-teachers")
-			.then((data) => setTeachers([...data.data.teachers]))
+			.then((data) => {
+				data.data.teachers.map((user, i) => (user.id = i + 1));
+				setTeachers([...data.data.teachers]);
+			})
 			.catch((err) => console.log("err :", err));
 	};
 
 	return (
 		<div style={{ overflowY: "auto", maxHeight: "90%" }}>
+			<Header title="Examiners" subtitle="Manage Examiners" />
 			<Box
 				component="form"
 				sx={{
 					"& .MuiTextField-root": { m: 2 },
 				}}
 				m="50px"
+				mt={2}
 				noValidate
 				autoComplete="off"
 			>
-				{alert.show && (
+				<Snackbar
+					open={alert.show}
+					autoHideDuration={6000}
+					onClose={() => {
+						setAlert({
+							msg: "",
+							type: "",
+							show: false,
+						});
+					}}
+				>
 					<Alert severity={alert.type} sx={{ mb: 2 }}>
 						{alert.msg}
 					</Alert>
-				)}
+				</Snackbar>
 
-				<Typography variant="h3" mb="20px">
+				<Typography variant="h3" mb="20px" mt={0}>
 					Add new examiner
 				</Typography>
 
@@ -195,7 +213,7 @@ function MangeExaminers() {
 						}}
 						sx={{ width: 150 }}
 						onChange={handleChange}
-					/> 
+					/>
 				</div>
 				<Button
 					variant="filled"
@@ -210,56 +228,7 @@ function MangeExaminers() {
 					Add
 				</Button>
 			</Box>
-			<Box
-				component="form"
-				sx={{
-					"& .MuiTextField-root": { m: 2 },
-				}}
-				m="50px"
-				noValidate
-				autoComplete="off"
-			>
-				<Typography variant="h3" mb="20px">
-					Remove examiner
-				</Typography>
-
-				<div>
-					<TextField
-						id="filled-select-currency"
-						select
-						label="Select examiner"
-						name="teacher"
-						defaultValue="Jhone Doe"
-						variant="filled"
-						// value={instructor}
-						required
-						sx={{
-							minWidth: "300px",
-						}}
-						onChange={(e) => {
-							setInstructor(e.target.value);
-						}}
-					>
-						{teachers.map((teacher) => (
-							<MenuItem value={teacher._id}>
-								{teacher.name}
-							</MenuItem>
-						))}
-					</TextField>
-				</div>
-				<Button
-					variant="filled"
-					sx={{
-						mt: 1,
-						ml: 2,
-						boxShadow: 3,
-					}}
-					startIcon={<DeleteIcon />}
-					onClick={removeInstructor}
-				>
-					Remove
-				</Button>
-			</Box>
+			<Instructors instructors={teachers} rE={removeInstructor} />
 		</div>
 	);
 }
