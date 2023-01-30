@@ -9,7 +9,7 @@ function CandidateInfo({ og, cdn }) {
 					opacity: og ? "1" : 0,
 				}}
 			>
-				Currently Joined Candidate : <b>{cdn}</b>
+				Candidate : <b>{cdn}</b>
 			</Typography>
 		</div>
 	);
