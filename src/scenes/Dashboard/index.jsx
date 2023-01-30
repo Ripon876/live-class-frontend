@@ -37,12 +37,12 @@ const Dashboard = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="DASHBOARD" subtitle="Welcome to your Dashboard" />
       </Box>
-      {user.type !== "admin" &&
-        !Object.values(requirements).every((item) => item) && (
-          <Requirements rq={requirements} srq={setR} />
-        )}
 
-      {examStatus && Object.values(requirements).every((item) => item) && (
+      {user.type !== "admin" &&
+        !Object.values(requirements).every((item) => item) &&
+        !examStatus && <Requirements rq={requirements} srq={setR} />}
+
+      {examStatus && (
         <>
           {examStatus?.canJoin ? (
             <div className="mt-5 text-center">
@@ -67,8 +67,16 @@ const Dashboard = () => {
           ) : (
             <>
               <h3 className="mb-3 text-center">Exams are ongoing</h3>
-              {examStatus?.delay && <p className="mb-3 text-center">You can join after delay ends</p>}
-              {examStatus?.break && <p className="mb-3 text-center">You can join after break ends</p>}
+              {examStatus?.delay && (
+                <p className="mb-3 text-center">
+                  You can join after delay ends
+                </p>
+              )}
+              {examStatus?.break && (
+                <p className="mb-3 text-center">
+                  You can join after break ends
+                </p>
+              )}
             </>
           )}
         </>

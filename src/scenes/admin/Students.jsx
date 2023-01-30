@@ -94,27 +94,29 @@ const Students = () => {
     },
   ];
   return (
-    <Box m="20px">
-      <Header title="Candidates" subtitle="Manage Candidates" />
-      <Snackbar
-        open={alert.show}
-        autoHideDuration={6000}
-        onClose={() => {
-          setAlert({
-            msg: "",
-            type: "",
-            show: false,
-          });
-        }}
-      >
-        <Alert severity={alert.type} sx={{ mb: 2 }}>
-          {alert.msg}
-        </Alert>
-      </Snackbar>
-      <Box m="40px 0 0 0" height="70vh">
-        <DataGrid rows={students} columns={columns} />
+    <div style={{ overflowY: "auto", maxHeight: "90%" }}>
+      <Box m="20px">
+        <Header title="Candidates" subtitle="Manage Candidates" />
+        <Snackbar
+          open={alert.show}
+          autoHideDuration={6000}
+          onClose={() => {
+            setAlert({
+              msg: "",
+              type: "",
+              show: false,
+            });
+          }}
+        >
+          <Alert severity={alert.type} sx={{ mb: 2 }}>
+            {alert.msg}
+          </Alert>
+        </Snackbar>
+        <Box m="40px 0 0 0" height="70vh">
+          <DataGrid rows={students} columns={columns} />
+        </Box>
       </Box>
-    </Box>
+    </div>
   );
 };
 
