@@ -148,7 +148,7 @@ function MangeExaminers() {
 					</Alert>
 				</Snackbar>
 
-				<Typography variant="h3"  mb={0}>
+				<Typography variant="h3" mb={0}>
 					Add new examiner
 				</Typography>
 
@@ -203,7 +203,9 @@ function MangeExaminers() {
 					/>
 				</div>
 				<Button
-					variant="filled"
+					variant="contained"
+					component="label"
+					className="BTN"
 					sx={{
 						mt: 1,
 						ml: 2,

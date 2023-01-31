@@ -67,7 +67,10 @@ function RenewExams({ cr, oc }) {
 			</Dialog>
 
 			<Button
-				variant="filled"
+				variant="contained"
+				component="label"
+				size="small"
+				className="BTN"
 				sx={{
 					boxShadow: 3,
 					mt: 1,

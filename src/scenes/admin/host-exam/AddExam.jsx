@@ -119,10 +119,11 @@ function AddExam({ fd, hc, hs, examiners, roleplayers, sfd }) {
 				<Button
 					variant="filled"
 					sx={{
-						mt: 1,
-						ml: 2,
+						mt: 0,
+						ml: 0,
 						boxShadow: 3,
 					}}
+					className='BTN'
 					startIcon={<AddIcon />}
 					onClick={handleSubmit}
 				>

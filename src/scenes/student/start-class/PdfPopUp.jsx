@@ -28,8 +28,8 @@ function PdfPopUp({ op, setOp, pdf }) {
 				aria-describedby="scroll-dialog-description"
 			>
 				<DialogTitle id="scroll-dialog-title">PDF</DialogTitle>
-				<DialogContent dividers={true} sx={{height: '55vh'}}>
-					<div className='h-100 w-100'>
+				<DialogContent dividers={true} sx={{ height: "55vh" }}>
+					<div className="h-100 w-100">
 						<iframe
 							src={pdf + "#toolbar=0"}
 							width="100%"
@@ -38,7 +38,15 @@ function PdfPopUp({ op, setOp, pdf }) {
 					</div>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose}>Close</Button>
+					<Button
+						variant="contained"
+						component="label"
+						size="small"
+						className="BTN"
+						onClick={handleClose}
+					>
+						Close
+					</Button>
 				</DialogActions>
 			</Dialog>
 		</div>

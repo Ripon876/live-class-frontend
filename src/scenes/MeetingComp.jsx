@@ -29,8 +29,10 @@ const MeetingComp = ({ id, title, name, apiRef, sct, ao, admin }) => {
 		<div className="jitsiContainer">
 			<JitsiMeeting
 				configOverwrite={{
-					startWithAudioMuted: admin ? true : false,
-					startWithVideoMuted: admin ? true : false,
+					// startWithAudioMuted: admin ? true : false,
+					// startWithVideoMuted: admin ? true : false,
+					startWithAudioMuted: true,
+					startWithVideoMuted: true,
 					hiddenPremeetingButtons: ["microphone"],
 					prejoinPageEnabled: false,
 					logoImageUrl: "",
@@ -72,7 +74,7 @@ const MeetingComp = ({ id, title, name, apiRef, sct, ao, admin }) => {
 					DEFAULT_WELCOME_PAGE_LOGO_URL: "",
 					TOOLBAR_BUTTONS: [
 						"microphone",
-						// "camera",
+						"camera",
 						// "closedcaptions",
 						// "desktop",
 						"fullscreen",

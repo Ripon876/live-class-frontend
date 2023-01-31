@@ -274,7 +274,12 @@ function ExamV2R() {
 								No More Exams Left Today
 							</Typography>
 							<a href="/" style={{ textDecoration: "none" }}>
-								<Button variant="contained" size="large">
+								<Button
+									variant="contained"
+									component="label"
+									className="BTN"
+									size="large"
+								>
 									Back to dashboard
 								</Button>
 							</a>

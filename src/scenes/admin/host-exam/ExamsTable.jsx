@@ -57,10 +57,13 @@ function ExamsTable({ exams, dltExm }) {
 							<TableCell align="right">
 								<div>
 									<Button
+										variant="contained"
+										component="label"
+										size="small"
+										className="BTN"
 										sx={{
 											boxShadow: 3,
 										}}
-										variant="filled"
 										startIcon={<AssignmentIcon />}
 										onClick={() => {
 											window.location.href =
@@ -71,12 +74,16 @@ function ExamsTable({ exams, dltExm }) {
 										See Details
 									</Button>
 								</div>
-								<div>
+								<div className='mt-1'>
 									<Button
+										variant="contained"
+										component="label"
+										size="small"
+										className="BTN"
 										sx={{
 											boxShadow: 3,
 										}}
-										variant="filled"
+										 
 										startIcon={<DeleteIcon />}
 										onClick={() => {
 											dltExm(singleClass._id);

@@ -113,6 +113,7 @@ function ExamV2C() {
 				...state,
 				delay: false,
 			});
+			setRoomId((old) => false);
 		});
 		socket.on("breakStart", (bt) => {
 			setCls((old) => null);
@@ -128,6 +129,7 @@ function ExamV2C() {
 				...state,
 				break: false,
 			});
+			setRoomId((old) => false);
 		});
 
 		socket.on("examsEnded", () => {
@@ -341,24 +343,26 @@ function ExamV2C() {
 								<div>
 									<div>
 										<div>
-											{!state?.allStationEnd && cls && (
-												<MeetingComp
-													id={roomId}
-													title={cls?.title}
-													name={std?.name}
-													sct={setCurrentgTime}
-													ao={{
-														exam: cls?._id,
-														type: "student",
-														cd: {
-															name: std?.name,
-															_id: std?.id,
-														},
-														ex: cls?.teacher,
-														rp: cls?.roleplayer,
-													}}
-												/>
-											)}
+											{!state?.allStationEnd &&
+												cls &&
+												roomId && (
+													<MeetingComp
+														id={roomId}
+														title={cls?.title}
+														name={std?.name}
+														sct={setCurrentgTime}
+														ao={{
+															exam: cls?._id,
+															type: "student",
+															cd: {
+																name: std?.name,
+																_id: std?.id,
+															},
+															ex: cls?.teacher,
+															rp: cls?.roleplayer,
+														}}
+													/>
+												)}
 										</div>
 									</div>
 

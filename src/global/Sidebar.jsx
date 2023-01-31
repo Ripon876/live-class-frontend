@@ -34,7 +34,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 
 const AppSidebar = () => {
   const userType = useSelector((state) => state.user.type);
-
+ 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [selected, setSelected] = useState(false);
@@ -43,7 +43,9 @@ const AppSidebar = () => {
     <Box
       sx={{
         "& .ps-sidebar-container": {
-          background: `${colors.primary[400]} !important`,
+          // background: `${colors.primary[400]} !important`
+          background: "#fbfcff!important",
+          borderRight: "3px solid #88888854",
         },
         "& .pro-icon-wrapper": {
           background: "transparent !important",

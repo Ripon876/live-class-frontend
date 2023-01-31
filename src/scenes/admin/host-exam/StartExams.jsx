@@ -85,6 +85,7 @@ function StartExams({ cs, sp, oc }) {
 			</Dialog>
 
 			<Button
+				className="BTN"
 				variant="filled"
 				sx={{
 					boxShadow: 3,

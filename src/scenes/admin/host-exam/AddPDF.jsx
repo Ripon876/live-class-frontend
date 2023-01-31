@@ -33,7 +33,7 @@ function AddPDF({ fd, sfd }) {
 	return (
 		<div className="mb-4 mt-2 d-flex align-items-center">
 			<div>
-				<Button variant="contained" component="label">
+				<Button variant="contained" component="label"  size="small" className='BTN'>
 					Upload PDF
 					<input type="file" hidden onChange={handleFile} />
 				</Button>

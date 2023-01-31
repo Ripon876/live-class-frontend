@@ -148,7 +148,9 @@ function MangeRoleplayers() {
 				noValidate
 				autoComplete="off"
 			>
-				<Typography variant="h3" mb={0}>Add new roleplayer</Typography>
+				<Typography variant="h3" mb={0}>
+					Add new roleplayer
+				</Typography>
 
 				<div>
 					<TextField
@@ -201,7 +203,9 @@ function MangeRoleplayers() {
 					/>
 				</div>
 				<Button
-					variant="filled"
+					variant="contained"
+					component="label"
+					className="BTN"
 					sx={{
 						mt: 1,
 						ml: 2,

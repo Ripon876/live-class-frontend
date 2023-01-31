@@ -28,8 +28,6 @@ function Result() {
 	const [result, setResult] = useState(0);
 
 	useEffect(() => {
-		 
-
 		axios
 			.get(process.env.REACT_APP_SERVER_URL + "/student/get-result", {
 				headers: {
@@ -94,8 +92,10 @@ function Result() {
 			}}
 		>
 			<Button
-				size="normal"
-				variant="filled"
+				variant="contained"
+				component="label"
+				size="small"
+				className="BTN"
 				sx={{
 					boxShadow: 3,
 					ml: 5,

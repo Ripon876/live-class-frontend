@@ -116,7 +116,10 @@ function Settings() {
 					</div>
 				)}
 				<Button
-					variant="filled"
+					variant="contained"
+					component="label"
+					size="small"
+					className="BTN"
 					sx={{
 						mt: 1,
 						ml: 2,

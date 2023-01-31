@@ -149,11 +149,13 @@ function ExamDetails() {
 					</div>
 				)}
 				<Button
+					variant="contained"
+					component="label"
+					className="BTN"
 					sx={{
 						boxShadow: 3,
-						mt:2
+						mt: 2,
 					}}
-					variant="filled"
 					// startIcon={<AssignmentIcon />}
 					onClick={() => {
 						window.location.href = "/host_exam";

@@ -297,7 +297,10 @@ function HostClass() {
 					</Typography>
 					<div style={{ cursor: spin ? "not-allowed" : "pointer" }}>
 						<Button
-							variant="filled"
+							variant="contained"
+							component="label"
+							size="small"
+							className="BTN"
 							sx={{
 								boxShadow: 3,
 							}}

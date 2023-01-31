@@ -39,6 +39,9 @@ function ExamStates({ states }) {
 							<TableCell align="right">{state.ex.name}</TableCell>
 							<TableCell align="right">
 								<Button
+									variant="contained"
+									component="label"
+									className="BTN"
 									size="small"
 									sx={{
 										boxShadow: 3,
@@ -51,7 +54,6 @@ function ExamStates({ states }) {
 											"_blank"
 										);
 									}}
-									variant="filled"
 									startIcon={<RemoveRedEyeIcon />}
 								>
 									Inspect Exam

@@ -173,6 +173,7 @@ function CheckList({ fd, sfd }) {
 													boxShadow: 3,
 													fontSize: "15px",
 												}}
+												className='BTN'
 												onClick={() => {
 													addQuestion(i1);
 												}}

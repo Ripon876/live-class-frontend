@@ -111,7 +111,9 @@ function InspectExam() {
 
 					<div>
 						<Button
-							variant="filled"
+							variant="contained"
+							component="label"
+							className="BTN"
 							sx={{
 								mt: 1,
 								ml: 2,

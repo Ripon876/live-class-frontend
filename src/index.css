@@ -77,3 +77,8 @@ html,
   background-position: center;
   background-repeat: no-repeat;
 }
+.BTN {
+  background: #0c3568 !important;
+  color: white !important;
+}
+

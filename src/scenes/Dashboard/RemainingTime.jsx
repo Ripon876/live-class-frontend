@@ -37,7 +37,7 @@ function RemainingTime() {
 		<div style={{ marginTop: "100px", textAlign: "center" }}>
 			{!msg && (
 				<Typography variant="h4" mb="10px">
-					Remainig Time
+					Remaining Time
 				</Typography>
 			)}
 			<Typography

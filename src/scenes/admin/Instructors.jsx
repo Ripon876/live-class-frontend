@@ -38,7 +38,9 @@ const Instructors = ({ instructors, rE }) => {
       renderCell: (params) => {
         return (
           <Button
-            variant="filled"
+            variant="contained"
+            component="label"
+            className="BTN"
             size="small"
             sx={{
               boxShadow: 3,

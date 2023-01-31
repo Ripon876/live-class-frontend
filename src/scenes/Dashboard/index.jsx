@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import RemainingTime from "./RemainingTime";
 import Requirements from "./Requirements";
-import Test from "./Test";
 import { useSelector } from "react-redux";
 import io from "socket.io-client";
 let socket;
@@ -49,8 +48,11 @@ const Dashboard = () => {
               <h3 className="mb-3 text-center">Exams are ongoing</h3>
               {examStatus?.rt > 0 && (
                 <Button
+                  variant="contained"
+                  component="label"
+                  size="small"
+                  className="BTN"
                   size="large"
-                  variant="filled"
                   sx={{
                     boxShadow: 3,
                     pt: "10px",

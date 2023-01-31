@@ -148,7 +148,9 @@ function Mark({ list, cId, eId, sm, ms }) {
 				<div className="text-start mt-3">
 					<Button
 						variant="contained"
-						size="normal"
+						component="label"
+						size="small"
+						className="BTN"
 						onClick={submitMark}
 					>
 						Submit
