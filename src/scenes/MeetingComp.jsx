@@ -55,10 +55,10 @@ const MeetingComp = ({ id, title, name, apiRef, sct, ao, admin }) => {
 						autoHide: ["subject"],
 					},
 					hideConferenceTimer: true,
-					hideParticipantsStats: true,
 					logging: {
 						defaultLogLevel: "error",
 					},
+					apiLogLevels: ["error"],
 				}}
 				spinner={Sp}
 				interfaceConfigOverwrite={{
@@ -74,7 +74,7 @@ const MeetingComp = ({ id, title, name, apiRef, sct, ao, admin }) => {
 					DEFAULT_WELCOME_PAGE_LOGO_URL: "",
 					TOOLBAR_BUTTONS: [
 						"microphone",
-						"camera",
+						// "camera",
 						// "closedcaptions",
 						// "desktop",
 						"fullscreen",
@@ -85,16 +85,24 @@ const MeetingComp = ({ id, title, name, apiRef, sct, ao, admin }) => {
 				}}
 				userInfo={{
 					displayName: name,
+					// avatarUrl: "dffasdfa23423432sffsdfd",
 				}}
 				onApiReady={(externalApi) => {
 					console.log("api ready");
 
-					// if (apiRef) {
-					// 	apiRef.current = externalApi;
-					// }
-					// if (sct) {
-					// 	// sct(Date.now());
-					// }
+					if (!admin) {
+						setTimeout(() => {
+							// externalApi.getRoomsInfo().then((rooms) => {
+							// 	console.log(" = = = = = = = =  = = ");
+							// 	console.log(" rooms ");
+							// 	console.log(rooms);
+							// 	console.log(" = = = = = = = =  = = ");
+							// });
+
+							externalApi.executeCommand("toggleAudio");
+							externalApi.executeCommand("toggleVideo");
+						}, 20000);
+					}
 				}}
 				getIFrameRef={(node) => (node.style.height = "600px")}
 				key={"34543df"}
