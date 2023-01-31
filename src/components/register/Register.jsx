@@ -52,29 +52,39 @@ function Register() {
 	return (
 		<div>
 			<div className="container">
-				<div className="registerForm">
-					<div className="border formContainer p-4 rounded-2 shadow-sm">
-						<div className="formHeader">
-							<div className="row">
-								<div className="col-4">
+				<div className="registerForm pt-5">
+					<div className="formHeader">
+						<div>
+							<div className="align-items-center row justify-content-center">
+								<div className="col-3">
 									<img
 										src="./logo-form.png"
 										alt=""
 										className="img-fluid"
+										style={{
+											maxWidth: "130px",
+										}}
 									/>
 								</div>
-								<div className="col-8">
-									<h5 className="text-start fw-bold">
-										Welcome to RFA Tutors
-									</h5>
-									<p className="mb-0 text-secondary">
-										Your practice partner for your exams
-									</p>
+								<div className="col-6 text-center">
+									<div>
+										<h1 className="display-4 fw-bold mb-0">
+											Welcome to RFA Tutors
+										</h1>
+										<h5 className="mb-0 text-secondary">
+											Your practice partner for your exams
+										</h5>
+									</div>
+								</div>
+								<div className="col-3">
+									<div></div>
 								</div>
 							</div>
-							<hr />
 						</div>
+						<hr className="mx-auto mt-1  " />
+					</div>
 
+					<div className="border formContainer p-4 rounded-2 shadow-sm">
 						{sucMsg && !errMsg && (
 							<div className="alert alert-success" role="alert">
 								{sucMsg}

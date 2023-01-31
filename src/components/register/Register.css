@@ -5,10 +5,10 @@
 .formContainer{
     width: 400px;
     margin: auto;
-    position: absolute;
+/*    position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);*/
 }
 .btnSubmit {
     background-color: #141b2d;
