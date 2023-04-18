@@ -21,7 +21,7 @@ const Students = () => {
 
   const removeCandidate = (id) => {
     axios
-      .delete(process.env.REACT_APP_SERVER_URL + "/admin/remove-instructor", {
+      .delete(process.env.REACT_APP_SERVER_URL + "/admin/remove-student", {
         data: {
           id: id,
         },
